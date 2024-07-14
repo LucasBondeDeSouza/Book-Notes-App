@@ -1,0 +1,99 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background-image: url("https://www.transparenttextures.com/patterns/black-thread-light.png");
+}
+
+button {
+    background: none; 
+    border: none; 
+    padding: 0; 
+    margin: 0;
+}
+
+.back {
+    fill: #000;
+    position: absolute;
+    left: 10px;
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 90vh;
+    gap: 40px;
+}
+
+.container h1 {
+    font-size: 40px;
+}
+
+.container form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 10px;
+    min-height: 350px;
+    width: 400px;
+    padding: 20px;
+    gap: 30px;
+    border: 1px solid #000;
+    background-color: #fff;
+}
+
+.title, .description {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.title label, .description label {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.title input, .description textarea {
+    border: 1px solid #000;
+    border-radius: 10px;
+}
+
+.title input {
+    padding: 8px;
+    font-size: 20px;
+}
+
+.description textarea {
+    padding: 10px;
+    font-size: 20px;
+}
+
+input[type='submit'] {
+    padding: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    border: none;
+    background-color: #000;
+    color: white;
+    border-radius: 10px;
+    transition: all .5s ease;
+}
+
+input[type='submit']:hover {
+    color: #000;
+    background-color: white;
+    border: 1px solid #000;
+}

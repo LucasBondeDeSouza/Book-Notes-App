@@ -1,0 +1,167 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background-image: url("https://www.transparenttextures.com/patterns/black-thread-light.png");
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    margin-top: 30px;
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.title > form > input {
+    border: none;
+    background-color: transparent;
+    font-size: 40px;
+    cursor: pointer;
+    transition: all .3s ease;
+}
+
+.title > form > input:hover {
+    opacity: .5;
+}
+
+.cards-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 880px;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+}
+
+.card {
+    width: 430px;
+    height: 410px;
+    padding: 20px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+    background-color: #fff;
+    border-radius: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.card::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.card::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.card::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.card::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.card img {
+    float: left;
+    max-height: 300px;
+    margin-right: 20px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+}
+
+.card-body > .card-title {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.card-body > .card-title > .info-book > h2 {
+    font-size: 26px;
+}
+
+.card-body > .card-title > .info-book > p {
+    font-weight: bold;
+    font-size: 12px;
+    color: darkcyan;
+}
+
+.card-body > .card-title > svg {
+    cursor: pointer;
+}
+
+.card-body > .card-text {
+    /*font-size: 18px;*/
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 999;
+    border-radius: 5px;
+    padding: 10px;
+    left: 0;
+    transform: translateX(-100%);
+}
+
+.dropdown-content form {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content form:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown-content form > button {
+    border: none;
+    background: transparent;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.delete {
+    color: red;
+}
+
+.edit {
+    color: blue;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+@media (max-width: 767px) {
+    .cards-group {
+        justify-content: center;
+    }
+}

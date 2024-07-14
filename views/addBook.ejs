@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Books</title>
+    <link rel="stylesheet" href="styles/editBook.css">
+</head>
+
+<body>
+    <form action="/back" method="get">
+        <button type="submit">
+            <svg xmlns="http://www.w3.org/2000/svg" class="back" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+            </svg>
+        </button>
+    </form>    
+
+    <div class="container">
+        <h1>Add Books</h1>
+
+        <form action="/add" method="post">
+            <div class="title">
+                <label for="bookTitle">Title</label>
+                <input type="text" name="title" id="bookTitle" required>
+            </div>
+            
+            <div class="description">
+                <label for="bookDescription">Description</label>
+                <textarea name="description" id="bookDescription" rows="8" required></textarea>
+            </div>
+
+            <input type="submit" value="Add">
+        </form>
+    </div>
+</body>
+
+</html>
