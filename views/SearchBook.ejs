@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Books Notes App</title>
-    <link rel="stylesheet" href="styles/editBook.css">
+    <title>Book Notes App</title>
+    <link rel="stylesheet" href="styles/searchBook.css">
 </head>
-
 <body>
     <form action="/back" method="get">
         <button type="submit">
@@ -18,24 +16,22 @@
     </form>    
 
     <div class="container">
-        <h1>Add Book</h1>
+        <h1>Search Book</h1>
 
-        <form action="/add" method="post">
-            <% if (locals.title) { %>
-                <div class="title">
-                    <label for="bookTitle">Title</label>
-                    <input type="text" name="title" id="bookTitle" value="<%= title %>" readonly>
-                </div>
-            <% } %>
-            
-            <div class="description">
-                <label for="bookDescription">Notes</label>
-                <textarea name="description" id="bookDescription" rows="8" required></textarea>
+        <form action="/search" method="get">
+            <div class="title">
+                <label for="bookTitle">Title</label>
+                <input type="text" name="searchTitle" id="bookTitle" required>
             </div>
 
-            <input type="submit" value="Add">
+            <% if (locals.error) { %>
+                <div class="error">
+                    <h1 style="color: red"><%= error %></h1>
+                </div>
+            <% } %>
+
+            <input type="submit" value="Search">
         </form>
     </div>
 </body>
-
 </html>
