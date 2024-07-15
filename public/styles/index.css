@@ -45,6 +45,10 @@ body {
     margin-top: 40px;
 }
 
+.cards-group:last-child {
+    margin-bottom: 70px;
+}
+
 .card {
     width: 430px;
     height: 410px;
