@@ -3,8 +3,6 @@ import bodyParser from "body-parser";
 import axios from "axios";
 import pg from "pg";
 import env from "dotenv";
-/*import session from "express-session";
-import flash from "connect-flash"*/
 
 const app = express();
 const port = 3000;
@@ -19,16 +17,8 @@ const db = new pg.Client({
 });
 db.connect();
 
-/*app.set('view engine', 'ejs')*/
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
-
-/*app.use(flash())
-
-app.use((req, res, next) => {
-    res.locals.errorMessage = req.flash('error')
-    next()
-})*/
 
 let listBooks = [];
 let listEditBooks = [];
