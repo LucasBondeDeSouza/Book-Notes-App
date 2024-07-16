@@ -15,19 +15,13 @@
             <form action="/addBook" method="get">
                 <input type="submit" value="+">
             </form>
-        </div>        
+        </div>
 
         <div class="cards-group">
             <% for (let book of listBooks) { %>
-                <div class="card">
-                    <img src="https://covers.openlibrary.org/b/isbn/<%= book.isbn %>-L.jpg" alt="book">
-                    <div class="card-body">
-                        <div class="card-title">
-                            <div class="info-book">
-                                <h2><%= book.title %></h2>
-                                <p>By <%= book.author %></p>
-                            </div>
-    
+                <div class="flip-card flip-horizontal-left" onclick="flipCard(this)">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
                             <div class="dropdown">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                     class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
@@ -43,7 +37,7 @@
                                             Delete
                                         </button>
                                     </form>
-    
+
                                     <form action="/editBook" method="get">
                                         <button class="edit" onchange="this.form.submit()" name="editBookId" value="<%= book.id %>">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
@@ -54,9 +48,51 @@
                                     </form>
                                 </div>
                             </div>
+
+                            <div class="card-image">
+                                <img src="https://covers.openlibrary.org/b/isbn/<%= book.isbn %>-L.jpg" alt="book">
+                            </div>
                         </div>
-    
-                        <p class="card-text"><%= book.description %></p>
+
+                        <div class="flip-card-back">
+                            <div class="dropdown">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                    <path
+                                        d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
+                                </svg>
+                                <div class="dropdown-content">
+                                    <form action="/delete" method="post">
+                                        <button class="delete" onchange="this.form.submit()" name="deleteBookId" value="<%= book.id %>">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
+                                            </svg>
+                                            Delete
+                                        </button>
+                                    </form>
+
+                                    <form action="/editBook" method="get">
+                                        <button class="edit" onchange="this.form.submit()" name="editBookId" value="<%= book.id %>">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                                <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+                                            </svg>
+                                            Edit
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <h2><%= book.title %></h2>
+                                    <p>By <%= book.author %></p>
+                                </div>
+        
+                                <div class="card-text">
+                                    <p><%= book.description %></p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             <% } %>
@@ -78,6 +114,11 @@
                 });
             });
         });
+
+        function flipCard(card) {
+            card.classList.toggle('flipped');
+        }
+
     </script>
 </body>
 

@@ -33,7 +33,7 @@ app.get("/back", async (req, res) => {
 
 app.get("/", async (req, res) => {
     try {
-        const result = await db.query("SELECT * FROM books ORDER BY id ASC");
+        const result = await db.query("SELECT * FROM books ORDER BY id DESC");
         listBooks = await Promise.all(result.rows.map(async (book) => {
             const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${book.title}`);
             const isbn = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].isbn) ? searchBook.data.docs[0].isbn[0] : 'ISBN Not Found';
