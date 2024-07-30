@@ -1,0 +1,29 @@
+<div class="modal fade" id="editBookModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Book</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <h2 class="fs-4" id="modal-title" style="color: darkcyan;"></h2>
+                <form id="editBookForm" action="/editBook" method="post" class="needs-validation py-2" novalidate>
+                    <input type="hidden" id="editBookId" name="bookId">
+                    <input type="hidden" id="editUserId" name="userId">
+
+                    <div class="mb-3">
+                        <label for="notes" class="col-form-label fs-5">Notes</label>
+                        <textarea class="form-control py-2" rows="5" id="editBookNotes" name="notes"
+                            required></textarea>
+                        <div class="invalid-feedback">
+                            Please enter a notes.
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark w-100 fw-bold fs-5">Edit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

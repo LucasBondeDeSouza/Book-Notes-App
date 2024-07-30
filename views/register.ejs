@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Notes</title>
+  <%- include('partials/headerBootstrap') %>
+</head>
+
+<body class="bg-light">
+  <div class="container d-flex vh-100 justify-content-center">
+    <div class="row justify-content-center align-self-center w-100">
+  
+      <div class="col-12 col-lg-6">
+        <% if (error && error.length > 0) { %>
+          <div class="alert alert-danger alert-dismissible fade show">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <%= error %>
+          </div>
+        <% } %>
+  
+        <div class="card shadow p-2">
+          <div class="card-body">
+            <div class="d-flex justify-content-center">
+              <i class="fas fa-book fa-2x d-sm-inline d-lg-none me-3"></i>
+              <i class="fas fa-book fa-3x d-none d-lg-inline d-sm-none me-3"></i>
+              <h1 class="display-6 text-body fw-bold">Book Notes</h1>
+            </div>
+  
+            <form action="/register" method="POST" class="needs-validation" novalidate>
+              <div class="form-group my-3">
+                <input type="name" name="name" class="form-control py-2" placeholder="Name" required />
+                  <div class="invalid-feedback">
+                    Please choose a valid Name.
+                  </div>
+              </div>
+  
+              <div class="form-group my-3">
+                <input type="email" name="email" class="form-control" placeholder="Email" required />
+                  <div class="invalid-feedback">
+                      Please choose a valid Email.
+                  </div>
+              </div>
+  
+              <div class="form-group my-3">
+                <input type="password" name="password" class="form-control" placeholder="Password" required />
+                  <div class="invalid-feedback">
+                    Please choose a valid Password.
+                  </div>
+              </div>
+  
+              <button type="submit" class="btn btn-dark w-100 fw-bold fs-5">Register</button>
+  
+              <div class="card mt-3">
+                <div class="d-grid col-12">
+                  <a class="btn btn-block" href="/auth/google" role="button">
+                    <i class="fab fa-google fw-bold fs-5"></i>
+                    Sign Up with Google
+                  </a>
+                </div>
+              </div>
+            </form>
+  
+            <hr class="my-4">
+  
+            <div class="d-flex justify-content-center">
+              <p class="mb-0 me-2">Have an account?</p>
+              <a class="text-decoration-none fw-bold" href="/login" role="button">Login</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%- include('partials/footer') %>
+
+  <%- include('partials/footerBootstrap') %>

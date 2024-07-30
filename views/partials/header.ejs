@@ -1,0 +1,37 @@
+<header class="p-3 mb-3 border-bottom bg-white">
+    <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-between">
+            <a href="/home" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
+                <i class="fas fa-book fa-2x d-sm-inline d-lg-none me-2"></i>
+                <i class="fas fa-book fa-3x d-none d-lg-inline d-sm-none me-2"></i>
+                <h1 class="display-6 text-body fw-bold">Book Notes</h1>
+            </a>
+
+            <form class="col-12 col-lg-5 mb-3 mb-lg-0 me-lg-3 w-full" role="search">
+                <div class="input-group mb-3">
+                    <input type="search" class="form-control" placeholder="Search..." aria-label="Search"
+                        aria-describedby="button-addon2">
+                    <button class="btn btn-outline-secondary" type="button" id="button-addon2">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+
+            <div class="dropdown text-end">
+                <p href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle fs-5"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-fill"></i>
+                    <%= locals.name ? locals.name : '' %>
+                </p>
+                <ul class="dropdown-menu text-small">
+                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#newBookModal"
+                            data-bs-whatever="@mdo">New Book...</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><a class="dropdown-item" href="/logout">Sign out</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>

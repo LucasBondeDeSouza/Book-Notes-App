@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Notes</title>
+  <%- include('partials/headerBootstrap') %>
+    <link rel="stylesheet" href="styles/home.css">
+</head>
+
+<body>
+  <%- include('partials/header') %>
+
+    <%- include('partials/modal/modalEditBook') %>
+    <%- include('partials/modal/modalAddBook') %>
+
+    <main>
+      <div class="container">
+        <% if (error && error.length> 0) { %>
+          <div class="alert alert-danger alert-dismissible fade show">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <%= error %>
+          </div>
+          <% } else if (success && success.length> 0) { %>
+            <div class="alert alert-success alert-dismissible fade show">
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              <%= success %>
+            </div>
+            <% } %>
+
+              <div class="cards-group">
+                <% if (listBooks.length> 0) { %>
+                  <% for (let book of listBooks) { %>
+                    <div class="flip-card flip-horizontal-left">
+                      <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                          <div class="dropstart">
+                            <button class="btn p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="bi bi-three-dots-vertical fw-bold"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-start p-3">
+                              <li>
+                                <form action="/deleteBook" method="post">
+                                  <button class="text-danger button" onchange="this.form.submit()" name="deleteBookId"
+                                    value="<%= book.id %>">
+                                    <i class="bi bi-trash-fill"></i>
+                                    Delete
+                                  </button>
+                                </form>
+                              </li>
+                              <li>
+                                <button class="text-primary button edit-book-btn" data-bs-toggle="modal"
+                                  data-bs-target="#editBookModal" data-book-id="<%= book.id %>" data-user-id="<%= book.user_id %>"
+                                  data-book-title="<%= book.title %>"
+                                  data-book-notes="<%= book.description %>">
+                                  <i class="bi bi-pencil"></i> Edit
+                                </button>
+                              </li>
+                            </ul>
+                          </div>
+
+                          <div class="card-image">
+                            <img src="https://covers.openlibrary.org/b/isbn/<%= book.isbn %>-L.jpg" alt="book"
+                              onclick="flipCard(this)">
+                          </div>
+                        </div>
+
+                        <div class="flip-card-back">
+                          <div class="dropstart">
+                            <button class="btn p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu p-3">
+                              <li>
+                                <form action="/deleteBook" method="post">
+                                  <button class="text-danger button" onchange="this.form.submit()" name="deleteBookId"
+                                    value="<%= book.id %>">
+                                    <i class="bi bi-trash-fill"></i>
+                                    Delete
+                                  </button>
+                                </form>
+                              </li>
+                              <li>
+                                <button class="text-primary button edit-book-btn" data-bs-toggle="modal"
+                                  data-bs-target="#editBookModal" data-book-id="<%= book.id %>" data-user-id="<%= book.user_id %>"
+                                  data-book-title="<%= book.title %>"
+                                  data-book-notes="<%= book.description %>">
+                                  <i class="bi bi-pencil"></i> Edit
+                                </button>
+                              </li>
+                            </ul>
+                          </div>
+
+                          <div class="card-body" onclick="flipCard(this)">
+                            <div class="card-title">
+                              <h2>
+                                <%= book.title %>
+                              </h2>
+                              <p>By <%= book.author %>
+                              </p>
+                            </div>
+
+                            <div class="card-text">
+                              <p>
+                                <%= book.description %>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <% } %>
+                      <% } else { %>
+                        <div class="d-flex flex-column justify-content-start align-items-center min-vh-100">
+                          <!--<img src="images/prateleira-livro.png" alt="Nenhum livro cadastrado!" style="height: 250px;">-->
+                          <p>Nenhum livro cadastrado</p>
+                        </div>
+                        <% } %>
+              </div>
+      </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+      <script>
+        var editBookModal = document.getElementById('editBookModal');
+        editBookModal.addEventListener('show.bs.modal', function (event) {
+          var button = event.relatedTarget; // Botão que acionou o modal
+          var bookId = button.getAttribute('data-book-id');
+          var userId = button.getAttribute('data-user-id');
+          var bookTitle = button.getAttribute('data-book-title');
+          var bookNotes = button.getAttribute('data-book-notes');
+
+          // Preencher os campos do modal com os dados do livro
+          var modalTitle = editBookModal.querySelector('#modal-title');
+          modalTitle.textContent = bookTitle;
+
+          var inputBookId = document.getElementById('editBookId');
+          var inputUserId = document.getElementById('editUserId');
+          var inputBookNotes = document.getElementById('editBookNotes');
+
+          inputBookId.value = bookId;
+          inputUserId.value = userId;
+          inputBookNotes.value = bookNotes;
+        });
+      </script>
+
+      <%- include('partials/footerBootstrap') %>
