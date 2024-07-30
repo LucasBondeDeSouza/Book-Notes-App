@@ -9,5 +9,6 @@ CREATE TABLE books(
     id SERIAL PRIMARY KEY,
     title TEXT,
     description TEXT,
+    rating INT,
     user_id INTEGER REFERENCES users(id)
 );

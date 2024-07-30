@@ -63,6 +63,7 @@ app.get("/register", (req, res) => {
 app.post("/newBook", async (req, res) => {
     const title = req.body.title;
     const notes = req.body.notes;
+    const rating = req.body.rating;
 
     if (req.isAuthenticated()) {
         try {
@@ -150,6 +151,7 @@ app.post("/deleteBook", async (req, res) => {
             await db.query("DELETE FROM books WHERE id = $1 AND user_id = $2", 
                 [book_id, user_id]
             );
+            req.flash("success", "Book deleted successfully!");
             res.redirect('/home');
         } catch (err) {
             console.log(err);

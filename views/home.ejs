@@ -64,6 +64,18 @@
                                 <img src="https://covers.openlibrary.org/b/isbn/<%= book.isbn %>-L.jpg" alt="book"
                                   onclick="flipCard(this)">
                               </div>
+
+                              <div class="card-stars d-flex text-warning gap-1">
+                                <% for (let i = 0; i < book.rating; i++) { %>
+                                  <i class="bi bi-star-fill"></i>
+                                <% } %>
+
+                                <% if (book.rating < 5) { %>
+                                  <% for (let i = book.rating; i < 5; i++) { %>
+                                    <i class="bi bi-star"></i>
+                                  <% } %>
+                                <% } %>
+                              </div>
                             </div>
 
                             <div class="flip-card-back">
@@ -174,6 +186,15 @@
               inputBookId.value = bookId;
               inputUserId.value = userId;
               inputBookNotes.value = bookNotes;
+            });
+          </script>
+
+          <script>
+            const rangeInput = document.getElementById('rangeInput');
+            const valueDisplay = document.getElementById('value');
+
+            rangeInput.addEventListener('input', function() {
+                valueDisplay.textContent = rangeInput.value;
             });
           </script>
 
