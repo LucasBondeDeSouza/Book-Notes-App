@@ -87,10 +87,25 @@ app.post("/newBook", async (req, res) => {
 });
 
 app.get("/home", async (req, res) => {
-    //console.log(req.user);
     if (req.isAuthenticated()) {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 6; // Número de livros por página
+        const offset = (page - 1) * limit;
+
         try {
-            const result = await db.query("SELECT * FROM books WHERE user_id = $1 ORDER BY id DESC", [req.user.id]);
+            const result = await db.query(
+                "SELECT * FROM books WHERE user_id = $1 ORDER BY id DESC LIMIT $2 OFFSET $3",
+                [req.user.id, limit, offset]
+            );
+
+            const countResult = await db.query(
+                "SELECT COUNT(*) FROM books WHERE user_id = $1",
+                [req.user.id]
+            );
+
+            const totalBooks = parseInt(countResult.rows[0].count);
+            const totalPages = Math.ceil(totalBooks / limit);
+
             const listBooks = await Promise.all(result.rows.map(async (book) => {
                 try {
                     const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${book.title}`);
@@ -111,7 +126,12 @@ app.get("/home", async (req, res) => {
                 }
             }));
 
-            res.render("home.ejs", { name: req.user.username, listBooks });
+            res.render("home.ejs", {
+                name: req.user.username,
+                listBooks,
+                currentPage: page,
+                totalPages: totalPages,
+            });
         } catch (err) {
             console.log(err);
             res.redirect("/login");

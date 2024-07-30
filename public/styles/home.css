@@ -12,7 +12,7 @@ body {
 }
 
 .cards-group:last-child {
-    margin-bottom: 70px;
+    margin-bottom: 50px;
 }
 
 .flip-horizontal-left.flipped .flip-card-inner {
