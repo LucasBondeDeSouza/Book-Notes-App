@@ -27,7 +27,7 @@
                     <div class="mb-3">
                         <label for="rangeInput" class="form-label fs-5">Rating</label>
                         <input type="range" class="form-range" min="0" max="5" value="3" id="rangeInput" name="rating">
-                        <div id="value">3</div>
+                        <div id="valueAdd">3</div>
                     </div>
 
                     <button type="submit" class="btn btn-dark w-100 fw-bold fs-5">Add</button>
@@ -36,3 +36,12 @@
         </div>
     </div>
 </div>
+
+<script>
+    const rangeInput = document.getElementById('rangeInput');
+    const valueDisplayAdd = document.getElementById('valueAdd');
+
+    rangeInput.addEventListener('input', function() {
+        valueDisplayAdd.textContent = rangeInput.value;
+    });
+</script>

@@ -61,17 +61,15 @@ app.get("/register", (req, res) => {
 })
 
 app.post("/newBook", async (req, res) => {
-    const title = req.body.title;
-    const notes = req.body.notes;
-    const rating = req.body.rating;
+    const { title, notes, rating } = req.body
 
     if (req.isAuthenticated()) {
         try {
             const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${title}`);
             if (searchBook.data.docs.length > 0) {
                 await db.query(
-                    "INSERT INTO books (title, description, user_id) VALUES ($1, $2, $3)", 
-                    [title, notes, req.user.id]
+                    "INSERT INTO books (title, description, user_id, rating) VALUES ($1, $2, $3, $4)", 
+                    [title, notes, req.user.id, rating]
                 );
                 req.flash("success", "Book added successfully!");
                 res.redirect('/home');
@@ -110,18 +108,19 @@ app.get("/home", async (req, res) => {
             const listBooks = await Promise.all(result.rows.map(async (book) => {
                 try {
                     const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${book.title}`);
-                    const isbn = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].isbn) ? searchBook.data.docs[0].isbn[0] : 'ISBN Not Found';
+                    const cover = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].cover_i) ? searchBook.data.docs[0].cover_i : 'cover Not Found';
                     const author = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].author_name) ? searchBook.data.docs[0].author_name[0] : 'Author Not Found';
+
                     return {
                         ...book,
-                        isbn: isbn,
+                        cover: cover,
                         author: author
                     };
                 } catch (error) {
                     console.error(`Error fetching data for book ${book.title}:`, error);
                     return {
                         ...book,
-                        isbn: 'Error fetching ISBN',
+                        cover: 'Error fetching cover',
                         author: 'Error fetching author'
                     };
                 }
@@ -162,14 +161,13 @@ app.post("/deleteBook", async (req, res) => {
 });
 
 app.post("/editBook", async (req, res) => {
-    const book_id = req.body.bookId;
+    const { bookId, notes, rating } = req.body
     const user_id = req.user.id;
-    const notes = req.body.notes
 
     if (req.isAuthenticated()) {
         try {
-            await db.query("UPDATE books SET description = $1 WHERE id = $2 AND user_id = $3", 
-                [notes, book_id, user_id]
+            await db.query("UPDATE books SET description = $1, rating = $2 WHERE id = $3 AND user_id = $4", 
+                [notes, rating, bookId, user_id]
             )
             req.flash("success", "Book updated successfully!");
             res.redirect('/home')
@@ -178,6 +176,23 @@ app.post("/editBook", async (req, res) => {
             req.flash("error", "An error occurred while updating the book.");
             res.redirect('/home');
         }
+    } else {
+        res.redirect("/login");
+    }
+})
+
+app.get("/searchUser", async (req, res) => {
+    const username = req.query.username
+
+    if (req.isAuthenticated()) {
+        try {
+            const result = await db.query("SELECT * FROM users WHERE similarity(username, $1) > 0.3", [username])
+            console.log(result.rows)
+            res.redirect("/home")
+        } catch(err) {
+            console.log(err)
+        }
+
     } else {
         res.redirect("/login");
     }

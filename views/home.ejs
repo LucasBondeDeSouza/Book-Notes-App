@@ -29,6 +29,8 @@
                 </div>
                 <% } %>
 
+                  <h1>Your Books</h1>
+
                   <div class="cards-group">
                     <% if (listBooks.length> 0) { %>
                       <% for (let book of listBooks) { %>
@@ -53,7 +55,7 @@
                                     <button class="text-primary button edit-book-btn" data-bs-toggle="modal"
                                       data-bs-target="#editBookModal" data-book-id="<%= book.id %>"
                                       data-user-id="<%= book.user_id %>" data-book-title="<%= book.title %>"
-                                      data-book-notes="<%= book.description %>">
+                                      data-book-notes="<%= book.description %>" data-book-rating="<%= book.rating %>">
                                       <i class="bi bi-pencil"></i> Edit
                                     </button>
                                   </li>
@@ -61,7 +63,7 @@
                               </div>
 
                               <div class="card-image">
-                                <img src="https://covers.openlibrary.org/b/isbn/<%= book.isbn %>-L.jpg" alt="book"
+                                <img src="https://covers.openlibrary.org/b/id/<%= book.cover %>-L.jpg" alt="book"
                                   onclick="flipCard(this)">
                               </div>
 
@@ -174,27 +176,27 @@
               var userId = button.getAttribute('data-user-id');
               var bookTitle = button.getAttribute('data-book-title');
               var bookNotes = button.getAttribute('data-book-notes');
+              var bookRating = button.getAttribute('data-book-rating');
 
               // Preencher os campos do modal com os dados do livro
               var modalTitle = editBookModal.querySelector('#modal-title');
               modalTitle.textContent = bookTitle;
+              var valueDisplay = document.getElementById('value');
+              valueDisplay.textContent = bookRating;
 
               var inputBookId = document.getElementById('editBookId');
               var inputUserId = document.getElementById('editUserId');
               var inputBookNotes = document.getElementById('editBookNotes');
+              var inputBookRating = document.getElementById('editBookRating');
 
               inputBookId.value = bookId;
               inputUserId.value = userId;
               inputBookNotes.value = bookNotes;
-            });
-          </script>
-
-          <script>
-            const rangeInput = document.getElementById('rangeInput');
-            const valueDisplay = document.getElementById('value');
-
-            rangeInput.addEventListener('input', function() {
-                valueDisplay.textContent = rangeInput.value;
+              inputBookRating.value = bookRating;
+              
+              inputBookRating.addEventListener('input', () => {
+                valueDisplay.textContent = inputBookRating.value
+              })
             });
           </script>
 
