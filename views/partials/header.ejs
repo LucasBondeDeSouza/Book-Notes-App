@@ -28,7 +28,11 @@
                 <% } %>
                 <p href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle fs-5 me-2"
                     data-bs-toggle="dropdown" aria-expanded="false">
-                    <%= locals.name ? locals.name : '' %>
+                    <% if (locals.name.length > 15) { %>
+                        <%= locals.name.slice(0, 15) %>...
+                    <% } else { %>
+                        <%= locals.name %>
+                    <% } %>
                 </p>
                 <ul class="dropdown-menu text-small">
                     <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#newBookModal"

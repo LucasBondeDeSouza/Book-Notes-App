@@ -219,6 +219,23 @@ app.get("/searchUser", async (req, res) => {
     }
 })
 
+app.get("/viewProfile", async (req, res) => {
+    const user_id = req.query.userId
+
+    const result = await db.query(
+        "SELECT title, description, rating, username, picture FROM books JOIN users ON users.id = books.user_id WHERE users.id = $1",
+        [user_id]
+    )
+
+    const searchedUser = result.rows
+
+    res.render('home.ejs', {
+        name: req.user.username,
+        picture: req.user.picture,
+        searchedUser
+    })
+})
+
 app.get(
     "/auth/google", 
     passport.authenticate("google", {

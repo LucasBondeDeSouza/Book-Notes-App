@@ -18,6 +18,8 @@
         <main>
           <% if (locals.listUser) { %>
             <%- include('partials/userBooks') %>
+          <% } else if (locals.searchedUser) { %>
+            <%- include('partials/profileUser') %>
           <% } else { %>
             <%- include('partials/yourBooks') %>
           <% } %>
