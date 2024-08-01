@@ -128,6 +128,7 @@ app.get("/home", async (req, res) => {
 
             res.render("home.ejs", {
                 name: req.user.username,
+                picture: req.user.picture,
                 listBooks,
                 currentPage: page,
                 totalPages: totalPages,
@@ -186,9 +187,29 @@ app.get("/searchUser", async (req, res) => {
 
     if (req.isAuthenticated()) {
         try {
-            const result = await db.query("SELECT * FROM users WHERE similarity(username, $1) > 0.3", [username])
-            console.log(result.rows)
-            res.redirect("/home")
+            const result = await db.query("SELECT * FROM users WHERE similarity(username, $1) > 0.3", 
+                [username]
+            )
+
+            const listSearchUser = result.rows
+            console.log(listSearchUser)
+
+            if (listSearchUser.length > 0) {
+                for (let user of listSearchUser) {
+                    const bookCountResult = await db.query("SELECT COUNT(*) FROM books WHERE user_id = $1", [user.id]);
+                    user.book_count = bookCountResult.rows[0].count;
+                }
+                
+                res.render("home.ejs", { 
+                    name: req.user.username,
+                    picture: req.user.picture,
+                    listUser: listSearchUser 
+                })
+            } else {
+                req.flash("error", "User Not Found")
+                res.redirect("/home")
+            }
+            
         } catch(err) {
             console.log(err)
         }
@@ -311,8 +332,8 @@ passport.use(
             const result = await db.query("SELECT * FROM users WHERE email = $1", [profile.email])
 
             if (result.rows.length === 0) {
-                const newUser = await db.query("INSERT INTO users (username, email, password) VALUES ($1, $2, $3)",
-                    [profile.displayName, profile.email, "google"]
+                const newUser = await db.query("INSERT INTO users (username, email, password, picture) VALUES ($1, $2, $3, $4)",
+                    [profile.displayName, profile.email, "google", profile.picture]
                 )
                 cb(null, newUser.rows[0])
             } else {
