@@ -1,10 +1,11 @@
 <div class="container min-vh-100">
-    <% if (locals.searchedUser) { %>
-        <h1>Books of <%= searchedUser[0].username %></h1>
-    <% } %>
+    <% if (locals.userEmpty) { %>
+        <h2>Book of <%= userEmpty[0].username %></h2>
+        <p class="text-center mt-5">Nenhum Livro Cadastrado!</p>
 
-    <div class="cards-group">
-        <% if (searchedUser.length> 0) { %>
+    <% } else if (locals.searchedUser) { %>
+        <h2>Book of <%= searchedUser[0].username %></h2>
+        <div class="cards-group">
             <% for (let user of searchedUser) { %>
                 <div class="flip-card flip-horizontal-left">
                     <div class="flip-card-inner">
@@ -22,12 +23,12 @@
                                 <img src="https://covers.openlibrary.org/b/id/<%= user.cover %>-L.jpg" alt="book"
                                 onclick="flipCard(this)">
                             </div>
-
+    
                             <div class="card-stars d-flex text-warning gap-1">
                                 <% for (let i = 0; i < user.rating; i++) { %>
                                     <i class="bi bi-star-fill"></i>
                                 <% } %>
-
+    
                                 <% if (user.rating < 5) { %>
                                     <% for (let i = user.rating; i < 5; i++) { %>
                                         <i class="bi bi-star"></i>
@@ -35,7 +36,7 @@
                                 <% } %>
                             </div>
                         </div>
-
+    
                         <div class="flip-card-back">
                             <div class="card-profile d-flex gap-2">
                                 <% if (user.picture) { %>
@@ -45,7 +46,7 @@
                                 <% } %>
                                 <p class="fw-bolder"><%= user.username %></p>
                             </div>
-
+    
                             <div class="card-body" onclick="flipCard(this)">
                                 <div class="card-title">
                                     <h2>
@@ -53,7 +54,7 @@
                                     </h2>
                                     <p>By <%= user.author %></p>
                                 </div>
-
+    
                                 <div class="card-text">
                                     <p><%= user.description %></p>
                                 </div>
@@ -63,7 +64,6 @@
                 </div>
             <% } %>
 
-            <!-- Controles de paginação -->
             <div class="container my-5">
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-center">
@@ -92,8 +92,7 @@
                         <% } %>
                     </ul>
                 </nav>
-              </div> 
-
-        <% } %>
-    </div>
+            </div> 
+        </div>
+    <% } %>
 </div>

@@ -219,67 +219,80 @@ app.get("/searchUser", async (req, res) => {
 })
 
 app.get("/viewProfile", async (req, res) => {
-    const user_id = req.query.userId;
+    const user_id = req.query.userId
     const page = parseInt(req.query.page) || 1;
     const limit = 6; // Número de livros por página
     const offset = (page - 1) * limit;
 
     if (req.isAuthenticated()) {
-        try {
-            const result = await db.query(
-                "SELECT books.title, books.description, books.rating, users.username, users.picture " +
-                "FROM users " +
-                "LEFT JOIN books ON users.id = books.user_id " +
-                "WHERE users.id = $1 " +
-                "LIMIT $2 OFFSET $3",
-                [user_id, limit, offset]
-            );
 
-            const countResult = await db.query(
-                "SELECT COUNT(*) FROM books WHERE user_id = $1",
-                [user_id]
-            );
-
-            const totalBooks = parseInt(countResult.rows[0].count);
-            const totalPages = Math.ceil(totalBooks / limit);
-
-            const searchedUser = await Promise.all(result.rows.map(async (book) => {
-                try {
-                    const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${book.title}`);
-                    const cover = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].cover_i) ? searchBook.data.docs[0].cover_i : 'cover Not Found';
-                    const author = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].author_name) ? searchBook.data.docs[0].author_name[0] : 'Author Not Found';
-
-                    return {
-                        ...book,
-                        cover: cover,
-                        author: author
-                    };
-                } catch (error) {
-                    console.error(`Error fetching data for book ${book.title}:`, error);
-                    return {
-                        ...book,
-                        cover: 'Error fetching cover',
-                        author: 'Error fetching author'
-                    };
+        if (user_id == req.user.id) {
+            res.redirect('/home')
+        } else {
+            try {
+                const searchUser = await db.query(
+                    "SELECT title, description, rating, username, picture FROM books JOIN users ON users.id = books.user_id WHERE users.id = $1 ORDER BY books.id DESC LIMIT $2 OFFSET $3",
+                    [user_id, limit, offset]
+                )
+    
+                const countResult = await db.query(
+                    "SELECT COUNT(*) FROM books WHERE user_id = $1",
+                    [user_id]
+                );
+    
+                const totalBooks = parseInt(countResult.rows[0].count);
+                const totalPages = Math.ceil(totalBooks / limit);
+    
+                if (searchUser.rows.length > 0) {
+                    const searchedUser = await Promise.all(searchUser.rows.map(async (book) => {
+                        try {
+                            const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${book.title}`);
+                            const cover = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].cover_i) ? searchBook.data.docs[0].cover_i : 'cover Not Found';
+                            const author = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].author_name) ? searchBook.data.docs[0].author_name[0] : 'Author Not Found';
+                
+                            return {
+                                ...book,
+                                cover: cover,
+                                author: author
+                            };
+                        } catch (error) {
+                            console.error(`Error fetching data for book ${book.title}:`, error);
+                            return {
+                                ...book,
+                                cover: 'Error fetching cover',
+                                author: 'Error fetching author'
+                            };
+                        }
+                    }));
+    
+                    res.render('home.ejs', {
+                        name: req.user.username,
+                        userPicture: req.user.picture,
+                        searchedUser,
+                        currentPage: page,
+                        totalPages: totalPages
+                    })
+    
+                } else {
+                    const result = await db.query("SELECT username FROM users WHERE id = $1", [user_id])
+                    const userEmpty = result.rows
+                    
+                    res.render('home.ejs', { 
+                        name: req.user.username,
+                        userPicture: req.user.picture,
+                        userEmpty
+                    })
                 }
-            }));
-
-            res.render('home.ejs', {
-                name: req.user.username,
-                userPicture: req.user.picture,
-                searchedUser,
-                currentPage: page,
-                totalPages: totalPages,
-            });
-
-        } catch (err) {
-            console.log(err);
-            res.redirect("/login");
+    
+            } catch(err) {
+                console.log(err)
+            }
         }
+
     } else {
         res.redirect("/login");
     }
-});
+})
 
 app.get(
     "/auth/google", 

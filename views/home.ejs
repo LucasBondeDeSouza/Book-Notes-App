@@ -20,6 +20,8 @@
             <%- include('partials/userBooks') %>
           <% } else if (locals.searchedUser) { %>
             <%- include('partials/profileUser') %>
+          <% } else if (locals.userEmpty) { %>
+              <%- include('partials/profileUser') %>
           <% } else { %>
             <%- include('partials/yourBooks') %>
           <% } %>
