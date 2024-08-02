@@ -2,4 +2,66 @@
     <% if (locals.searchedUser) { %>
         <h1>Books of <%= searchedUser[0].username %></h1>
     <% } %>
+
+    <div class="cards-group">
+        <% if (searchedUser.length> 0) { %>
+            <% for (let user of searchedUser) { %>
+                <div class="flip-card flip-horizontal-left">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="card-profile d-flex gap-2">
+                                <% if (user.picture) { %>
+                                        <img src="<%= user.picture %>" alt="Profile Picture">
+                                <% } else { %>
+                                    <i class="bi bi-person-fill fs-5"></i>
+                                <% } %>
+                                <p class="fw-bolder"><%= user.username %></p>
+                            </div>
+                            
+                            <div class="card-image">
+                                <img src="https://covers.openlibrary.org/b/id/<%= user.cover %>-L.jpg" alt="book"
+                                onclick="flipCard(this)">
+                            </div>
+
+                            <div class="card-stars d-flex text-warning gap-1">
+                                <% for (let i = 0; i < user.rating; i++) { %>
+                                    <i class="bi bi-star-fill"></i>
+                                <% } %>
+
+                                <% if (user.rating < 5) { %>
+                                    <% for (let i = user.rating; i < 5; i++) { %>
+                                        <i class="bi bi-star"></i>
+                                    <% } %>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <div class="flip-card-back">
+                            <div class="card-profile d-flex gap-2">
+                                <% if (user.picture) { %>
+                                        <img src="<%= user.picture %>" alt="Profile Picture">
+                                <% } else { %>
+                                    <i class="bi bi-person-fill fs-5"></i>
+                                <% } %>
+                                <p class="fw-bolder"><%= user.username %></p>
+                            </div>
+
+                            <div class="card-body" onclick="flipCard(this)">
+                                <div class="card-title">
+                                    <h2>
+                                        <%= user.title %>
+                                    </h2>
+                                    <p>By <%= user.author %></p>
+                                </div>
+
+                                <div class="card-text">
+                                    <p><%= user.description %></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        <% } %>
+    </div>
 </div>

@@ -18,9 +18,9 @@
             </form>
 
             <div class="dropdown profile">
-                <% if (locals.picture) { %>
+                <% if (locals.userPicture) { %>
                     <div class="picture-profile">
-                        <img src="<%= locals.picture %>" alt="Profile Picture">
+                        <img src="<%= locals.userPicture %>" alt="Profile Picture">
                     </div>
                 <% } else { %>
                     <i class="bi bi-person-fill fs-4 d-inline d-md-none"></i>

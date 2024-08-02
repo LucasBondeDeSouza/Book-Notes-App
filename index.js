@@ -128,7 +128,7 @@ app.get("/home", async (req, res) => {
 
             res.render("home.ejs", {
                 name: req.user.username,
-                picture: req.user.picture,
+                userPicture: req.user.picture,
                 listBooks,
                 currentPage: page,
                 totalPages: totalPages,
@@ -192,7 +192,6 @@ app.get("/searchUser", async (req, res) => {
             )
 
             const listSearchUser = result.rows
-            console.log(listSearchUser)
 
             if (listSearchUser.length > 0) {
                 for (let user of listSearchUser) {
@@ -202,7 +201,7 @@ app.get("/searchUser", async (req, res) => {
                 
                 res.render("home.ejs", { 
                     name: req.user.username,
-                    picture: req.user.picture,
+                    userPicture: req.user.picture,
                     listUser: listSearchUser 
                 })
             } else {
@@ -220,21 +219,52 @@ app.get("/searchUser", async (req, res) => {
 })
 
 app.get("/viewProfile", async (req, res) => {
-    const user_id = req.query.userId
+    const user_id = req.query.userId;
 
-    const result = await db.query(
-        "SELECT title, description, rating, username, picture FROM books JOIN users ON users.id = books.user_id WHERE users.id = $1",
-        [user_id]
-    )
+    if (req.isAuthenticated()) {
+        try {
+            const result = await db.query(
+                "SELECT books.title, books.description, books.rating, users.username, users.picture " +
+                "FROM users " +
+                "LEFT JOIN books ON users.id = books.user_id " +
+                "WHERE users.id = $1",
+                [user_id]
+            );
 
-    const searchedUser = result.rows
+            const searchedUser = await Promise.all(result.rows.map(async (book) => {
+                try {
+                    const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${book.title}`);
+                    const cover = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].cover_i) ? searchBook.data.docs[0].cover_i : 'cover Not Found';
+                    const author = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].author_name) ? searchBook.data.docs[0].author_name[0] : 'Author Not Found';
+        
+                    return {
+                        ...book,
+                        cover: cover,
+                        author: author
+                    };
+                } catch (error) {
+                    console.error(`Error fetching data for book ${book.title}:`, error);
+                    return {
+                        ...book,
+                        cover: 'Error fetching cover',
+                        author: 'Error fetching author'
+                    };
+                }
+            }));
 
-    res.render('home.ejs', {
-        name: req.user.username,
-        picture: req.user.picture,
-        searchedUser
-    })
-})
+            res.render('home.ejs', {
+                name: req.user.username,
+                userPicture: req.user.picture,
+                searchedUser
+            });
+
+        } catch (err) {
+            console.log(err)
+        }
+    } else {
+        res.redirect("/login");
+    }
+});
 
 app.get(
     "/auth/google", 
