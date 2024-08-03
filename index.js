@@ -185,29 +185,39 @@ app.post("/editBook", async (req, res) => {
 app.get("/searchUser", async (req, res) => {
     const username = req.query.username
 
+    const page = parseInt(req.query.page) || 1;
+    const limit = 9; // Número de livros por página
+    const offset = (page - 1) * limit;
+
     if (req.isAuthenticated()) {
         try {
-            const result = await db.query("SELECT * FROM users WHERE similarity(username, $1) > 0.3", 
-                [username]
+            const result = await db.query("SELECT * FROM users WHERE similarity(username, $1) > 0.3 LIMIT $2 OFFSET $3", 
+                [username, limit, offset]
             )
 
             const listSearchUser = result.rows
 
-            if (listSearchUser.length > 0) {
-                for (let user of listSearchUser) {
-                    const bookCountResult = await db.query("SELECT COUNT(*) FROM books WHERE user_id = $1", [user.id]);
-                    user.book_count = bookCountResult.rows[0].count;
-                }
-                
-                res.render("home.ejs", { 
-                    name: req.user.username,
-                    userPicture: req.user.picture,
-                    listUser: listSearchUser 
-                })
-            } else {
-                req.flash("error", "User Not Found")
-                res.redirect("/home")
+            const countResult = await db.query(
+                "SELECT COUNT(*) FROM users WHERE similarity(username, $1) > 0.3",
+                [username]
+            );
+
+            const totalBooks = parseInt(countResult.rows[0].count);
+            const totalPages = Math.ceil(totalBooks / limit);
+
+            for (let user of listSearchUser) {
+                const bookCountResult = await db.query("SELECT COUNT(*) FROM books WHERE user_id = $1", [user.id]);
+                user.book_count = bookCountResult.rows[0].count;
             }
+                
+            res.render("home.ejs", { 
+                name: req.user.username,
+                userPicture: req.user.picture,
+                listUser: listSearchUser,
+                currentPage: page,
+                totalPages: totalPages,
+                username: username
+            })
             
         } catch(err) {
             console.log(err)
@@ -235,15 +245,15 @@ app.get("/viewProfile", async (req, res) => {
                     [user_id, limit, offset]
                 )
     
-                const countResult = await db.query(
-                    "SELECT COUNT(*) FROM books WHERE user_id = $1",
-                    [user_id]
-                );
-    
-                const totalBooks = parseInt(countResult.rows[0].count);
-                const totalPages = Math.ceil(totalBooks / limit);
-    
                 if (searchUser.rows.length > 0) {
+                    const countResult = await db.query(
+                        "SELECT COUNT(*) FROM books WHERE user_id = $1",
+                        [user_id]
+                    );
+        
+                    const totalBooks = parseInt(countResult.rows[0].count);
+                    const totalPages = Math.ceil(totalBooks / limit);
+                    
                     const searchedUser = await Promise.all(searchUser.rows.map(async (book) => {
                         try {
                             const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${book.title}`);

@@ -2,9 +2,8 @@
     <% if (locals.userEmpty) { %>
         <h2>Book of <%= userEmpty[0].username %></h2>
         <p class="text-center mt-5">Nenhum Livro Cadastrado!</p>
-
     <% } else if (locals.searchedUser) { %>
-        <h2>Book of <%= searchedUser[0].username %></h2>
+        <h2>Books of <%= searchedUser[0].username %></h2>
         <div class="cards-group">
             <% for (let user of searchedUser) { %>
                 <div class="flip-card flip-horizontal-left">
