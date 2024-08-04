@@ -68,7 +68,7 @@
                     <ul class="pagination justify-content-center">
                         <% if (currentPage > 1) { %>
                             <li class="page-item">
-                                <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Anterior">
+                                <a class="page-link" href="?userId=<%= user_id %>&page=<%= currentPage - 1 %>" aria-label="Anterior">
                                 <span aria-hidden="true">&laquo;</span>
                                 <span class="sr-only">Anterior</span>
                                 </a>
@@ -77,13 +77,13 @@
                 
                         <% for (let i = 1; i <= totalPages; i++) { %>
                             <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                <a class="page-link" href="?userId=<%= user_id %>&page=<%= i %>"><%= i %></a>
                             </li>
                         <% } %>
                 
                         <% if (currentPage < totalPages) { %>
                             <li class="page-item">
-                                <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Próximo">
+                                <a class="page-link" href="?userId=<%= user_id %>&page=<%= currentPage + 1 %>" aria-label="Próximo">
                                 <span aria-hidden="true">&raquo;</span>
                                 <span class="sr-only">Próximo</span>
                                 </a>

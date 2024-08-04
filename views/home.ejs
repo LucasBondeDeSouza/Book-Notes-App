@@ -12,53 +12,54 @@
 <body>
   <%- include('partials/header') %>
 
-    <%- include('partials/modal/modalEditBook') %>
-      <%- include('partials/modal/modalAddBook') %>
+  <%- include('partials/modal/modalEditBook') %>
+  <%- include('partials/modal/modalAddBook') %>
+  <%- include('partials/sidebar') %>
 
-        <main>
-          <% if (locals.listUser) { %>
-            <%- include('partials/userBooks') %>
-          <% } else if (locals.searchedUser) { %>
-            <%- include('partials/profileUser') %>
-          <% } else if (locals.userEmpty) { %>
-              <%- include('partials/profileUser') %>
-          <% } else { %>
-            <%- include('partials/yourBooks') %>
-          <% } %>
-        </main>
+  <main>
+    <% if (locals.listUser) { %>
+      <%- include('partials/userBooks') %>
+    <% } else if (locals.searchedUser) { %>
+      <%- include('partials/profileUser') %>
+    <% } else if (locals.userEmpty) { %>
+      <%- include('partials/profileUser') %>
+    <% } else { %>
+      <%- include('partials/yourBooks') %>
+    <% } %>
+  </main>
 
-        <%- include('partials/footer') %>
+  <%- include('partials/footer') %>
 
-          <script>
-            var editBookModal = document.getElementById('editBookModal');
-            editBookModal.addEventListener('show.bs.modal', function (event) {
-              var button = event.relatedTarget; // Botão que acionou o modal
-              var bookId = button.getAttribute('data-book-id');
-              var userId = button.getAttribute('data-user-id');
-              var bookTitle = button.getAttribute('data-book-title');
-              var bookNotes = button.getAttribute('data-book-notes');
-              var bookRating = button.getAttribute('data-book-rating');
+  <script>
+    var editBookModal = document.getElementById('editBookModal');
+    editBookModal.addEventListener('show.bs.modal', function (event) {
+      var button = event.relatedTarget; // Botão que acionou o modal
+      var bookId = button.getAttribute('data-book-id');
+      var userId = button.getAttribute('data-user-id');
+      var bookTitle = button.getAttribute('data-book-title');
+      var bookNotes = button.getAttribute('data-book-notes');
+      var bookRating = button.getAttribute('data-book-rating');
 
-              // Preencher os campos do modal com os dados do livro
-              var modalTitle = editBookModal.querySelector('#modal-title');
-              modalTitle.textContent = bookTitle;
-              var valueDisplay = document.getElementById('value');
-              valueDisplay.textContent = bookRating;
+      // Preencher os campos do modal com os dados do livro
+      var modalTitle = editBookModal.querySelector('#modal-title');
+      modalTitle.textContent = bookTitle;
+      var valueDisplay = document.getElementById('value');
+      valueDisplay.textContent = bookRating;
 
-              var inputBookId = document.getElementById('editBookId');
-              var inputUserId = document.getElementById('editUserId');
-              var inputBookNotes = document.getElementById('editBookNotes');
-              var inputBookRating = document.getElementById('editBookRating');
+      var inputBookId = document.getElementById('editBookId');
+      var inputUserId = document.getElementById('editUserId');
+      var inputBookNotes = document.getElementById('editBookNotes');
+      var inputBookRating = document.getElementById('editBookRating');
 
-              inputBookId.value = bookId;
-              inputUserId.value = userId;
-              inputBookNotes.value = bookNotes;
-              inputBookRating.value = bookRating;
+      inputBookId.value = bookId;
+      inputUserId.value = userId;
+      inputBookNotes.value = bookNotes;
+      inputBookRating.value = bookRating;
               
-              inputBookRating.addEventListener('input', () => {
-                valueDisplay.textContent = inputBookRating.value
-              })
-            });
-          </script>
+      inputBookRating.addEventListener('input', () => {
+        valueDisplay.textContent = inputBookRating.value
+      })
+    });
+  </script>
 
-          <%- include('partials/footerBootstrap') %>
+  <%- include('partials/footerBootstrap') %>

@@ -17,32 +17,40 @@
                 </div>
             </form>
 
-            <div class="dropdown profile">
-                <% if (locals.userPicture) { %>
-                    <div class="picture-profile">
-                        <img src="<%= locals.userPicture %>" alt="Profile Picture">
-                    </div>
-                <% } else { %>
-                    <i class="bi bi-person-fill fs-4 d-inline d-md-none"></i>
-                    <i class="bi bi-person-fill fs-5 d-none d-md-inline"></i>
-                <% } %>
-                <p href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle fs-5 me-2"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                    <% if (locals.name.length > 15) { %>
-                        <%= locals.name.slice(0, 15) %>...
+            <div class="d-flex align-items-center gap-3">
+                <div class="dropdown profile">
+                    <% if (locals.userPicture) { %>
+                        <div class="picture-profile">
+                            <img src="<%= locals.userPicture %>" alt="Profile Picture">
+                        </div>
                     <% } else { %>
-                        <%= locals.name %>
+                        <i class="bi bi-person-fill fs-4 d-inline d-md-none"></i>
+                        <i class="bi bi-person-fill fs-5 d-none d-md-inline"></i>
                     <% } %>
-                </p>
-                <ul class="dropdown-menu text-small">
-                    <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#newBookModal"
-                            data-bs-whatever="@mdo">New Book...</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="/logout">Sign out</a></li>
-                </ul>
-            </div>                     
+                    <p href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle fs-5 me-2"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <% if (locals.name.length > 15) { %>
+                            <%= locals.name.slice(0, 15) %>...
+                        <% } else { %>
+                            <%= locals.name %>
+                        <% } %>
+                    </p>
+                    <ul class="dropdown-menu text-small">
+                        <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#newBookModal"
+                                data-bs-whatever="@mdo">New Book...</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="/logout">Sign out</a></li>
+                    </ul>
+                </div>
+    
+                <div class="sidebar">
+                    <button class="btn float-end py-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" role="button">
+                        <i class="bi bi-people-fill fs-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvas"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </header>

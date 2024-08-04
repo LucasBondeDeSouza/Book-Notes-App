@@ -230,6 +230,7 @@ app.get("/searchUser", async (req, res) => {
 
 app.get("/viewProfile", async (req, res) => {
     const user_id = req.query.userId
+
     const page = parseInt(req.query.page) || 1;
     const limit = 6; // Número de livros por página
     const offset = (page - 1) * limit;
@@ -247,7 +248,7 @@ app.get("/viewProfile", async (req, res) => {
     
                 if (searchUser.rows.length > 0) {
                     const countResult = await db.query(
-                        "SELECT COUNT(*) FROM books WHERE user_id = $1",
+                        "SELECT COUNT(*) FROM books JOIN users ON users.id = books.user_id WHERE users.id = $1",
                         [user_id]
                     );
         
@@ -280,7 +281,8 @@ app.get("/viewProfile", async (req, res) => {
                         userPicture: req.user.picture,
                         searchedUser,
                         currentPage: page,
-                        totalPages: totalPages
+                        totalPages: totalPages,
+                        user_id
                     })
     
                 } else {
