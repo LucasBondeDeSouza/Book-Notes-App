@@ -18,16 +18,15 @@
             </form>
 
             <div class="d-flex align-items-center gap-3">
-                <div class="dropdown profile">
+                <div class="dropdown profile d-flex align-items-center">
                     <% if (locals.userPicture) { %>
                         <div class="picture-profile">
                             <img src="<%= locals.userPicture %>" alt="Profile Picture">
                         </div>
                     <% } else { %>
-                        <i class="bi bi-person-fill fs-4 d-inline d-md-none"></i>
-                        <i class="bi bi-person-fill fs-5 d-none d-md-inline"></i>
+                        <i class="bi bi-person-fill fs-2"></i>
                     <% } %>
-                    <p href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle fs-5 me-2"
+                    <p class="d-block link-body-emphasis text-decoration-none dropdown-toggle fs-5 m-0"
                         data-bs-toggle="dropdown" aria-expanded="false">
                         <% if (locals.name.length > 15) { %>
                             <%= locals.name.slice(0, 15) %>...
@@ -44,13 +43,13 @@
                         <li><a class="dropdown-item" href="/logout">Sign out</a></li>
                     </ul>
                 </div>
-    
-                <div class="sidebar">
-                    <button class="btn float-end py-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" role="button">
+            
+                <div class="sidebar d-flex align-items-center">
+                    <button class="btn py-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" role="button">
                         <i class="bi bi-people-fill fs-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvas"></i>
                     </button>
                 </div>
-            </div>
+            </div>            
         </div>
     </div>
 </header>

@@ -8,6 +8,10 @@ body {
     background-color: rgba(0, 0, 0, .1);
 }
 
+/* Sidebar */
+
+/* Fim Sidebar */
+
 .card {
     cursor: pointer;
 }
@@ -18,8 +22,8 @@ body {
 }
 
 .picture-profile {
-    height: 25px;
-    width: 25px;
+    height: 35px;
+    width: 35px;
 }
 
 .picture-profile img {

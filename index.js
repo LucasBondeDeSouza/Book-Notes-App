@@ -128,12 +128,23 @@ app.get("/home", async (req, res) => {
                 }
             }));
 
+            // Obtenha os seguidores para a visualização
+            const followersResult = await db.query(
+                "SELECT u.id, u.username, u.picture FROM users u JOIN followers f ON u.id = f.followed_id WHERE f.follower_id = $1",
+                [req.user.id]
+            );
+
+            const followers = followersResult.rows;
+
+            console.log(followers)
+
             res.render("home.ejs", {
                 name: req.user.username,
                 userPicture: req.user.picture,
                 listBooks,
                 currentPage: page,
                 totalPages: totalPages,
+                followers
             });
         } catch (err) {
             console.log(err);
@@ -221,6 +232,14 @@ app.get("/searchUser", async (req, res) => {
                 user.book_count = bookCountResult.rows[0].count;
                 user.isFollowing = followingIds.includes(user.id);
             }
+
+            // Obtenha os seguidores para a visualização
+            const followersResult = await db.query(
+                "SELECT u.id, u.username, u.picture FROM users u JOIN followers f ON u.id = f.followed_id WHERE f.follower_id = $1",
+                [req.user.id]
+            );
+
+            const followers = followersResult.rows;
                 
             res.render("home.ejs", { 
                 name: req.user.username,
@@ -228,7 +247,8 @@ app.get("/searchUser", async (req, res) => {
                 listUser: listSearchUser,
                 currentPage: page,
                 totalPages: totalPages,
-                username: username
+                username: username,
+                followers
             })
             
         } catch(err) {
@@ -247,6 +267,13 @@ app.get("/viewProfile", async (req, res) => {
     const limit = 6; // Número de livros por página
     const offset = (page - 1) * limit;
 
+    const followingResult = await db.query(
+        "SELECT 1 FROM followers WHERE follower_id = $1 AND followed_id = $2",
+        [req.user.id, user_id]
+    );
+
+    const isFollowing = followingResult.rowCount > 0;
+
     if (req.isAuthenticated()) {
 
         if (user_id == req.user.id) {
@@ -257,6 +284,14 @@ app.get("/viewProfile", async (req, res) => {
                     "SELECT title, description, rating, username, picture FROM books JOIN users ON users.id = books.user_id WHERE users.id = $1 ORDER BY books.id DESC LIMIT $2 OFFSET $3",
                     [user_id, limit, offset]
                 )
+
+                // Obtenha os seguidores para a visualização
+                const followersResult = await db.query(
+                    "SELECT u.id, u.username, u.picture FROM users u JOIN followers f ON u.id = f.followed_id WHERE f.follower_id = $1",
+                    [req.user.id]
+                );
+
+                const followers = followersResult.rows;
     
                 if (searchUser.rows.length > 0) {
                     const countResult = await db.query(
@@ -294,17 +329,21 @@ app.get("/viewProfile", async (req, res) => {
                         searchedUser,
                         currentPage: page,
                         totalPages: totalPages,
-                        user_id
+                        user_id,
+                        isFollowing,
+                        followers
                     })
     
                 } else {
-                    const result = await db.query("SELECT username FROM users WHERE id = $1", [user_id])
+                    const result = await db.query("SELECT * FROM users WHERE id = $1", [user_id])
                     const userEmpty = result.rows
                     
                     res.render('home.ejs', { 
                         name: req.user.username,
                         userPicture: req.user.picture,
-                        userEmpty
+                        userEmpty,
+                        isFollowing,
+                        followers
                     })
                 }
     
