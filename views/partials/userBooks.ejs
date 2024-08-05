@@ -4,31 +4,51 @@
         <% if (listUser.length > 0) { %>
             <% for (let user of listUser) { %>
                 <div class="col-12 col-md-6 col-lg-4 mb-3">
-                    <!-- Adiciona um ID único para o formulário -->
-                    <form action="/viewProfile" method="get" class="user-form">
-                        <input type="hidden" name="userId" value="<%= user.id %>">
-                        <div class="card cursor-pointer p-4" onclick="this.closest('form').submit();">
-                            <div class="d-flex gap-3">
-                                <% if (user.picture) { %>
-                                    <div class="users-profile">
-                                        <img src="<%= user.picture %>" alt="Profile Picture">
+                    <div class="card p-4">
+                        <div class="d-flex flex-column">
+                            <form action="/viewProfile" method="get" class="user-form w-100">
+                                <input type="hidden" name="userId" value="<%= user.id %>">
+                                <div class="d-flex gap-3 cursor-pointer" onclick="this.closest('form').submit();">
+                                    <% if (user.picture) { %>
+                                        <div class="users-profile">
+                                            <img src="<%= user.picture %>" alt="Profile Picture">
+                                        </div>
+                                    <% } else { %>
+                                        <i class="bi bi-person-fill fs-2"></i>
+                                    <% } %>
+                                    <div class="d-flex flex-column">
+                                        <h2>
+                                            <% if (user.username.length > 15) { %>
+                                                <%= user.username.slice(0, 15) %>...
+                                            <% } else { %>
+                                                <%= user.username %>
+                                            <% } %>
+                                        </h2>
+                                        <p><%= user.book_count %> registered books</p>
                                     </div>
-                                <% } else { %>
-                                    <i class="bi bi-person-fill fs-2"></i>
-                                <% } %>
-                                <div class="d-flex flex-column">
-                                    <h2>
-                                        <% if (user.username.length > 15) { %>
-                                            <%= user.username.slice(0, 15) %>...
-                                        <% } else { %>
-                                            <%= user.username %>
-                                        <% } %>
-                                    </h2>
-                                    <p><%= user.book_count %> registered books</p>
                                 </div>
+                            </form>
+
+                            <!-- Botões para seguir/deixar de seguir -->
+                            <div class="d-flex justify-content-between mt-2">
+                                <% if (user.isFollowing) { %>
+                                    <form action="/unfollow" method="post" class="w-100">
+                                        <input type="hidden" name="userId" value="<%= user.id %>">
+                                        <button type="submit" class="btn btn-secondary w-100">
+                                            <i class="fas fa-user-check me-1"></i> Following
+                                        </button>
+                                    </form>
+                                <% } else { %>
+                                    <form action="/follow" method="post" class="w-100">
+                                        <input type="hidden" name="userId" value="<%= user.id %>">
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="fas fa-user-plus me-1"></i> Follow
+                                        </button>
+                                    </form>
+                                <% } %>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             <% } %>
 

@@ -15,6 +15,8 @@ const port = 3000
 const saltRounds = 10
 env.config()
 
+let atualSearchUser = ''
+
 const db = new pg.Client({
     user: process.env.PG_USER,
     host: process.env.PG_HOST,
@@ -185,6 +187,8 @@ app.post("/editBook", async (req, res) => {
 app.get("/searchUser", async (req, res) => {
     const username = req.query.username
 
+    atualSearchUser = username
+
     const page = parseInt(req.query.page) || 1;
     const limit = 9; // Número de livros por página
     const offset = (page - 1) * limit;
@@ -205,9 +209,17 @@ app.get("/searchUser", async (req, res) => {
             const totalBooks = parseInt(countResult.rows[0].count);
             const totalPages = Math.ceil(totalBooks / limit);
 
+            const followingResult = await db.query(
+                "SELECT followed_id FROM followers WHERE follower_id = $1",
+                [req.user.id]
+            );
+
+            const followingIds = followingResult.rows.map(row => row.followed_id);
+
             for (let user of listSearchUser) {
                 const bookCountResult = await db.query("SELECT COUNT(*) FROM books WHERE user_id = $1", [user.id]);
                 user.book_count = bookCountResult.rows[0].count;
+                user.isFollowing = followingIds.includes(user.id);
             }
                 
             res.render("home.ejs", { 
@@ -301,6 +313,44 @@ app.get("/viewProfile", async (req, res) => {
             }
         }
 
+    } else {
+        res.redirect("/login");
+    }
+})
+
+app.post('/follow', async (req, res) => {
+    const followerId = req.user.id;
+    const followedId = req.body.userId;
+
+    if (req.isAuthenticated()) {
+        try {
+            await db.query('INSERT INTO followers (follower_id, followed_id) VALUES ($1, $2)',
+                [followerId, followedId]
+            )
+    
+            res.redirect(`/searchUser?username=${atualSearchUser}`);
+        } catch (err) {
+            console.log(err)
+        }
+    } else {
+        res.redirect("/login");
+    }
+})
+
+app.post('/unfollow', async (req, res) => {
+    const followerId = req.user.id;
+    const followedId = req.body.userId;
+
+    if (req.isAuthenticated()) {
+        try {
+            await db.query('DELETE FROM followers WHERE follower_id = $1 AND followed_id = $2',
+                [followerId, followedId]
+            )
+
+            res.redirect(`/searchUser?username=${atualSearchUser}`);
+        } catch (err) {
+            console.log(err)
+        }
     } else {
         res.redirect("/login");
     }

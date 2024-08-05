@@ -13,3 +13,10 @@ CREATE TABLE books(
     rating INT,
     user_id INTEGER REFERENCES users(id)
 );
+
+CREATE TABLE followers (
+    id SERIAL PRIMARY KEY,
+    follower_id INTEGER REFERENCES users(id),
+    followed_id INTEGER REFERENCES users(id),
+    UNIQUE (follower_id, followed_id)
+);
