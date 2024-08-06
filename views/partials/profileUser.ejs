@@ -18,7 +18,9 @@
                 </form>
             <% } %>
         </div>
-        <p class="text-center mt-5">Nenhum Livro Cadastrado!</p>
+        <div class="d-flex flex-column justify-content-center align-items-center min-vh-100">
+            <p>Nenhum Livro Cadastrado!</p>
+        </div>
     <% } else if (locals.searchedUser) { %>
         <div class="d-flex">
             <h2>Books of <%= searchedUser[0].username %></h2>
