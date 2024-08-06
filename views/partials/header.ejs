@@ -7,13 +7,16 @@
                 <h1 class="display-6 text-body fw-bold">Book Notes</h1>
             </a>
 
-            <form action="/searchUser" method="get" class="col-12 col-lg-5 mb-3 mb-lg-0 me-lg-3 w-full">
+            <form action="/searchUser" method="get" class="col-12 col-lg-5 mb-3 mb-lg-0 me-lg-3 w-full needs-validation" novalidate>
                 <div class="input-group mb-3">
                     <input type="search" class="form-control" placeholder="Search User..." aria-label="Search"
-                        aria-describedby="button-addon2" name="username">
+                        aria-describedby="button-addon2" name="username" required>
                     <button class="btn btn-outline-secondary" type="submit" id="button-addon2">
                         <i class="bi bi-search"></i>
-                    </button>                 
+                    </button>    
+                    <div class="invalid-feedback">
+                        Please choose a username.
+                    </div>             
                 </div>
             </form>
 
