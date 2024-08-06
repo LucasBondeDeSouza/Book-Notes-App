@@ -4,12 +4,55 @@
     box-sizing: border-box;
 }
 
-body {
-    background-color: rgba(0, 0, 0, .1);
+/* Sidebar */
+.custom-offcanvas .offcanvas-header {
+    border-bottom: 1px solid #dee2e6; /* Linha de separação */
+    padding: 1rem 1.5rem;
 }
 
-/* Sidebar */
+.custom-offcanvas .offcanvas-title {
+    font-weight: bold;
+    color: #343a40;
+}
 
+.sidebar {
+    overflow-y: auto;
+    height: 80%;
+}
+
+.sidebar > ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar > ul > li {
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar > ul > li > a {
+    display: flex;
+    align-items: center;
+    height: 50px;
+    text-decoration: none;
+    color: black;
+    padding-left: 20px;
+    transition: .3s ease;
+}
+
+.sidebar > ul > li > a:hover {
+    background-color: #f0f0f0;
+}
+
+.sidebar > ul > li > a > p {
+    padding-left: 10px;
+}
+
+.sidebar .users-profile {
+    height: 39px;
+    width: 39px;
+}
 /* Fim Sidebar */
 
 .card {
@@ -173,5 +216,10 @@ body {
 
     .flip-card-back > .card-body > .card-text > p {
         font-size: 1.1rem;
+    }
+
+    .sidebar .users-profile {
+        height: 30px;
+        width: 30px;
     }
 }

@@ -1,25 +1,25 @@
-<div class="offcanvas offcanvas-end w-30" tabindex="-1" id="offcanvas" data-bs-keyboard="false" data-bs-backdrop="false">
+<div class="offcanvas offcanvas-end custom-offcanvas" tabindex="-1" id="offcanvas" data-bs-keyboard="false" data-bs-backdrop="false">
     <div class="offcanvas-header">
-        <h6 class="offcanvas-title d-inline d-lg-none" id="offcanvas">Follows</h6>
-        <h2 class="offcanvas-title d-none d-lg-inline" id="offcanvas">Follows</h2>
+        <h6 class="offcanvas-title d-inline d-lg-none">Follows</h6>
+        <h3 class="offcanvas-title d-none d-lg-inline">Follows</h3>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
-    <div class="offcanvas-body px-0">
-        <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-start" id="menu">
+    <div class="sidebar">
+        <ul>
             <% if (followers.length > 0) { %>
                 <% for (let user of followers) { %>
-                    <li class="nav-item mx-2 border p-1">
-                        <a href='/viewProfile?userId=<%= user.id %>' class="d-flex align-items-center justify-content-between gap-2">
+                    <li>
+                        <a href='/viewProfile?userId=<%= user.id %>'>
                             <% if (user.picture) { %>
                                 <div class="users-profile">
-                                    <img src="<%= user.picture %>" alt="Profile Picture">
+                                    <img src="<%= user.picture %>" alt="Profile Picture" class="profile-picture">
                                 </div>
                             <% } else { %>
                                 <i class="bi bi-person-fill fs-1"></i>
                             <% } %>
-                            <p class="m-0"><%= user.username %></p>
+                            <p class="m-0 fw-bold"><%= user.username %></p>
                         </a>
-                    </li>                    
+                    </li>
                 <% } %>
             <% } else { %>
                 <p>You don't follow anyone yet</p>
