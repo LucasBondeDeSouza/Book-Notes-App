@@ -62,32 +62,7 @@ app.get("/register", (req, res) => {
     res.render("register.ejs")
 })
 
-app.post("/newBook", async (req, res) => {
-    const { title, notes, rating } = req.body
-
-    if (req.isAuthenticated()) {
-        try {
-            const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${title}`);
-            if (searchBook.data.docs.length > 0) {
-                await db.query(
-                    "INSERT INTO books (title, description, user_id, rating) VALUES ($1, $2, $3, $4)", 
-                    [title, notes, req.user.id, rating]
-                );
-                req.flash("success", "Book added successfully!");
-                res.redirect('/home');
-            } else {
-                req.flash("error", "Unable to add Book!");
-                res.redirect('/home');
-            }
-        } catch (err) {
-            console.log(err);
-        } 
-    } else {
-        res.redirect("/login");
-    }
-});
-
-app.get("/home", async (req, res) => {
+app.get("/yourProfile", async (req, res) => {
     if (req.isAuthenticated()) {
         const page = parseInt(req.query.page) || 1;
         const limit = 6; // Número de livros por página
@@ -141,7 +116,106 @@ app.get("/home", async (req, res) => {
             res.render("home.ejs", {
                 name: req.user.username,
                 userPicture: req.user.picture,
-                listBooks,
+                yourBooks: listBooks,
+                currentPage: page,
+                totalPages: totalPages,
+                followers
+            });
+        } catch (err) {
+            console.log(err);
+            res.redirect("/login");
+        }
+    } else {
+        res.redirect("/login");
+    }
+})
+
+app.post("/newBook", async (req, res) => {
+    const { title, notes, rating } = req.body
+
+    if (req.isAuthenticated()) {
+        try {
+            const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${title}`);
+            if (searchBook.data.docs.length > 0) {
+                await db.query(
+                    "INSERT INTO books (title, description, user_id, rating) VALUES ($1, $2, $3, $4)", 
+                    [title, notes, req.user.id, rating]
+                );
+                req.flash("success", "Book added successfully!");
+                res.redirect('/yourProfile');
+            } else {
+                req.flash("error", "Unable to add Book!");
+                res.redirect('/yourProfile');
+            }
+        } catch (err) {
+            console.log(err);
+        } 
+    } else {
+        res.redirect("/login");
+    }
+});
+
+app.get("/home", async (req, res) => {
+    if (req.isAuthenticated()) {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 6; // Número de livros por página
+        const offset = (page - 1) * limit;
+
+        try {
+            const result = await db.query(
+                "SELECT u.username, u.picture, b.title, b.description, b.rating " +
+                "FROM books b " +
+                "JOIN users u ON b.user_id = u.id " +
+                "JOIN followers f ON u.id = f.followed_id " +
+                "WHERE f.follower_id = $1 ORDER BY b.id DESC LIMIT $2 OFFSET $3",
+                [req.user.id, limit, offset]
+            );
+
+            const countResult = await db.query(
+                "SELECT COUNT(*) " +
+                "FROM books b " +
+                "JOIN users u ON b.user_id = u.id " +
+                "JOIN followers f ON u.id = f.followed_id " +
+                "WHERE f.follower_id = $1",
+                [req.user.id]
+            );
+
+            const totalBooks = parseInt(countResult.rows[0].count);
+            const totalPages = Math.ceil(totalBooks / limit);
+
+            const listBooks = await Promise.all(result.rows.map(async (book) => {
+                try {
+                    const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${book.title}`);
+                    const cover = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].cover_i) ? searchBook.data.docs[0].cover_i : 'cover Not Found';
+                    const author = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].author_name) ? searchBook.data.docs[0].author_name[0] : 'Author Not Found';
+
+                    return {
+                        ...book,
+                        cover: cover,
+                        author: author
+                    };
+                } catch (error) {
+                    console.error(`Error fetching data for book ${book.title}:`, error);
+                    return {
+                        ...book,
+                        cover: 'Error fetching cover',
+                        author: 'Error fetching author'
+                    };
+                }
+            }));
+
+            // Obtenha os seguidores para a visualização
+            const followersResult = await db.query(
+                "SELECT u.id, u.username, u.picture FROM users u JOIN followers f ON u.id = f.followed_id WHERE f.follower_id = $1",
+                [req.user.id]
+            );
+
+            const followers = followersResult.rows;
+
+            res.render("home.ejs", {
+                name: req.user.username,
+                userPicture: req.user.picture,
+                booksTimeline: listBooks,
                 currentPage: page,
                 totalPages: totalPages,
                 followers
@@ -165,7 +239,7 @@ app.post("/deleteBook", async (req, res) => {
                 [book_id, user_id]
             );
             req.flash("success", "Book deleted successfully!");
-            res.redirect('/home');
+            res.redirect('/yourProfile');
         } catch (err) {
             console.log(err);
         }
@@ -184,11 +258,11 @@ app.post("/editBook", async (req, res) => {
                 [notes, rating, bookId, user_id]
             )
             req.flash("success", "Book updated successfully!");
-            res.redirect('/home')
+            res.redirect('/yourProfile')
         } catch (err) {
             console.log(err)
             req.flash("error", "An error occurred while updating the book.");
-            res.redirect('/home');
+            res.redirect('/yourProfile');
         }
     } else {
         res.redirect("/login");
@@ -277,7 +351,7 @@ app.get("/viewProfile", async (req, res) => {
     if (req.isAuthenticated()) {
 
         if (user_id == req.user.id) {
-            res.redirect('/home')
+            res.redirect('/yourProfile')
         } else {
             try {
                 const searchUser = await db.query(

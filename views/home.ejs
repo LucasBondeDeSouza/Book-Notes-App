@@ -23,8 +23,10 @@
       <%- include('partials/profileUser') %>
     <% } else if (locals.userEmpty) { %>
       <%- include('partials/profileUser') %>
+    <% } else if (locals.yourBooks) { %>
+      <%- include('partials/yourProfile') %>
     <% } else { %>
-      <%- include('partials/yourBooks') %>
+      <%- include('partials/timeLine') %>
     <% } %>
   </main>
 
