@@ -19,6 +19,8 @@
   <main>
     <% if (locals.listUser) { %>
       <%- include('partials/userBooks') %>
+    <% } else if (locals.listBook) { %>
+      <%- include('partials/searchBooks') %>
     <% } else if (locals.searchedUser) { %>
       <%- include('partials/profileUser') %>
     <% } else if (locals.userEmpty) { %>

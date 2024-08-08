@@ -7,19 +7,33 @@
                 <h1 class="display-6 text-body fw-bold">Book Notes</h1>
             </a>
 
-            <form action="/searchUser" method="get" class="col-12 col-lg-5 mb-3 mb-lg-0 me-lg-3 w-full needs-validation" novalidate>
+            <!-- Formulário de busca com dropdown -->
+            <form id="searchForm" action="/searchUser" method="get" class="col-12 col-lg-5 mb-3 mb-lg-0 me-lg-3 w-full needs-validation" novalidate>
                 <div class="input-group mb-3">
-                    <input type="search" class="form-control" placeholder="Search User..." aria-label="Search"
+                    <!-- Input de busca -->
+                    <input type="search" id="searchInput" class="form-control" placeholder="Search User..." aria-label="Search"
                         aria-describedby="button-addon2" name="username" required>
+
+                    <!-- Dropdown de opções -->
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#" onclick="toggleSearch('user')">Search User</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="toggleSearch('book')">Search Book</a></li>
+                    </ul>
+
+                    <!-- Botão de pesquisa -->
                     <button class="btn btn-outline-secondary" type="submit" id="button-addon2">
                         <i class="bi bi-search"></i>
-                    </button>    
+                    </button>
+
+                    <!-- Feedback de validação -->
                     <div class="invalid-feedback">
-                        Please choose a username.
-                    </div>             
+                        Please enter a search term.
+                    </div>
                 </div>
             </form>
 
+            <!-- Outros elementos do header -->
             <div class="d-flex align-items-center gap-3">
                 <div class="dropdown profile d-flex align-items-center">
                     <% if (locals.userPicture) { %>
@@ -47,13 +61,30 @@
                         <li><a class="dropdown-item text-danger" href="/logout">Sign out</a></li>
                     </ul>
                 </div>
-            
+
                 <div class="sidebar d-flex align-items-center">
                     <button class="btn py-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" role="button">
                         <i class="bi bi-people-fill fs-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvas"></i>
                     </button>
                 </div>
-            </div>            
+            </div>
         </div>
     </div>
 </header>
+
+<script>
+    function toggleSearch(option) {
+        var searchInput = document.getElementById('searchInput');
+        var searchForm = document.getElementById('searchForm');
+
+        if (option === 'user') {
+            searchInput.placeholder = 'Search User...';
+            searchInput.name = 'username';
+            searchForm.action = '/searchUser';
+        } else if (option === 'book') {
+            searchInput.placeholder = 'Search Book...';
+            searchInput.name = 'bookname';
+            searchForm.action = '/searchBook';
+        }
+    }
+</script>
