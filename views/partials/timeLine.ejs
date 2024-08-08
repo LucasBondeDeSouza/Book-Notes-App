@@ -7,14 +7,14 @@
                 <div class="flip-card flip-horizontal-left">
                     <div class="flip-card-inner">
                         <div class="flip-card-front">
-                            <div class="card-profile d-flex align-items-center gap-2">
+                            <a href="viewProfile?userId=<%= book.id %>" class="card-profile d-flex align-items-center text-decoration-none text-dark gap-2">
                                 <% if (book.picture) { %>
                                     <img src="<%= book.picture %>" alt="Profile Picture">
                                 <% } else { %>
-                                    <i class="bi bi-person-fill fs-5"></i>
+                                    <i class="bi bi-person-fill fs-5 "></i>
                                 <% } %>
                                 <p class="fw-bolder m-0"><%= book.username %></p>
-                            </div>                            
+                            </a>                            
                             
                             <div class="card-image">
                                 <img src="https://covers.openlibrary.org/b/id/<%= book.cover %>-L.jpg" alt="book"
@@ -35,14 +35,14 @@
                         </div>
     
                         <div class="flip-card-back">
-                            <div class="card-profile d-flex align-items-center gap-2">
+                            <a href="viewProfile?userId=<%= book.id %>" class="card-profile d-flex align-items-center text-decoration-none text-dark gap-2">
                                 <% if (book.picture) { %>
                                     <img src="<%= book.picture %>" alt="Profile Picture">
                                 <% } else { %>
                                     <i class="bi bi-person-fill fs-5"></i>
                                 <% } %>
                                 <p class="fw-bolder m-0"><%= book.username %></p>
-                            </div> 
+                            </a> 
     
                             <div class="card-body" onclick="flipCard(this)">
                                 <div class="card-title">

@@ -163,7 +163,7 @@ app.get("/home", async (req, res) => {
 
         try {
             const result = await db.query(
-                "SELECT u.username, u.picture, b.title, b.description, b.rating " +
+                "SELECT u.id, u.username, u.picture, b.title, b.description, b.rating " +
                 "FROM books b " +
                 "JOIN users u ON b.user_id = u.id " +
                 "JOIN followers f ON u.id = f.followed_id " +
