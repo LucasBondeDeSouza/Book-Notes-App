@@ -131,15 +131,15 @@ app.get("/yourProfile", async (req, res) => {
 });
 
 app.post("/newBook", async (req, res) => {
-    const { title, notes, rating } = req.body
+    const { title, review, rating } = req.body
 
     if (req.isAuthenticated()) {
         try {
             const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${title}`);
             if (searchBook.data.docs.length > 0) {
                 await db.query(
-                    "INSERT INTO books (title, description, user_id, rating) VALUES ($1, $2, $3, $4)", 
-                    [title, notes, req.user.id, rating]
+                    "INSERT INTO books (title, review, user_id, rating) VALUES ($1, $2, $3, $4)", 
+                    [title, review, req.user.id, rating]
                 );
                 req.flash("success", "Book added successfully!");
                 res.redirect('/yourProfile');
@@ -163,11 +163,11 @@ app.get("/home", async (req, res) => {
 
         try {
             const result = await db.query(
-                `SELECT u.id, u.username, u.picture, b.title, b.description, b.rating
+                `SELECT u.id, u.username, u.picture, b.title, b.review, b.rating
                 FROM (
                     SELECT * FROM books
                     ORDER BY id DESC
-                    LIMIT 50
+                    LIMIT 52
                 ) b
                 JOIN users u ON b.user_id = u.id
                 JOIN followers f ON u.id = f.followed_id
@@ -177,9 +177,14 @@ app.get("/home", async (req, res) => {
                 [req.user.id, limit, offset]
             );
 
+            // Atualize o countResult para contar apenas os 50 livros mais recentes
             const countResult = await db.query(
                 `SELECT COUNT(*)
-                FROM books b
+                FROM (
+                    SELECT * FROM books
+                    ORDER BY id DESC
+                    LIMIT 52
+                ) b
                 JOIN users u ON b.user_id = u.id
                 JOIN followers f ON u.id = f.followed_id
                 WHERE f.follower_id = $1`,
@@ -235,13 +240,13 @@ app.post("/deleteBook", async (req, res) => {
 });
 
 app.post("/editBook", async (req, res) => {
-    const { bookId, notes, rating } = req.body
+    const { bookId, review, rating } = req.body
     const user_id = req.user.id;
 
     if (req.isAuthenticated()) {
         try {
-            await db.query("UPDATE books SET description = $1, rating = $2 WHERE id = $3 AND user_id = $4", 
-                [notes, rating, bookId, user_id]
+            await db.query("UPDATE books SET review = $1, rating = $2 WHERE id = $3 AND user_id = $4", 
+                [review, rating, bookId, user_id]
             )
             req.flash("success", "Book updated successfully!");
             res.redirect('/yourProfile')
@@ -330,7 +335,7 @@ app.get("/searchBook", async (req, res) => {
     if (req.isAuthenticated()) {
         try {
             const result = await db.query(
-                `SELECT u.id, u.username, u.picture, b.title, b.description, b.rating 
+                `SELECT u.id, u.username, u.picture, b.title, b.review, b.rating 
                  FROM books b 
                  JOIN users u ON b.user_id = u.id 
                  WHERE LOWER(b.title) = $1 
@@ -432,7 +437,7 @@ app.get("/viewProfile", async (req, res) => {
         } else {
             try {
                 const searchUser = await db.query(
-                    "SELECT title, description, rating, username, picture FROM books JOIN users ON users.id = books.user_id WHERE users.id = $1 ORDER BY books.id DESC LIMIT $2 OFFSET $3",
+                    "SELECT title, review, rating, username, picture FROM books JOIN users ON users.id = books.user_id WHERE users.id = $1 ORDER BY books.id DESC LIMIT $2 OFFSET $3",
                     [user_id, limit, offset]
                 )
 
