@@ -1,148 +1,142 @@
 <div class="container d-flex flex-column min-vh-100">
-    <% if (error && error.length> 0) { %>
-      <div class="alert alert-danger alert-dismissible fade show">
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        <%= error %>
-      </div>
-      <% } else if (success && success.length> 0) { %>
-        <div class="alert alert-success alert-dismissible fade show">
-          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-          <%= success %>
+    <% if (error && error.length > 0) { %>
+        <div class="alert alert-danger alert-dismissible fade show">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <%= error %>
         </div>
-        <% } %>
+    <% } else if (success && success.length > 0) { %>
+        <div class="alert alert-success alert-dismissible fade show">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <%= success %>
+        </div>
+    <% } %>
 
-          <h1>Your Books</h1>
+    <h1>Your Books</h1>
 
-          <div class="cards-group">
-            <% if (yourBooks.length > 0) { %>
-              <% for (let book of yourBooks) { %>
+    <div class="cards-group">
+        <% if (yourBooks.length > 0) { %>
+            <% for (let book of yourBooks) { %>
                 <div class="flip-card flip-horizontal-left">
-                  <div class="flip-card-inner">
-                    <div class="flip-card-front">
-                      <div class="dropstart">
-                        <button class="btn p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                          <i class="bi bi-three-dots-vertical fw-bold"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-start p-3">
-                          <li>
-                            <form action="/deleteBook" method="post">
-                              <button class="text-danger button" onchange="this.form.submit()"
-                                name="deleteBookId" value="<%= book.id %>">
-                                <i class="bi bi-trash-fill"></i>
-                                Delete
-                              </button>
-                            </form>
-                          </li>
-                          <li>
-                            <button class="text-primary button edit-book-btn" data-bs-toggle="modal"
-                              data-bs-target="#editBookModal" data-book-id="<%= book.id %>"
-                              data-user-id="<%= book.user_id %>" data-book-title="<%= book.title %>"
-                              data-book-notes="<%= book.description %>" data-book-rating="<%= book.rating %>">
-                              <i class="bi bi-pencil"></i> Edit
-                            </button>
-                          </li>
-                        </ul>
-                      </div>
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="dropstart">
+                                <button type="button" class="btn p-0" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-three-dots-vertical fw-bold"></i>
+                                </button>
 
-                      <div class="card-image">
-                        <img src="https://covers.openlibrary.org/b/id/<%= book.cover %>-L.jpg" alt="book"
-                          onclick="flipCard(this)">
-                      </div>
+                                <ul class="dropdown-menu dropdown-menu-start p-3">
+                                    <li>
+                                        <form action="/deleteBook" method="post">
+                                            <button class="text-danger button" onchange="this.form.submit()" name="deleteBookId" value="<%= book.id %>">
+                                                <i class="bi bi-trash-fill"></i> Delete
+                                            </button>
+                                        </form>
+                                    </li>
+                                    <li>
+                                        <button class="text-primary button edit-book-btn" data-bs-toggle="modal" data-bs-target="#editBookModal" data-book-id="<%= book.id %>" 
+                                            data-user-id="<%= book.user_id %>" data-book-title="<%= book.title %>" data-book-notes="<%= book.description %>" data-book-rating="<%= book.rating %>">
+                                            <i class="bi bi-pencil-fill"></i> Edit
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
 
-                      <div class="card-stars d-flex text-warning gap-1">
-                        <% for (let i = 0; i < book.rating; i++) { %>
-                          <i class="bi bi-star-fill"></i>
-                        <% } %>
+                            <div class="card-image">
+                                <img src="https://covers.openlibrary.org/b/id/<%= book.cover %>-L.jpg" alt="book" onclick="flipCard(this)">
+                            </div>
 
-                        <% if (book.rating < 5) { %>
-                          <% for (let i = book.rating; i < 5; i++) { %>
-                            <i class="bi bi-star"></i>
-                          <% } %>
-                        <% } %>
-                      </div>
-                    </div>
+                            <div class="card-stars d-flex text-warning gap-1">
+                                <% for (let i = 0; i < book.rating; i++) { %>
+                                    <i class="bi bi-star-fill"></i>
+                                <% } %>
 
-                    <div class="flip-card-back">
-                      <div class="dropstart">
-                        <button class="btn p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                          <i class="bi bi-three-dots-vertical"></i>
-                        </button>
-                        <ul class="dropdown-menu p-3">
-                          <li>
-                            <form action="/deleteBook" method="post">
-                              <button class="text-danger button" onchange="this.form.submit()"
-                                name="deleteBookId" value="<%= book.id %>">
-                                <i class="bi bi-trash-fill"></i>
-                                Delete
-                              </button>
-                            </form>
-                          </li>
-                          <li>
-                            <button class="text-primary button edit-book-btn" data-bs-toggle="modal"
-                              data-bs-target="#editBookModal" data-book-id="<%= book.id %>"
-                              data-user-id="<%= book.user_id %>" data-book-title="<%= book.title %>"
-                              data-book-notes="<%= book.description %>">
-                              <i class="bi bi-pencil"></i> Edit
-                            </button>
-                          </li>
-                        </ul>
-                      </div>
-
-                      <div class="card-body" onclick="flipCard(this)">
-                        <div class="card-title">
-                          <h2>
-                            <%= book.title %>
-                          </h2>
-                          <p>By <%= book.author %>
-                          </p>
+                                <% if (book.rating < 5) { %>
+                                    <% for (let i = book.rating; i < 5; i++) { %>
+                                        <i class="bi bi-star"></i>
+                                    <% } %>
+                                <% } %>
+                            </div>
                         </div>
 
-                        <div class="card-text">
-                          <p>
-                            <%= book.description %>
-                          </p>
+                        <div class="flip-card-back">
+                            <div class="dropstart">
+                                <button type="button" class="btn p-0" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-three-dots-vertical fw-bold"></i>
+                                </button>
+
+                                <ul class="dropdown-menu dropdown-menu-start p-3">
+                                    <li>
+                                        <form action="/deleteBook" method="post">
+                                            <button class="text-danger button" onchange="this.form.submit()" name="deleteBookId" value="<%= book.id %>">
+                                                <i class="bi bi-trash-fill"></i> Delete
+                                            </button>
+                                        </form>
+                                    </li>
+                                    <li>
+                                        <button class="text-primary button edit-book-btn" data-bs-toggle="modal" data-bs-target="#editBookModal" data-book-id="<%= book.id %>" 
+                                            data-user-id="<%= book.user_id %>" data-book-title="<%= book.title %>" data-book-notes="<%= book.description %>" data-book-rating="<%= book.rating %>">
+                                            <i class="bi bi-pencil-fill"></i> Edit
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="card-body" onclick="flipCard(this)">
+                                <div class="card-title">
+                                    <h2><%= book.title %></h2>
+                                    <p>By <%= book.author %></p>
+                                </div>
+
+                                <div class="card-text">
+                                    <p><%= book.description %></p>
+                                </div>
+                            </div>
                         </div>
-                      </div>
                     </div>
-                  </div>
                 </div>
-              <% } %>
-
-                <!-- Controles de paginação -->
-                <div class="container my-5">
-                  <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center">
-                      <% if (currentPage > 1) { %>
-                        <li class="page-item">
-                          <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Anterior">
-                            <span aria-hidden="true">&laquo;</span>
-                            <span class="sr-only">Anterior</span>
-                          </a>
-                        </li>
-                      <% } %>
-                
-                      <% for (let i = 1; i <= totalPages; i++) { %>
-                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                          <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                        </li>
-                      <% } %>
-                
-                      <% if (currentPage < totalPages) { %>
-                        <li class="page-item">
-                          <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Próximo">
-                            <span aria-hidden="true">&raquo;</span>
-                            <span class="sr-only">Próximo</span>
-                          </a>
-                        </li>
-                      <% } %>
-                    </ul>
-                  </nav>
-                </div>                        
-
-            <% } else { %>
-              <div class="d-flex flex-column justify-content-center align-items-center min-vh-100">
-                <p>Nenhum livro cadastrado</p>
-              </div>
             <% } %>
-          </div>
-  </div>
+
+            <!-- Controle de paginação -->
+            <div class="container my-5">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <% if (currentPage > 1) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Anterior">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Anterior</span>
+                                </a>
+                            </li>
+                        <% } %>
+                
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                            </li>
+                        <% } %>
+                
+                        <% if (currentPage < totalPages) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Próximo">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Próximo</span>
+                                </a>
+                            </li>
+                        <% } %>
+                    </ul>
+                </nav>
+            </div>
+
+        <% } else { %>
+            <div class="d-flex flex-column justify-content-center align-items-center min-vh-100">
+                <p>Nenhum livro cadastrado</p>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<div id="loading-screen" class="loading-screen d-none">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>

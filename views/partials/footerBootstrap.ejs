@@ -48,6 +48,18 @@
   }
 </script>
 
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+      // Exibe a tela de carregamento quando a página começar a carregar
+      document.getElementById("loading-screen").classList.remove("d-none");
+
+      // Oculta a tela de carregamento quando a página terminar de carregar
+      window.addEventListener("load", function () {
+          document.getElementById("loading-screen").classList.add("d-none");
+      });
+  });
+</script>
+
 </body>
 
 </html>

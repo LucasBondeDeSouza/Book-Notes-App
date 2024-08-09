@@ -50,6 +50,28 @@ app.use((req, res, next) => {
     next()
 })
 
+// Função reutilizável para buscar dados do livro na API OpenLibrary
+async function fetchBookData(book) {
+    try {
+        const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${book.title}`);
+        const cover = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].cover_i) ? searchBook.data.docs[0].cover_i : 'cover Not Found';
+        const author = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].author_name) ? searchBook.data.docs[0].author_name[0] : 'Author Not Found';
+
+        return {
+            ...book,
+            cover: cover,
+            author: author,
+        };
+    } catch (error) {
+        console.error(`Error fetching data for book ${book.title}:`, error);
+        return {
+            ...book,
+            cover: 'Error fetching cover',
+            author: 'Error fetching author',
+        };
+    }
+}
+
 app.get("/", (req, res) => {
     res.render("login.ejs")
 })
@@ -82,36 +104,14 @@ app.get("/yourProfile", async (req, res) => {
             const totalBooks = parseInt(countResult.rows[0].count);
             const totalPages = Math.ceil(totalBooks / limit);
 
-            const listBooks = await Promise.all(result.rows.map(async (book) => {
-                try {
-                    const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${book.title}`);
-                    const cover = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].cover_i) ? searchBook.data.docs[0].cover_i : 'cover Not Found';
-                    const author = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].author_name) ? searchBook.data.docs[0].author_name[0] : 'Author Not Found';
+            const listBooks = await Promise.all(result.rows.map(fetchBookData));
 
-                    return {
-                        ...book,
-                        cover: cover,
-                        author: author
-                    };
-                } catch (error) {
-                    console.error(`Error fetching data for book ${book.title}:`, error);
-                    return {
-                        ...book,
-                        cover: 'Error fetching cover',
-                        author: 'Error fetching author'
-                    };
-                }
-            }));
-
-            // Obtenha os seguidores para a visualização
             const followersResult = await db.query(
                 "SELECT u.id, u.username, u.picture FROM users u JOIN followers f ON u.id = f.followed_id WHERE f.follower_id = $1",
                 [req.user.id]
             );
 
             const followers = followersResult.rows;
-
-            console.log(followers)
 
             res.render("home.ejs", {
                 name: req.user.username,
@@ -128,7 +128,7 @@ app.get("/yourProfile", async (req, res) => {
     } else {
         res.redirect("/login");
     }
-})
+});
 
 app.post("/newBook", async (req, res) => {
     const { title, notes, rating } = req.body
@@ -163,48 +163,34 @@ app.get("/home", async (req, res) => {
 
         try {
             const result = await db.query(
-                "SELECT u.id, u.username, u.picture, b.title, b.description, b.rating " +
-                "FROM books b " +
-                "JOIN users u ON b.user_id = u.id " +
-                "JOIN followers f ON u.id = f.followed_id " +
-                "WHERE f.follower_id = $1 ORDER BY b.id DESC LIMIT $2 OFFSET $3",
+                `SELECT u.id, u.username, u.picture, b.title, b.description, b.rating
+                FROM (
+                    SELECT * FROM books
+                    ORDER BY id DESC
+                    LIMIT 50
+                ) b
+                JOIN users u ON b.user_id = u.id
+                JOIN followers f ON u.id = f.followed_id
+                WHERE f.follower_id = $1
+                ORDER BY b.id DESC
+                LIMIT $2 OFFSET $3`,
                 [req.user.id, limit, offset]
             );
 
             const countResult = await db.query(
-                "SELECT COUNT(*) " +
-                "FROM books b " +
-                "JOIN users u ON b.user_id = u.id " +
-                "JOIN followers f ON u.id = f.followed_id " +
-                "WHERE f.follower_id = $1",
+                `SELECT COUNT(*)
+                FROM books b
+                JOIN users u ON b.user_id = u.id
+                JOIN followers f ON u.id = f.followed_id
+                WHERE f.follower_id = $1`,
                 [req.user.id]
             );
 
             const totalBooks = parseInt(countResult.rows[0].count);
             const totalPages = Math.ceil(totalBooks / limit);
 
-            const listBooks = await Promise.all(result.rows.map(async (book) => {
-                try {
-                    const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${book.title}`);
-                    const cover = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].cover_i) ? searchBook.data.docs[0].cover_i : 'cover Not Found';
-                    const author = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].author_name) ? searchBook.data.docs[0].author_name[0] : 'Author Not Found';
+            const listBooks = await Promise.all(result.rows.map(fetchBookData));
 
-                    return {
-                        ...book,
-                        cover: cover,
-                        author: author
-                    };
-                } catch (error) {
-                    console.error(`Error fetching data for book ${book.title}:`, error);
-                    return {
-                        ...book,
-                        cover: 'Error fetching cover',
-                        author: 'Error fetching author'
-                    };
-                }
-            }));
-
-            // Obtenha os seguidores para a visualização
             const followersResult = await db.query(
                 "SELECT u.id, u.username, u.picture FROM users u JOIN followers f ON u.id = f.followed_id WHERE f.follower_id = $1",
                 [req.user.id]
