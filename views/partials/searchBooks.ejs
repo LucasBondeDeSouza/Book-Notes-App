@@ -1,7 +1,7 @@
 <div class="container min-vh-100">
-    <h1 class="mb-3">Results for book: <%= book %></h1>
+    <h1 class="mb-3">Results for book: "<%= book %>"</h1>
 
-    <% if (listBookData.length > 0) { %>
+    <% if (listBook.length > 0) { %>
         <h6><%= listBookData[0].count %> Book(s) Found</h6>
         <h6>Average Rating: <%= listBookData[0].average_rating %></h6>
     
