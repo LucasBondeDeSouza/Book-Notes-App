@@ -34,36 +34,4 @@
 
   <%- include('partials/footer') %>
 
-  <script>
-    var editBookModal = document.getElementById('editBookModal');
-    editBookModal.addEventListener('show.bs.modal', function (event) {
-      var button = event.relatedTarget; // Botão que acionou o modal
-      var bookId = button.getAttribute('data-book-id');
-      var userId = button.getAttribute('data-user-id');
-      var bookTitle = button.getAttribute('data-book-title');
-      var bookNotes = button.getAttribute('data-book-notes');
-      var bookRating = button.getAttribute('data-book-rating');
-
-      // Preencher os campos do modal com os dados do livro
-      var modalTitle = editBookModal.querySelector('#modal-title');
-      modalTitle.textContent = bookTitle;
-      var valueDisplay = document.getElementById('value');
-      valueDisplay.textContent = bookRating;
-
-      var inputBookId = document.getElementById('editBookId');
-      var inputUserId = document.getElementById('editUserId');
-      var inputBookNotes = document.getElementById('editBookNotes');
-      var inputBookRating = document.getElementById('editBookRating');
-
-      inputBookId.value = bookId;
-      inputUserId.value = userId;
-      inputBookNotes.value = bookNotes;
-      inputBookRating.value = bookRating;
-              
-      inputBookRating.addEventListener('input', () => {
-        valueDisplay.textContent = inputBookRating.value
-      })
-    });
-  </script>
-
   <%- include('partials/footerBootstrap') %>
