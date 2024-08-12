@@ -1,4 +1,5 @@
 import express from "express"
+import rateLimit from 'express-rate-limit';
 import bodyParser from "body-parser"
 import pg from "pg"
 import bcrypt from "bcrypt"
@@ -39,6 +40,17 @@ app.use(
         },
     })
 )
+
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutos
+    max: 5, // Bloqueia após 5 tentativas
+    handler: function (req, res, next) {
+        req.flash('error', "Too many login attempts. Please try again after 15 minutes.");
+        res.redirect('/login');
+    },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
 
 app.use(passport.initialize())
 app.use(passport.session())
@@ -574,7 +586,7 @@ app.get("/logout", (req, res) => {
 })
 
 app.post(
-    "/login", 
+    "/login", loginLimiter, 
     passport.authenticate("local", {
         successRedirect: "/home",
         failureRedirect: "/login",

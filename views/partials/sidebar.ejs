@@ -1,12 +1,20 @@
-<div class="offcanvas offcanvas-end custom-offcanvas" tabindex="-1" id="offcanvas" data-bs-keyboard="false" data-bs-backdrop="false">
+<div class="offcanvas offcanvas-end custom-offcanvas" tabindex="-1" id="offcanvas" data-bs-keyboard="false"
+    data-bs-backdrop="false">
     <div class="offcanvas-header">
         <h6 class="offcanvas-title d-inline d-lg-none">Follows</h6>
         <h3 class="offcanvas-title d-none d-lg-inline">Follows</h3>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="sidebar">
+        <div class="ms-2 d-flex filter-sidebar">
+            <button id="toggleButton" class="btn-filter">
+                <i class="bi bi-search fs-5 fw-bold"></i>
+            </button>
+            <input type="text" id="inputField" class="form-control" placeholder="Search">
+        </div>
+
         <ul>
-            <% if (followers.length > 0) { %>
+            <% if (followers.length> 0) { %>
                 <% for (let user of followers) { %>
                     <li>
                         <a href='/viewProfile?userId=<%= user.id %>'>
@@ -14,16 +22,35 @@
                                 <div class="users-profile">
                                     <img src="<%= user.picture %>" alt="Profile Picture" class="profile-picture">
                                 </div>
-                            <% } else { %>
-                                <i class="bi bi-person-fill fs-1"></i>
-                            <% } %>
-                            <p class="m-0 fw-bold"><%= user.username %></p>
+                                <% } else { %>
+                                    <i class="bi bi-person-fill fs-1"></i>
+                                    <% } %>
+                                        <p class="m-0 fw-bold">
+                                            <%= user.username %>
+                                        </p>
                         </a>
                     </li>
-                <% } %>
-            <% } else { %>
-                <p class="text-center">You don't follow anyone yet</p>
-            <% } %>
+                    <% } %>
+                        <% } else { %>
+                            <p class="text-center">You don't follow anyone yet</p>
+                            <% } %>
         </ul>
     </div>
 </div>
+
+<script>
+    document.getElementById('inputField').addEventListener('input', function () {
+        const filterText = this.value.toLowerCase();
+        const userItems = document.querySelectorAll('.sidebar ul li');
+
+        userItems.forEach(function (item) {
+            const username = item.querySelector('p').textContent.toLowerCase();
+
+            if (username.includes(filterText)) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+</script>

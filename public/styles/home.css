@@ -5,6 +5,21 @@
 }
 
 /* Sidebar */
+.filter-sidebar {
+    align-items: center;
+    height: 40px;
+    width: 90%;
+    margin: 10px 0 0 0;
+}
+
+.filter-sidebar .btn-filter {
+    height: 48px;
+    width: 48px;
+    border-radius: 50%;
+    border: none;
+    background-color: #fff;
+}
+
 .custom-offcanvas .offcanvas-header {
     border-bottom: 1px solid #dee2e6; /* Linha de separação */
     padding: 1rem 1.5rem;
