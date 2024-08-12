@@ -1,31 +1,33 @@
 <div class="container min-vh-100">
-    <h1 class="mb-3">Results for book: "<%= book %>"</h1>
+    <div class="mb-4">
+        <h1 class="mb-3">Results for book: "<%= book %>"</h1>
 
-    <% if (listBook.length > 0) { %>
-        <h6><%= listBookData[0].count %> Book(s) Found</h6>
-        <h6>Average Rating: <%= listBookData[0].average_rating %></h6>
-    
-        <div class="card-stars d-flex text-warning gap-1">
-            <% 
-            const averageRating = listBookData[0].average_rating;
-            const fullStars = Math.floor(averageRating);
-            const halfStar = averageRating % 1 >= 0.5 ? 1 : 0;
-            const emptyStars = 5 - fullStars - halfStar;
-            %>
-    
-            <% for (let i = 0; i < fullStars; i++) { %>
-                <i class="bi bi-star-fill"></i>
-            <% } %>
-    
-            <% if (halfStar) { %>
-                <i class="bi bi-star-half"></i>
-            <% } %>
-    
-            <% for (let i = 0; i < emptyStars; i++) { %>
-                <i class="bi bi-star"></i>
-            <% } %>
-        </div>
-    <% } %>    
+        <% if (listBook.length > 0) { %>
+            <h6><%= listBookData[0].count %> Book(s) Found</h6>
+            <h6>Average Rating: <%= listBookData[0].average_rating %></h6>
+        
+            <div class="card-stars d-flex text-warning gap-1">
+                <% 
+                const averageRating = listBookData[0].average_rating;
+                const fullStars = Math.floor(averageRating);
+                const halfStar = averageRating % 1 >= 0.5 ? 1 : 0;
+                const emptyStars = 5 - fullStars - halfStar;
+                %>
+        
+                <% for (let i = 0; i < fullStars; i++) { %>
+                    <i class="bi bi-star-fill"></i>
+                <% } %>
+        
+                <% if (halfStar) { %>
+                    <i class="bi bi-star-half"></i>
+                <% } %>
+        
+                <% for (let i = 0; i < emptyStars; i++) { %>
+                    <i class="bi bi-star"></i>
+                <% } %>
+            </div>
+        <% } %>  
+    </div>  
 
     <div class="cards-group">
         <% if (listBook.length > 0) { %>
