@@ -11,7 +11,14 @@
         </div>
     <% } %>
 
-    <h1>Your Books</h1>
+    <h1 class="mb-4">Your Books</h1>
+
+    <!-- Filtro de Busca -->
+    <div class="mb-4 d-flex filter">
+        <i class="bi bi-search fw-bold fs-5 d-none d-lg-inline"></i>
+        <i class="bi bi-search fw-bold d-inline d-lg-none"></i>
+        <input type="text" id="bookFilter" placeholder="Search">
+    </div>
 
     <div class="cards-group">
         <% if (yourBooks.length > 0) { %>
@@ -171,4 +178,22 @@
         valueDisplay.textContent = inputBookRating.value
       })
     });
-  </script>
+</script>
+
+<script>
+    document.getElementById('bookFilter').addEventListener('input', function() {
+        const filter = this.value.toLowerCase();
+        const books = document.querySelectorAll('.cards-group .flip-card');
+
+        books.forEach(book => {
+            const title = book.querySelector('.card-title h2').textContent.toLowerCase();
+            const author = book.querySelector('.card-title p').textContent.toLowerCase();
+
+            if (title.includes(filter) || author.includes(filter)) {
+                book.style.display = '';
+            } else {
+                book.style.display = 'none';
+            }
+        });
+    });
+</script>
