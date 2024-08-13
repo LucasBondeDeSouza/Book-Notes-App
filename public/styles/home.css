@@ -123,6 +123,22 @@
     border-radius: 50%;
 }
 
+.viewProfile-picture {
+    height: 45px;
+    width: 45px;
+}
+
+.viewProfile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.alternative-picture {
+    font-size: 45px;
+}
+
 .card-profile {
     width: 100%;
     height: 30px;
@@ -269,5 +285,14 @@
     .sidebar .users-profile {
         height: 30px;
         width: 30px;
+    }
+
+    .viewProfile-picture {
+        height: 40px;
+        width: 40px;
+    }
+
+    .alternative-picture {
+        font-size: 40px;
     }
 }

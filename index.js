@@ -16,8 +16,6 @@ const port = 3000
 const saltRounds = 10
 env.config()
 
-let atualSearchUser = ''
-
 const db = new pg.Client({
     user: process.env.PG_USER,
     host: process.env.PG_HOST,
@@ -274,8 +272,6 @@ app.post("/editBook", async (req, res) => {
 
 app.get("/searchUser", async (req, res) => {
     const username = req.query.username
-
-    atualSearchUser = username
 
     const page = parseInt(req.query.page) || 1;
     const limit = 9; // Número de livros por página
