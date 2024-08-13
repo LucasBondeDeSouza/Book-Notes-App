@@ -535,7 +535,7 @@ app.post('/follow', async (req, res) => {
                 [followerId, followedId]
             )
     
-            res.redirect(`/searchUser?username=${atualSearchUser}`);
+            res.redirect(req.get('Referer'));
         } catch (err) {
             console.log(err)
         }
@@ -554,7 +554,7 @@ app.post('/unfollow', async (req, res) => {
                 [followerId, followedId]
             )
 
-            res.redirect(`/searchUser?username=${atualSearchUser}`);
+            res.redirect(req.get('Referer'));
         } catch (err) {
             console.log(err)
         }
