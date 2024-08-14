@@ -16,17 +16,13 @@ const port = 3000
 const saltRounds = 10
 env.config()
 
-const db = new pg.Pool({
-    connectionString: process.env.POSTGRES_URL,
-})
-
-/*const db = new pg.Client({
+const db = new pg.Client({
     user: process.env.PG_USER,
     host: process.env.PG_HOST,
     database: process.env.PG_DATABASE,
     password: process.env.PG_PASSWORD,
     port: process.env.PG_PORT
-})*/
+})
 db.connect()
 
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -698,6 +694,6 @@ passport.deserializeUser((user, cb) => {
     cb(null, user)
 })
 
-app.listen(process.env.PORT, () => {
+app.listen(port, () => {
     console.log(`Server running on port ${port}`)
 })

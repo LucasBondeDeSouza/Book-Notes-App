@@ -22,18 +22,18 @@
                                 <div class="users-profile">
                                     <img src="<%= user.picture %>" alt="Profile Picture" class="profile-picture">
                                 </div>
-                                <% } else { %>
-                                    <i class="bi bi-person-fill fs-1"></i>
-                                <% } %>
-                                    <p class="m-0 fw-bold">
-                                        <%= user.username %>
-                                    </p>
+                            <% } else { %>
+                                <i class="bi bi-person-fill fs-1"></i>
+                            <% } %>
+                            <p class="m-0 fw-bold">
+                                <%= user.username %>
+                            </p>
                         </a>
                     </li>
-                    <% } %>
-                        <% } else { %>
-                            <p class="text-center">You don't follow anyone yet</p>
-                            <% } %>
+                <% } %>
+            <% } else { %>
+                <p class="text-center">You don't follow anyone yet</p>
+            <% } %>
         </ul>
     </div>
 </div>
