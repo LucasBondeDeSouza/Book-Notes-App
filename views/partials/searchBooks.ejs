@@ -35,7 +35,7 @@
                 <div class="flip-card flip-horizontal-left">
                     <div class="flip-card-inner">
                         <div class="flip-card-front">
-                            <a href="viewProfile?userId=<%= book.id %>" class="card-profile d-flex align-items-center text-decoration-none text-dark gap-2">
+                            <a href="/user/profile?userId=<%= book.id %>" class="card-profile d-flex align-items-center text-decoration-none text-dark gap-2">
                                 <% if (book.picture) { %>
                                     <img src="<%= book.picture %>" alt="Profile Picture">
                                 <% } else { %>

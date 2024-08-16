@@ -6,7 +6,7 @@
                 <div class="col-12 col-md-6 col-lg-4 mb-3">
                     <div class="card p-4">
                         <div class="d-flex flex-column">
-                            <form action="/viewProfile" method="get" class="user-form w-100">
+                            <form action="/user/profile" method="get" class="user-form w-100">
                                 <input type="hidden" name="userId" value="<%= user.id %>">
                                 <div class="d-flex gap-3 cursor-pointer" onclick="this.closest('form').submit();">
                                     <% if (user.picture) { %>

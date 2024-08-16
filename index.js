@@ -84,7 +84,7 @@ app.get("/register", (req, res) => {
     res.render("register.ejs")
 })
 
-app.get("/yourProfile", async (req, res) => {
+app.get("/profile", async (req, res) => {
     if (req.isAuthenticated()) {
         const page = parseInt(req.query.page) || 1;
         const limit = 6; // Número de livros por página
@@ -260,7 +260,7 @@ app.post("/editBook", async (req, res) => {
     }
 })
 
-app.get("/searchUser", async (req, res) => {
+app.get("/search/user", async (req, res) => {
     const username = req.query.username
 
     const page = parseInt(req.query.page) || 1;
@@ -323,8 +323,8 @@ app.get("/searchUser", async (req, res) => {
     }
 })
 
-app.get("/searchBook", async (req, res) => {
-    const book = req.query.bookname
+app.get("/search/book", async (req, res) => {
+    const book = req.query.title
 
     const page = parseInt(req.query.page) || 1;
     const limit = 6; // Número de livros por página
@@ -414,7 +414,7 @@ app.get("/searchBook", async (req, res) => {
     }
 })
 
-app.get("/viewProfile", async (req, res) => {
+app.get("/user/profile", async (req, res) => {
     const user_id = req.query.userId
 
     const page = parseInt(req.query.page) || 1;
@@ -431,7 +431,7 @@ app.get("/viewProfile", async (req, res) => {
     if (req.isAuthenticated()) {
 
         if (user_id == req.user.id) {
-            res.redirect('/yourProfile')
+            res.redirect('/profile')
         } else {
             try {
                 const searchUser = await db.query(

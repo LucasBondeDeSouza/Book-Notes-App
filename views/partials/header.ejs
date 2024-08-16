@@ -8,7 +8,7 @@
             </a>
 
             <!-- Formulário de busca com dropdown -->
-            <form id="searchForm" action="/searchUser" method="get" class="col-12 col-lg-5 mb-3 mb-lg-0 me-lg-3 needs-validation" novalidate>
+            <form id="searchForm" action="/search/user" method="get" class="col-12 col-lg-5 mb-3 mb-lg-0 me-lg-3 needs-validation" novalidate>
                 <div class="input-group align-items-center">
                     <!-- Input de busca -->
                     <input type="search" id="searchInput" class="form-control" placeholder="Search User..." aria-label="Search"
@@ -52,7 +52,7 @@
                         <% } %>
                     </p>
                     <ul class="dropdown-menu text-small">
-                        <li><a class="dropdown-item" href="/yourProfile">You Profile</a></li>
+                        <li><a class="dropdown-item" href="/profile">My Profile</a></li>
                         <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#newBookModal"
                                 data-bs-whatever="@mdo">New Book...</a></li>
                         <li>
@@ -73,18 +73,18 @@
 </header>
 
 <script>
-    function toggleSearch(option) {
-        var searchInput = document.getElementById('searchInput');
-        var searchForm = document.getElementById('searchForm');
-
-        if (option === 'user') {
-            searchInput.placeholder = 'Search User...';
-            searchInput.name = 'username';
-            searchForm.action = '/searchUser';
-        } else if (option === 'book') {
-            searchInput.placeholder = 'Search Book...';
-            searchInput.name = 'bookname';
-            searchForm.action = '/searchBook';
+    function toggleSearch(type) {
+        const form = document.getElementById('searchForm');
+        const input = document.getElementById('searchInput');
+        
+        if (type === 'user') {
+            form.action = '/search/user';
+            input.name = 'username';
+            input.placeholder = 'Search User...';
+        } else if (type === 'book') {
+            form.action = '/search/book';
+            input.name = 'title';
+            input.placeholder = 'Search Book...';
         }
     }
 </script>

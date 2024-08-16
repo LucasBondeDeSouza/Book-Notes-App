@@ -17,7 +17,7 @@
             <% if (followers.length> 0) { %>
                 <% for (let user of followers) { %>
                     <li>
-                        <a href='/viewProfile?userId=<%= user.id %>'>
+                        <a href='/user/profile?userId=<%= user.id %>'>
                             <% if (user.picture) { %>
                                 <div class="users-profile">
                                     <img src="<%= user.picture %>" alt="Profile Picture" class="profile-picture">
