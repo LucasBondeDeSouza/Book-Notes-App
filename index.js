@@ -9,7 +9,7 @@ import GoogleStrategy from "passport-google-oauth2"
 import flash from "connect-flash"
 import axios from "axios"
 
-import db from "./config/db.js"
+import pool from "./config/db.js"
 
 const app = express()
 const port = 3000
@@ -91,12 +91,12 @@ app.get("/profile", async (req, res) => {
         const offset = (page - 1) * limit;
 
         try {
-            const result = await db.query(
+            const result = await pool.query(
                 "SELECT * FROM books WHERE user_id = $1 ORDER BY id DESC LIMIT $2 OFFSET $3",
                 [req.user.id, limit, offset]
             );
 
-            const countResult = await db.query(
+            const countResult = await pool.query(
                 "SELECT COUNT(*) FROM books WHERE user_id = $1",
                 [req.user.id]
             );
@@ -106,7 +106,7 @@ app.get("/profile", async (req, res) => {
 
             const listBooks = await Promise.all(result.rows.map(fetchBookData));
 
-            const followersResult = await db.query(
+            const followersResult = await pool.query(
                 "SELECT u.id, u.username, u.picture FROM users u JOIN followers f ON u.id = f.followed_id WHERE f.follower_id = $1",
                 [req.user.id]
             );
@@ -137,7 +137,7 @@ app.post("/newBook", async (req, res) => {
         try {
             const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${title}`);
             if (searchBook.data.docs.length > 0) {
-                await db.query(
+                await pool.query(
                     "INSERT INTO books (title, review, user_id, rating) VALUES ($1, $2, $3, $4)", 
                     [title, review, req.user.id, rating]
                 );
@@ -162,7 +162,7 @@ app.get("/home", async (req, res) => {
         const offset = (page - 1) * limit;
 
         try {
-            const result = await db.query(
+            const result = await pool.query(
                 `SELECT u.id, u.username, u.picture, b.title, b.review, b.rating
                 FROM (
                     SELECT * FROM books
@@ -178,7 +178,7 @@ app.get("/home", async (req, res) => {
             );
 
             // Atualize o countResult para contar apenas os 50 livros mais recentes
-            const countResult = await db.query(
+            const countResult = await pool.query(
                 `SELECT COUNT(*)
                 FROM (
                     SELECT * FROM books
@@ -196,7 +196,7 @@ app.get("/home", async (req, res) => {
 
             const listBooks = await Promise.all(result.rows.map(fetchBookData));
 
-            const followersResult = await db.query(
+            const followersResult = await pool.query(
                 "SELECT u.id, u.username, u.picture FROM users u JOIN followers f ON u.id = f.followed_id WHERE f.follower_id = $1",
                 [req.user.id]
             );
@@ -226,7 +226,7 @@ app.post("/deleteBook", async (req, res) => {
 
     if (req.isAuthenticated()) {
         try {
-            await db.query("DELETE FROM books WHERE id = $1 AND user_id = $2", 
+            await pool.query("DELETE FROM books WHERE id = $1 AND user_id = $2", 
                 [book_id, user_id]
             );
             req.flash("success", "Book deleted successfully!");
@@ -245,7 +245,7 @@ app.post("/editBook", async (req, res) => {
 
     if (req.isAuthenticated()) {
         try {
-            await db.query("UPDATE books SET review = $1, rating = $2 WHERE id = $3 AND user_id = $4", 
+            await pool.query("UPDATE books SET review = $1, rating = $2 WHERE id = $3 AND user_id = $4", 
                 [review, rating, bookId, user_id]
             )
             req.flash("success", "Book updated successfully!");
@@ -269,13 +269,13 @@ app.get("/search/user", async (req, res) => {
 
     if (req.isAuthenticated()) {
         try {
-            const result = await db.query("SELECT * FROM users WHERE similarity(username, $1) > 0.3 LIMIT $2 OFFSET $3", 
+            const result = await pool.query("SELECT * FROM users WHERE similarity(username, $1) > 0.3 LIMIT $2 OFFSET $3", 
                 [username, limit, offset]
             )
 
             const listSearchUser = result.rows
 
-            const countResult = await db.query(
+            const countResult = await pool.query(
                 "SELECT COUNT(*) FROM users WHERE similarity(username, $1) > 0.3",
                 [username]
             );
@@ -283,7 +283,7 @@ app.get("/search/user", async (req, res) => {
             const totalBooks = parseInt(countResult.rows[0].count);
             const totalPages = Math.ceil(totalBooks / limit);
 
-            const followingResult = await db.query(
+            const followingResult = await pool.query(
                 "SELECT followed_id FROM followers WHERE follower_id = $1",
                 [req.user.id]
             );
@@ -291,13 +291,13 @@ app.get("/search/user", async (req, res) => {
             const followingIds = followingResult.rows.map(row => row.followed_id);
 
             for (let user of listSearchUser) {
-                const bookCountResult = await db.query("SELECT COUNT(*) FROM books WHERE user_id = $1", [user.id]);
+                const bookCountResult = await pool.query("SELECT COUNT(*) FROM books WHERE user_id = $1", [user.id]);
                 user.book_count = bookCountResult.rows[0].count;
                 user.isFollowing = followingIds.includes(user.id);
             }
 
             // Obtenha os seguidores para a visualização
-            const followersResult = await db.query(
+            const followersResult = await pool.query(
                 "SELECT u.id, u.username, u.picture FROM users u JOIN followers f ON u.id = f.followed_id WHERE f.follower_id = $1",
                 [req.user.id]
             );
@@ -332,7 +332,7 @@ app.get("/search/book", async (req, res) => {
 
     if (req.isAuthenticated()) {
         try {
-            const result = await db.query(
+            const result = await pool.query(
                 `SELECT u.id, u.username, u.picture, b.title, b.review, b.rating 
                  FROM books b 
                  JOIN users u ON b.user_id = u.id 
@@ -341,7 +341,7 @@ app.get("/search/book", async (req, res) => {
                 [book.toLowerCase(), limit, offset]
             );
             
-            const countResult = await db.query(
+            const countResult = await pool.query(
                 `SELECT COUNT(*) FROM books b 
                  JOIN users u ON b.user_id = u.id 
                  WHERE LOWER(b.title) = $1`,
@@ -351,7 +351,7 @@ app.get("/search/book", async (req, res) => {
             const totalBooks = parseInt(countResult.rows[0].count);
             const totalPages = Math.ceil(totalBooks / limit);
 
-            const bookData = await db.query(
+            const bookData = await pool.query(
                 `SELECT 
                     ROUND(AVG(rating), 1) AS average_rating,
                     COUNT(*) AS count
@@ -388,7 +388,7 @@ app.get("/search/book", async (req, res) => {
             }));
 
             // Obtenha os seguidores para a visualização
-            const followersResult = await db.query(
+            const followersResult = await pool.query(
                 "SELECT u.id, u.username, u.picture FROM users u JOIN followers f ON u.id = f.followed_id WHERE f.follower_id = $1",
                 [req.user.id]
             );
@@ -421,7 +421,7 @@ app.get("/user/profile", async (req, res) => {
     const limit = 6; // Número de livros por página
     const offset = (page - 1) * limit;
 
-    const followingResult = await db.query(
+    const followingResult = await pool.query(
         "SELECT 1 FROM followers WHERE follower_id = $1 AND followed_id = $2",
         [req.user.id, user_id]
     );
@@ -434,13 +434,13 @@ app.get("/user/profile", async (req, res) => {
             res.redirect('/profile')
         } else {
             try {
-                const searchUser = await db.query(
+                const searchUser = await pool.query(
                     "SELECT title, review, rating, username, picture FROM books JOIN users ON users.id = books.user_id WHERE users.id = $1 ORDER BY books.id DESC LIMIT $2 OFFSET $3",
                     [user_id, limit, offset]
                 )
 
                 // Obtenha os seguidores para a visualização
-                const followersResult = await db.query(
+                const followersResult = await pool.query(
                     "SELECT u.id, u.username, u.picture FROM users u JOIN followers f ON u.id = f.followed_id WHERE f.follower_id = $1",
                     [req.user.id]
                 );
@@ -448,7 +448,7 @@ app.get("/user/profile", async (req, res) => {
                 const followers = followersResult.rows;
     
                 if (searchUser.rows.length > 0) {
-                    const countResult = await db.query(
+                    const countResult = await pool.query(
                         "SELECT COUNT(*) FROM books JOIN users ON users.id = books.user_id WHERE users.id = $1",
                         [user_id]
                     );
@@ -489,7 +489,7 @@ app.get("/user/profile", async (req, res) => {
                     })
     
                 } else {
-                    const result = await db.query("SELECT * FROM users WHERE id = $1", [user_id])
+                    const result = await pool.query("SELECT * FROM users WHERE id = $1", [user_id])
                     const userEmpty = result.rows
                     
                     res.render('home.ejs', { 
@@ -517,7 +517,7 @@ app.post('/follow', async (req, res) => {
 
     if (req.isAuthenticated()) {
         try {
-            await db.query('INSERT INTO followers (follower_id, followed_id) VALUES ($1, $2)',
+            await pool.query('INSERT INTO followers (follower_id, followed_id) VALUES ($1, $2)',
                 [followerId, followedId]
             )
     
@@ -536,7 +536,7 @@ app.post('/unfollow', async (req, res) => {
 
     if (req.isAuthenticated()) {
         try {
-            await db.query('DELETE FROM followers WHERE follower_id = $1 AND followed_id = $2',
+            await pool.query('DELETE FROM followers WHERE follower_id = $1 AND followed_id = $2',
                 [followerId, followedId]
             )
 
@@ -584,7 +584,7 @@ app.post("/register", async (req, res) => {
     const { name, email, password } = req.body
 
     try {
-        const checkResult = await db.query("SELECT * FROM users WHERE email = $1", 
+        const checkResult = await pool.query("SELECT * FROM users WHERE email = $1", 
             [email]
         )
     
@@ -597,7 +597,7 @@ app.post("/register", async (req, res) => {
                 if (err) {
                     console.log("Error hashing password: ", err)
                 } else {
-                    const result = await db.query(
+                    const result = await pool.query(
                         "INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *",
                         [name, email, hash]
                     )
@@ -618,7 +618,7 @@ passport.use("local",
     new Strategy(async function verify(username, password, cb) {
         console.log(username)
         try {
-            const result = await db.query("SELECT * FROM users WHERE email = $1", 
+            const result = await pool.query("SELECT * FROM users WHERE email = $1", 
                 [username]
             )
             
@@ -659,10 +659,10 @@ passport.use(
     }, async (accessToken, refreshToken, profile, cb) => {
         console.log(profile)
         try {
-            const result = await db.query("SELECT * FROM users WHERE email = $1", [profile.email])
+            const result = await pool.query("SELECT * FROM users WHERE email = $1", [profile.email])
 
             if (result.rows.length === 0) {
-                const newUser = await db.query("INSERT INTO users (username, email, password, picture) VALUES ($1, $2, $3, $4)",
+                const newUser = await pool.query("INSERT INTO users (username, email, password, picture) VALUES ($1, $2, $3, $4)",
                     [profile.displayName, profile.email, "google", profile.picture]
                 )
                 cb(null, newUser.rows[0])
