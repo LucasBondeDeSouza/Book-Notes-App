@@ -142,10 +142,10 @@ app.post("/newBook", async (req, res) => {
                     [title, review, req.user.id, rating]
                 );
                 req.flash("success", "Book added successfully!");
-                res.redirect('/yourProfile');
+                res.redirect('/profile');
             } else {
                 req.flash("error", "Unable to add Book!");
-                res.redirect('/yourProfile');
+                res.redirect('/profile');
             }
         } catch (err) {
             console.log(err);
@@ -230,7 +230,7 @@ app.post("/deleteBook", async (req, res) => {
                 [book_id, user_id]
             );
             req.flash("success", "Book deleted successfully!");
-            res.redirect('/yourProfile');
+            res.redirect('/profile');
         } catch (err) {
             console.log(err);
         }
@@ -249,11 +249,11 @@ app.post("/editBook", async (req, res) => {
                 [review, rating, bookId, user_id]
             )
             req.flash("success", "Book updated successfully!");
-            res.redirect('/yourProfile')
+            res.redirect('/profile')
         } catch (err) {
             console.log(err)
             req.flash("error", "An error occurred while updating the book.");
-            res.redirect('/yourProfile');
+            res.redirect('/profile');
         }
     } else {
         res.redirect("/login");
