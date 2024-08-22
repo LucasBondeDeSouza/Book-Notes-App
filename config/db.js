@@ -17,6 +17,6 @@ const pool = new Pool({
     connectionString: process.env.POSTGRES_URL,
 })
 
-pool.connect()
+//pool.connect()
 
 export default pool
