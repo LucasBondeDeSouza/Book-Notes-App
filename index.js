@@ -73,7 +73,7 @@ async function fetchBookData(book) {
 }
 
 app.get("/", (req, res) => {
-    res.render("login.ejs")
+    res.render(__dirname + "/login.ejs")
 })
 
 app.get("/login", (req, res) => {
