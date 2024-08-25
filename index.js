@@ -31,12 +31,16 @@ app.use(
     session({
         secret: process.env.SESSION_SECRET,
         resave: false,
-        saveUninitialized: true,
+        saveUninitialized: false,
         cookie: {
             maxAge: 1000 * 60 * 60 * 24,
         },
     })
 )
+
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash())
 
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutos
@@ -48,10 +52,6 @@ const loginLimiter = rateLimit({
     standardHeaders: true,
     legacyHeaders: false,
 });
-
-app.use(passport.initialize())
-app.use(passport.session())
-app.use(flash())
 
 app.use((req, res, next) => {
     res.locals.error = req.flash("error")
