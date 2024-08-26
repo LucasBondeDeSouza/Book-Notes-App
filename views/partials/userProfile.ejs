@@ -1,7 +1,16 @@
 <div class="container min-vh-100">
     <% if (locals.userEmpty) { %>
-        <div class="d-flex">
-            <h2>Book of <%= userEmpty[0].username %></h2>
+        <div class="d-flex mb-4 gap-2 align-items-center">
+            <% if (userEmpty[0].picture) { %>
+                <div class="viewProfile-picture">
+                    <img src="<%= userEmpty[0].picture %>" alt="user picture">
+                </div>
+            <% } else { %>
+                <i class="bi bi-person-fill alternative-picture"></i>
+            <% } %>
+        
+            <h2 class="mb-0"><%= userEmpty[0].username %></h2>
+
             <% if (isFollowing) { %>
                 <form action="/unfollow" method="post" class="ms-3">
                     <input type="hidden" name="userId" value="<%= userEmpty[0].id %>">
