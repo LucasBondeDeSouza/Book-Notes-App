@@ -1,0 +1,106 @@
+<div class="container d-flex flex-column min-vh-100">
+    <h1>Timeline</h1>
+
+    <div class="cards-group">
+        <% if (booksTimeline.length > 0) { %>
+            <% for (let book of booksTimeline) { %>
+                <div class="flip-card flip-horizontal-left">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <a href="/user/profile?userId=<%= book.id %>" class="card-profile d-flex align-items-center text-decoration-none text-dark gap-2">
+                                <% if (book.picture) { %>
+                                    <img src="<%= book.picture %>" alt="Profile Picture">
+                                <% } else { %>
+                                    <i class="bi bi-person-fill fs-5 "></i>
+                                <% } %>
+                                <p class="fw-bolder m-0"><%= book.username %></p>
+                            </a>                            
+                            
+                            <div class="card-image">
+                                <img src="https://covers.openlibrary.org/b/id/<%= book.cover %>-L.jpg" alt="book"
+                                onclick="flipCard(this)">
+                            </div>
+    
+                            <div class="card-stars d-flex text-warning gap-1">
+                                <% for (let i = 0; i < book.rating; i++) { %>
+                                    <i class="bi bi-star-fill"></i>
+                                <% } %>
+    
+                                <% if (book.rating < 5) { %>
+                                    <% for (let i = book.rating; i < 5; i++) { %>
+                                        <i class="bi bi-star"></i>
+                                    <% } %>
+                                <% } %>
+                            </div>
+                        </div>
+    
+                        <div class="flip-card-back">
+                            <a href="/user/profile?userId=<%= book.id %>" class="card-profile d-flex align-items-center text-decoration-none text-dark gap-2">
+                                <% if (book.picture) { %>
+                                    <img src="<%= book.picture %>" alt="Profile Picture">
+                                <% } else { %>
+                                    <i class="bi bi-person-fill fs-5"></i>
+                                <% } %>
+                                <p class="fw-bolder m-0"><%= book.username %></p>
+                            </a> 
+    
+                            <div class="card-body" onclick="flipCard(this)">
+                                <div class="card-title">
+                                    <h2>
+                                        <%= book.title %>
+                                    </h2>
+                                    <p>By <%= book.author %></p>
+                                </div>
+    
+                                <div class="card-text">
+                                    <p><%= book.review %></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+
+            <!-- Controles de paginação -->
+            <div class="container my-5">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <% if (currentPage > 1) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Anterior">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Anterior</span>
+                                </a>
+                            </li>
+                        <% } %>
+                
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                            </li>
+                        <% } %>
+                
+                        <% if (currentPage < totalPages) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Próximo">
+                                    <span aria-hidden="true">&raquo;</span>
+                                    <span class="sr-only">Próximo</span>
+                                </a>
+                            </li>
+                        <% } %>
+                    </ul>
+                </nav>
+            </div> 
+        <% } else { %>
+            <div class="d-flex flex-column justify-content-center align-items-center min-vh-100">
+                <p>You have no posts to view</p>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<div id="loading-screen" class="loading-screen d-none">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
