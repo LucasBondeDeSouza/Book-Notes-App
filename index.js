@@ -685,13 +685,18 @@ passport.use(
     })
 )
 
-passport.serializeUser((user, cb) => {
-    cb(null, user)
-})
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
 
-passport.deserializeUser((user, cb) => {
-    cb(null, user)
-})
+passport.deserializeUser(async (id, done) => {
+    try {
+        const result = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+        done(null, result.rows[0]);
+    } catch (err) {
+        done(err);
+    }
+});
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`)
