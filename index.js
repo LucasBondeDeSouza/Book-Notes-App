@@ -82,7 +82,11 @@ async function fetchBookData(book) {
 }
 
 app.get("/", (req, res) => {
-    res.render("login.ejs")
+    if (req.isAuthenticated()) {
+        res.redirect("/home");
+    } else {
+        res.redirect("/login")
+    }
 })
 
 app.get("/login", (req, res) => {
