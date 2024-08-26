@@ -9,6 +9,7 @@ import GoogleStrategy from "passport-google-oauth2"
 import flash from "connect-flash"
 import axios from "axios"
 import path from "path";
+import cors from "cors"
 import { fileURLToPath } from 'url';
 
 import pool from "./config/db.js"
@@ -26,6 +27,11 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static("public"))
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(cors({
+    origin: 'https://litshare.vercel.app',
+    credentials: true,
+}));
 
 app.use(
     session({
