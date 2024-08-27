@@ -1,0 +1,27 @@
+<div class="py-2 bg-white sticky-bottom d-lg-none border-top">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-around">
+            <a href="/home">
+                <i class="bi bi-house-door fs-5"></i>
+            </a>
+
+            <i class="bi bi-search f-5"></i>
+
+            <i class="bi bi-plus-square fs-5" data-bs-toggle="modal" data-bs-target="#newBookModal"
+            data-bs-whatever="@mdo"></i>
+
+            <i class="bi bi-people-fill fs-5" data-bs-toggle="offcanvas" data-bs-target="#offcanvas"></i>
+
+            <% if (locals.userPicture && locals.name) { %>
+                <div class="picture-profile">
+                    <img src="<%= locals.userPicture %>" alt="Profile Picture">
+                    <p><%= locals.name %></p>
+                </div>
+            <% } else { %>
+                <a href="/profile">
+                    <i class="bi bi-person-circle fs-5"></i>
+                </a>
+            <% } %>
+        </div>
+    </div>
+</div>
