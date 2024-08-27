@@ -253,19 +253,6 @@
     background-color: #F8F9FA;
 }
 
-.navigation-picture {
-    height: 30px;
-    width: 30px;
-    border: 1px solid red;
-}
-
-.navigation-picture img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
-
 .loading-screen {
     position: fixed;
     top: 0;
