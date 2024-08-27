@@ -99,24 +99,24 @@
     gap: 10px;
 }
 
-.picture-profile {
-    height: 35px;
-    width: 35px;
-}
-
-.picture-profile img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
-
 .navigation-picture {
     height: 30px;
     width: 30px;
 }
 
 .navigation-picture > a > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.picture-profile {
+    height: 35px;
+    width: 35px;
+}
+
+.picture-profile img {
     width: 100%;
     height: 100%;
     object-fit: cover;
