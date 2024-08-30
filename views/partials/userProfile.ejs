@@ -10,7 +10,13 @@
             <% } %>
         
             <div class="d-flex flex-column gap-2">
-                <h2 class="mb-0"><%= userEmpty[0].username %></h2>
+                <h2 class="mb-0">
+                    <% if (userEmpty[0].username.length > 20) { %>
+                        <%= userEmpty[0].username.slice(0, 20) %>...
+                    <% } else { %>
+                        <%= userEmpty[0].username %>
+                    <% } %>
+                </h2>
 
                 <div class="d-flex align-items-center gap-3">
                     <h6><%= totalFollowing %> Following</h6>
@@ -49,7 +55,13 @@
             <% } %>
         
             <div class="d-flex flex-column gap-2">
-                <h2 class="mb-0"><%= searchedUser[0].username %></h2>
+                <h2 class="mb-0">
+                    <% if (searchedUser[0].username.length > 20) { %>
+                        <%= searchedUser[0].username.slice(0, 20) %>...
+                    <% } else { %>
+                        <%= searchedUser[0].username %>
+                    <% } %>
+                </h2>
 
                 <div class="d-flex align-items-center gap-3">
                     <h6><%= totalFollowing %> Following</h6>
