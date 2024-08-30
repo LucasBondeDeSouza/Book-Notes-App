@@ -460,19 +460,19 @@ app.get("/user/profile", async (req, res) => {
 
                 const followers = followersResult.rows;
 
-                const countFollowed = await pool.query(
+                const countFollowers = await pool.query(
                     "SELECT COUNT(*) FROM followers WHERE followed_id = $1",
                     [user_id]
                 )
 
-                const totalFollowed = countFollowed.rows[0].count;
+                const totalFollowers = countFollowers.rows[0].count;
 
-                const countFollows = await pool.query(
+                const countFollowing = await pool.query(
                     "SELECT COUNT(*) FROM followers WHERE follower_id = $1",
                     [user_id]
                 )
 
-                const totalFollows = countFollows.rows[0].count;
+                const totalFollowing = countFollowing.rows[0].count;
     
                 if (searchUser.rows.length > 0) {
                     const countResult = await pool.query(
@@ -513,8 +513,8 @@ app.get("/user/profile", async (req, res) => {
                         user_id,
                         isFollowing,
                         followers,
-                        totalFollowed,
-                        totalFollows
+                        totalFollowers,
+                        totalFollowing
                     })
     
                 } else {
@@ -527,8 +527,8 @@ app.get("/user/profile", async (req, res) => {
                         userEmpty,
                         isFollowing,
                         followers,
-                        totalFollowed,
-                        totalFollows
+                        totalFollowers,
+                        totalFollowing
                     })
                 }
     

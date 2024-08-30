@@ -1,6 +1,6 @@
 <div class="container min-vh-100">
-    <% if (locals.userEmpty && locals.totalFollowed && locals.totalFollows) { %>
-        <div class="d-flex mb-4 gap-2 align-items-center">
+    <% if (locals.userEmpty && locals.totalFollowers && locals.totalFollowing) { %>
+        <div class="d-flex gap-2 align-items-start">
             <% if (userEmpty[0].picture) { %>
                 <div class="viewProfile-picture">
                     <img src="<%= userEmpty[0].picture %>" alt="user picture">
@@ -9,7 +9,14 @@
                 <i class="bi bi-person-fill alternative-picture"></i>
             <% } %>
         
-            <h2 class="mb-0"><%= userEmpty[0].username %></h2>
+            <div class="d-flex flex-column gap-2">
+                <h2 class="mb-0"><%= userEmpty[0].username %></h2>
+
+                <div class="d-flex align-items-center gap-3">
+                    <h6><%= totalFollowing %> Following</h6>
+                    <h6><%= totalFollowers %> Followers</h6>   
+                </div>
+            </div>
 
             <% if (isFollowing) { %>
                 <form action="/unfollow" method="post" class="ms-3">
@@ -28,16 +35,11 @@
             <% } %>
         </div>
 
-        <div class="d-flex align-items-center gap-3">
-            <h6><%= totalFollows %> Follows</h6>
-            <h6><%= totalFollowed %> Followeds</h6>   
-        </div>
-
         <div class="d-flex flex-column justify-content-center align-items-center min-vh-100">
             <p>This user has not published any books</p>
         </div>
-    <% } else if (locals.searchedUser && locals.totalFollowed && locals.totalFollows) { %>
-        <div class="d-flex mb-4 gap-2 align-items-center">
+    <% } else if (locals.searchedUser && locals.totalFollowers && locals.totalFollowing) { %>
+        <div class="d-flex mb-5 gap-2 align-items-start">
             <% if (searchedUser[0].picture) { %>
                 <div class="viewProfile-picture">
                     <img src="<%= searchedUser[0].picture %>" alt="user picture">
@@ -46,7 +48,14 @@
                 <i class="bi bi-person-fill alternative-picture"></i>
             <% } %>
         
-            <h2 class="mb-0"><%= searchedUser[0].username %></h2>
+            <div class="d-flex flex-column gap-2">
+                <h2 class="mb-0"><%= searchedUser[0].username %></h2>
+
+                <div class="d-flex align-items-center gap-3">
+                    <h6><%= totalFollowing %> Following</h6>
+                    <h6><%= totalFollowers %> Followers</h6>   
+                </div>
+            </div>
             
             <% if (isFollowing) { %>
                 <form action="/unfollow" method="post" class="ms-3 mb-0">
@@ -63,11 +72,6 @@
                     </button>
                 </form>
             <% } %>
-        </div>
-        
-        <div class="d-flex align-items-center gap-3">
-            <h6><%= totalFollows %> Follows</h6>
-            <h6><%= totalFollowed %> Followeds</h6>   
         </div>
 
         <!-- Filtro de Busca -->
