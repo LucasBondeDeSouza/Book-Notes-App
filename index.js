@@ -459,6 +459,20 @@ app.get("/user/profile", async (req, res) => {
                 );
 
                 const followers = followersResult.rows;
+
+                const countFollowed = await pool.query(
+                    "SELECT COUNT(*) FROM followers WHERE followed_id = $1",
+                    [user_id]
+                )
+
+                const totalFollowed = countFollowed.rows[0].count;
+
+                const countFollows = await pool.query(
+                    "SELECT COUNT(*) FROM followers WHERE follower_id = $1",
+                    [user_id]
+                )
+
+                const totalFollows = countFollows.rows[0].count;
     
                 if (searchUser.rows.length > 0) {
                     const countResult = await pool.query(
@@ -498,7 +512,9 @@ app.get("/user/profile", async (req, res) => {
                         totalPages: totalPages,
                         user_id,
                         isFollowing,
-                        followers
+                        followers,
+                        totalFollowed,
+                        totalFollows
                     })
     
                 } else {
@@ -510,7 +526,9 @@ app.get("/user/profile", async (req, res) => {
                         userPicture: req.user.picture,
                         userEmpty,
                         isFollowing,
-                        followers
+                        followers,
+                        totalFollowed,
+                        totalFollows
                     })
                 }
     
