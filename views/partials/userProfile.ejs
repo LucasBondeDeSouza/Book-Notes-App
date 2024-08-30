@@ -11,7 +11,7 @@
         
             <div class="d-flex flex-column gap-2">
                 <div class="d-flex gap-2">
-                    <h2 class="mb-0">
+                    <h2>
                         <% if (userEmpty[0].username.length > 20) { %>
                             <%= userEmpty[0].username.slice(0, 20) %>...
                         <% } else { %>
@@ -59,28 +59,30 @@
             <div class="d-flex flex-column gap-2">
                 <h2 class="mb-0">
                     <div class="d-flex gap-2">
-                        <% if (searchedUser[0].username.length > 20) { %>
-                            <%= searchedUser[0].username.slice(0, 20) %>...
+                        <h2>
+                            <% if (searchedUser[0].username.length > 20) { %>
+                                <%= searchedUser[0].username.slice(0, 20) %>...
+                            <% } else { %>
+                                <%= searchedUser[0].username %>
+                            <% } %>
+                        </h2>
+
+                        <% if (isFollowing) { %>
+                            <form action="/unfollow" method="post" class="ms-3 mb-0">
+                                <input type="hidden" name="userId" value="<%= user_id %>">
+                                <button type="submit" class="btn btn-secondary w-100">
+                                    <i class="fas fa-user-check"></i>
+                                </button>
+                            </form>
                         <% } else { %>
-                            <%= searchedUser[0].username %>
+                            <form action="/follow" method="post" class="ms-3 mb-0">
+                                <input type="hidden" name="userId" value="<%= user_id %>">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-user-plus"></i>
+                                </button>
+                            </form>
                         <% } %>
                     </div>
-
-                    <% if (isFollowing) { %>
-                        <form action="/unfollow" method="post" class="ms-3 mb-0">
-                            <input type="hidden" name="userId" value="<%= user_id %>">
-                            <button type="submit" class="btn btn-secondary w-100">
-                                <i class="fas fa-user-check"></i>
-                            </button>
-                        </form>
-                    <% } else { %>
-                        <form action="/follow" method="post" class="ms-3 mb-0">
-                            <input type="hidden" name="userId" value="<%= user_id %>">
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="fas fa-user-plus"></i>
-                            </button>
-                        </form>
-                    <% } %>
                 </h2>
 
                 <div class="d-flex align-items-center gap-3">
