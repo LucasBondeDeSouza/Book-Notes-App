@@ -37,8 +37,9 @@
                 </div>
 
                 <div class="d-flex align-items-center gap-3">
-                    <h6><%= totalFollowing %> Following</h6>
-                    <h6><%= totalFollowers %> Followers</h6>   
+                    <h6>0 books</h6>
+                    <h6><%= totalFollowers %> followers</h6> 
+                    <h6><%= totalFollowing %> following</h6>
                 </div>
             </div>
         </div>
@@ -46,7 +47,7 @@
         <div class="d-flex flex-column justify-content-center align-items-center min-vh-100">
             <p>This user has not published any books</p>
         </div>
-    <% } else if (locals.searchedUser && locals.totalFollowers && locals.totalFollowing) { %>
+    <% } else if (locals.searchedUser && locals.totalBooks && locals.totalFollowers && locals.totalFollowing) { %>
         <div class="d-flex mb-5 gap-2 align-items-start">
             <% if (searchedUser[0].picture) { %>
                 <div class="viewProfile-picture">
@@ -86,8 +87,9 @@
                 </h2>
 
                 <div class="d-flex align-items-center gap-3">
-                    <h6><%= totalFollowing %> Following</h6>
-                    <h6><%= totalFollowers %> Followers</h6>   
+                    <h6><%= totalBooks %> books</h6>
+                    <h6><%= totalFollowers %> followers</h6> 
+                    <h6><%= totalFollowing %> following</h6>  
                 </div>
             </div>
         </div>

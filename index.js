@@ -282,15 +282,16 @@ app.get("/search/user", async (req, res) => {
 
     if (req.isAuthenticated()) {
         try {
-            const result = await pool.query("SELECT * FROM users WHERE similarity(username, $1) > 0.3 LIMIT $2 OFFSET $3", 
-                [username, limit, offset]
-            )
+            const result = await pool.query(
+                "SELECT * FROM users WHERE username ILIKE $1 LIMIT $2 OFFSET $3",
+                [`%${username}%`, limit, offset]
+            );
 
             const listSearchUser = result.rows
 
             const countResult = await pool.query(
-                "SELECT COUNT(*) FROM users WHERE similarity(username, $1) > 0.3",
-                [username]
+                "SELECT COUNT(*) FROM users WHERE username ILIKE $1",
+                [`%${username}%`]
             );
 
             const totalBooks = parseInt(countResult.rows[0].count);
@@ -349,16 +350,16 @@ app.get("/search/book", async (req, res) => {
                 `SELECT u.id, u.username, u.picture, b.title, b.review, b.rating 
                  FROM books b 
                  JOIN users u ON b.user_id = u.id 
-                 WHERE LOWER(b.title) = $1 
+                 WHERE b.title ILIKE $1 
                  ORDER BY b.id DESC LIMIT $2 OFFSET $3`, 
-                [book.toLowerCase(), limit, offset]
+                [`%${book}%`, limit, offset]
             );
             
             const countResult = await pool.query(
                 `SELECT COUNT(*) FROM books b 
                  JOIN users u ON b.user_id = u.id 
-                 WHERE LOWER(b.title) = $1`,
-                 [book.toLowerCase()]
+                 WHERE b.title ILIKE $1`,
+                 [`%${book}%`]
             )
 
             const totalBooks = parseInt(countResult.rows[0].count);
@@ -369,8 +370,8 @@ app.get("/search/book", async (req, res) => {
                     ROUND(AVG(rating), 1) AS average_rating,
                     COUNT(*) AS count
                 FROM books
-                WHERE LOWER(title) = LOWER($1)`,
-                [book]
+                WHERE title ILIKE $1`,
+                [`%${book}%`]
             );
             
             const averageRating = bookData.rows[0].average_rating;
@@ -513,6 +514,7 @@ app.get("/user/profile", async (req, res) => {
                         user_id,
                         isFollowing,
                         followers,
+                        totalBooks,
                         totalFollowers,
                         totalFollowing
                     })
