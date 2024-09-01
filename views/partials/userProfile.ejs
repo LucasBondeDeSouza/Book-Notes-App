@@ -6,7 +6,7 @@
                     <img src="<%= userEmpty[0].picture %>" alt="user picture">
                 </div>
             <% } else { %>
-                <i class="bi bi-person-fill alternative-picture"></i>
+                <i class="bi bi-person-circle alternative-picture"></i>
             <% } %>
         
             <div class="d-flex flex-column gap-2">
@@ -54,7 +54,7 @@
                     <img src="<%= searchedUser[0].picture %>" alt="user picture">
                 </div>
             <% } else { %>
-                <i class="bi bi-person-fill alternative-picture"></i>
+                <i class="bi bi-person-circle alternative-picture"></i>
             <% } %>
         
             <div class="d-flex flex-column gap-2">
@@ -111,7 +111,7 @@
                                 <% if (book.picture) { %>
                                     <img src="<%= book.picture %>" alt="Profile Picture">
                                 <% } else { %>
-                                    <i class="bi bi-person-fill fs-5"></i>
+                                    <i class="bi bi-person-circle fs-5"></i>
                                 <% } %>
                                 <p class="fw-bolder m-0"><%= book.username %></p>
                             </div>
@@ -138,7 +138,7 @@
                                 <% if (book.picture) { %>
                                     <img src="<%= book.picture %>" alt="Profile Picture">
                                 <% } else { %>
-                                    <i class="bi bi-person-fill fs-5"></i>
+                                    <i class="bi bi-person-circle fs-5"></i>
                                 <% } %>
                                 <p class="fw-bolder m-0"><%= book.username %></p>
                             </div> 
