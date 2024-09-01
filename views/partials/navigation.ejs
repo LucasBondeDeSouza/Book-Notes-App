@@ -11,11 +11,11 @@
             data-bs-whatever="@mdo"></i>
 
             <% if (locals.userPicture) { %>
-                <div class="picture-profile" style="height: 30px; width: 30px;">
-                    <a href="/profile">
+                <a href="/profile">
+                    <div class="navigation-picture">
                         <img src="<%= locals.userPicture %>" alt="Profile Picture">
-                    </a>
-                </div>
+                    </div>
+                </a>
             <% } else { %>
                 <a href="/profile" class="text-decoration-none text-reset">
                     <i class="bi bi-person-circle fs-2"></i>
