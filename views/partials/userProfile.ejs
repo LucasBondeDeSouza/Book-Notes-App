@@ -86,8 +86,16 @@
         
                 <div class="d-flex align-items-center gap-3">
                     <h6><%= totalBooks %> books</h6>
-                    <h6><%= totalFollowers %> followers</h6>
-                    <h6><%= totalFollowing %> following</h6>
+
+                    <h6 data-bs-toggle="modal" data-bs-target="#modalFollowers"
+                    data-bs-whatever="@mdo"><%= totalFollowers %> followers</h6>
+
+                    <form action="/following" method="get">
+                        <input type="hidden" name="user_id" value="<%= user_id %>">
+                        <button type="submit" style="display: none;"></button>
+                        <h6 onclick="this.parentNode.submit();" data-bs-toggle="modal" data-bs-target="#modalFollowing"
+                        data-bs-whatever="@mdo"><%= totalFollowing %> following</h6>
+                    </form>
                 </div>
             </div>
         </div>        

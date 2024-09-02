@@ -608,6 +608,26 @@ app.post('/unfollow', async (req, res) => {
     }
 })
 
+app.get('/following', async (req, res) => {
+    const userId = req.query.user_id;
+    
+    if (req.isAuthenticated()) {
+        try {
+            const followingResult = await pool.query(
+                "SELECT u.id, u.username, u.picture FROM users u JOIN followers f ON u.id = f.followed_id WHERE f.follower_id = $1",
+                [userId]
+            );
+
+            const followings = followingResult.rows
+            res.json(followings);
+        } catch (err) {
+            console.log(err)
+        }
+    } else {
+        res.redirect("/login");
+    }
+})
+
 app.get(
     "/auth/google", 
     passport.authenticate("google", {

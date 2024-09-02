@@ -1,0 +1,49 @@
+<div class="modal fade" id="modalFollowing" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Following</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div id="followingList">
+                    <!-- Lista de seguidores será injetada aqui -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modalElement = document.getElementById('modalFollowing');
+        modalElement.addEventListener('show.bs.modal', async function () {
+            const userId = document.querySelector('input[name="user_id"]').value;
+            const response = await fetch(`/following?user_id=${userId}`);
+            const followings = await response.json();
+    
+            const followingList = document.getElementById('followingList');
+            followingList.innerHTML = ''; // Limpa a lista existente
+    
+            followings.forEach(following => {
+                const userDiv = document.createElement('div');
+                userDiv.className = 'd-flex align-items-center mb-2';
+    
+                const userImage = document.createElement('img');
+                userImage.src = following.picture;
+                userImage.className = 'rounded-circle';
+                userImage.style.width = '40px';
+                userImage.style.height = '40px';
+                userImage.style.marginRight = '10px';
+    
+                const userName = document.createElement('span');
+                userName.textContent = following.username;
+    
+                userDiv.appendChild(userImage);
+                userDiv.appendChild(userName);
+                followingList.appendChild(userDiv);
+            });
+        });
+    });
+</script> 
