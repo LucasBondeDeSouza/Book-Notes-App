@@ -300,7 +300,13 @@ app.get("/search/user", async (req, res) => {
     if (req.isAuthenticated()) {
         try {
             const result = await pool.query(
-                "SELECT * FROM users WHERE username ILIKE $1 LIMIT $2 OFFSET $3",
+                `SELECT u.*, COUNT(f.followed_id) AS follower_count
+                FROM users u
+                LEFT JOIN followers f ON u.id = f.followed_id
+                WHERE u.username ILIKE $1
+                GROUP BY u.id
+                ORDER BY follower_count DESC
+                LIMIT $2 OFFSET $3`,
                 [`%${username}%`, limit, offset]
             );
 
@@ -364,11 +370,14 @@ app.get("/search/book", async (req, res) => {
     if (req.isAuthenticated()) {
         try {
             const result = await pool.query(
-                `SELECT u.id, u.username, u.picture, b.title, b.review, b.rating 
-                 FROM books b 
-                 JOIN users u ON b.user_id = u.id 
-                 WHERE b.title ILIKE $1 
-                 ORDER BY b.id DESC LIMIT $2 OFFSET $3`, 
+                `SELECT u.id, u.username, u.picture, b.title, b.review, b.rating, COUNT(f.followed_id) AS follower_count
+                FROM books b 
+                JOIN users u ON b.user_id = u.id 
+                LEFT JOIN followers f ON u.id = f.followed_id
+                WHERE b.title ILIKE $1 
+                GROUP BY u.id, b.id
+                ORDER BY follower_count DESC, b.id DESC 
+                LIMIT $2 OFFSET $3`, 
                 [`%${book}%`, limit, offset]
             );
             
