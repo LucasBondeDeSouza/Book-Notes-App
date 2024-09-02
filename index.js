@@ -126,13 +126,30 @@ app.get("/profile", async (req, res) => {
 
             const followers = followersResult.rows;
 
+            // Contar Seguidores (quem segue o usuário)
+            const countFollowers = await pool.query(
+                "SELECT COUNT(*) FROM followers WHERE followed_id = $1",
+                [req.user.id]
+            );
+            const totalFollowers = countFollowers.rows[0].count;
+
+            // Contar Seguindo (quem o usuário está seguindo)
+            const countFollowing = await pool.query(
+                "SELECT COUNT(*) FROM followers WHERE follower_id = $1",
+                [req.user.id]
+            );
+            const totalFollowing = countFollowing.rows[0].count;
+
             res.render("home.ejs", {
                 name: req.user.username,
                 userPicture: req.user.picture,
                 yourBooks: listBooks,
                 currentPage: page,
                 totalPages: totalPages,
-                followers
+                followers,
+                totalBooks,
+                totalFollowers,
+                totalFollowing
             });
         } catch (err) {
             console.log(err);
@@ -461,18 +478,18 @@ app.get("/user/profile", async (req, res) => {
 
                 const followers = followersResult.rows;
 
+                // Contar Seguidores (quem segue o usuário)
                 const countFollowers = await pool.query(
                     "SELECT COUNT(*) FROM followers WHERE followed_id = $1",
                     [user_id]
-                )
-
+                );
                 const totalFollowers = countFollowers.rows[0].count;
 
+                // Contar Seguindo (quem o usuário está seguindo)
                 const countFollowing = await pool.query(
                     "SELECT COUNT(*) FROM followers WHERE follower_id = $1",
                     [user_id]
-                )
-
+                );
                 const totalFollowing = countFollowing.rows[0].count;
     
                 if (searchUser.rows.length > 0) {

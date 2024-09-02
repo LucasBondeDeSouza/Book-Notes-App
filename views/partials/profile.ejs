@@ -11,7 +11,29 @@
         </div>
     <% } %>
 
-    <h1 class="mb-4">Your Books</h1>
+    <div class="d-flex mb-5 gap-2 align-items-start">
+        <% if (userPicture) { %>
+            <div class="viewProfile-picture">
+                <img src="<%= userPicture %>" alt="user picture">
+            </div>
+        <% } else { %>
+            <i class="bi bi-person-circle alternative-picture"></i>
+        <% } %>
+    
+        <div class="d-flex flex-column gap-2">
+            <h2 class="mb-0">
+                <div class="d-flex gap-2">
+                    <h2><%= name %></h2>
+                </div>
+            </h2>
+
+            <div class="d-flex align-items-center gap-3">
+                <h6><%= totalBooks %> books</h6>
+                <h6><%= totalFollowers %> followers</h6> 
+                <h6><%= totalFollowing %> following</h6>  
+            </div>
+        </div>
+    </div>
 
     <!-- Filtro de Busca -->
     <!--<div class="mb-4 d-flex filter">
