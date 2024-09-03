@@ -19,7 +19,8 @@
     document.addEventListener('DOMContentLoaded', function () {
         const modalElement = document.getElementById('modalFollowing');
         modalElement.addEventListener('show.bs.modal', async function () {
-            const userId = document.querySelector('input[name="user_id"]').value;
+            const showFollowingModal = document.getElementById('showFollowingModal');
+            const userId = showFollowingModal.getAttribute('data-user-id');
             const response = await fetch(`/following?user_id=${userId}`);
             const followings = await response.json();
     
@@ -31,7 +32,7 @@
                 userDiv.className = 'd-flex align-items-center mb-2';
     
                 const userImage = document.createElement('img');
-                userImage.src = following.picture;
+                userImage.src = following.picture || '/path/to/default-image.jpg'; // Caso a imagem seja nula
                 userImage.className = 'rounded-circle';
                 userImage.style.width = '40px';
                 userImage.style.height = '40px';
@@ -46,4 +47,4 @@
             });
         });
     });
-</script> 
+</script>

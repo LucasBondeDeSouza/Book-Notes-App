@@ -93,8 +93,9 @@
                     <form action="/following" method="get">
                         <input type="hidden" name="user_id" value="<%= user_id %>">
                         <button type="submit" style="display: none;"></button>
-                        <h6 onclick="this.parentNode.submit();" data-bs-toggle="modal" data-bs-target="#modalFollowing"
-                        data-bs-whatever="@mdo"><%= totalFollowing %> following</h6>
+                        <h6 id="showFollowingModal" data-user-id="<%= user_id %>" data-bs-toggle="modal" data-bs-target="#modalFollowing">
+                            <%= totalFollowing %> following
+                        </h6>                        
                     </form>
                 </div>
             </div>
@@ -219,5 +220,5 @@
                 book.style.display = 'none';
             }
         });
-    });
+    }); 
 </script>
