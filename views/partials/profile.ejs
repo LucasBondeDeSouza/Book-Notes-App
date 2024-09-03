@@ -29,8 +29,21 @@
 
             <div class="d-flex align-items-center gap-3">
                 <h6><%= totalBooks %> books</h6>
-                <h6><%= totalFollowers %> followers</h6> 
-                <h6><%= totalFollowing %> following</h6>  
+                <form action="/following" method="get">
+                    <input type="hidden" name="user_id" value="<%= id %>">
+                    <button type="submit" style="display: none;"></button>
+                    <h6 id="showFollowerModal" data-user-id="<%= id %>" data-bs-toggle="modal" data-bs-target="#modalFollower">
+                        <%= totalFollowers %> followers
+                    </h6>                       
+                </form>
+
+                <form action="/following" method="get">
+                    <input type="hidden" name="user_id" value="<%= id %>">
+                    <button type="submit" style="display: none;"></button>
+                    <h6 id="showFollowingModal" data-user-id="<%= id %>" data-bs-toggle="modal" data-bs-target="#modalFollowing">
+                        <%= totalFollowing %> following
+                    </h6>                        
+                </form>
             </div>
         </div>
     </div>

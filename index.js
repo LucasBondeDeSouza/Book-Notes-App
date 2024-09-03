@@ -141,6 +141,7 @@ app.get("/profile", async (req, res) => {
             const totalFollowing = countFollowing.rows[0].count;
 
             res.render("home.ejs", {
+                id: req.user.id,
                 name: req.user.username,
                 userPicture: req.user.picture,
                 yourBooks: listBooks,
