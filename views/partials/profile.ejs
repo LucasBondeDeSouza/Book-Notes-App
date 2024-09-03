@@ -29,6 +29,7 @@
 
             <div class="d-flex align-items-center gap-3">
                 <h6><%= totalBooks %> books</h6>
+                
                 <form action="/followers" method="get">
                     <input type="hidden" name="user_id" value="<%= id %>">
                     <button type="submit" style="display: none;"></button>

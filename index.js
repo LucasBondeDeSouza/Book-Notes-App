@@ -631,23 +631,29 @@ app.get('/followers', async (req, res) => {
 
 app.get('/following', async (req, res) => {
     const userId = req.query.user_id;
-    
+    const loggedInUserId = req.user.id; // Supondo que o ID do usuário logado está disponível em req.user
+
     if (req.isAuthenticated()) {
         try {
             const followingResult = await pool.query(
-                "SELECT u.id, u.username, u.picture FROM users u JOIN followers f ON u.id = f.followed_id WHERE f.follower_id = $1",
-                [userId]
+                `SELECT u.id, u.username, u.picture, 
+                        EXISTS (SELECT 1 FROM followers f WHERE f.follower_id = $1 AND f.followed_id = u.id) AS isFollowing
+                 FROM users u 
+                 JOIN followers f ON u.id = f.followed_id 
+                 WHERE f.follower_id = $2`,
+                [loggedInUserId, userId]
             );
 
-            const followings = followingResult.rows
+            const followings = followingResult.rows;
             res.json(followings);
         } catch (err) {
-            console.log(err)
+            console.log(err);
+            res.status(500).send("Erro ao buscar followings");
         }
     } else {
         res.redirect("/login");
     }
-})
+});
 
 app.get(
     "/auth/google", 
