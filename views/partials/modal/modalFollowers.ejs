@@ -25,6 +25,8 @@
             const followers = await response.json();
 
             const followerList = document.getElementById('followerList');
+            followerList.style.height = '300px'
+            followerList.style.overflowY = 'auto'
             followerList.innerHTML = ''; // Limpa a lista existente
 
             followers.forEach(follower => {

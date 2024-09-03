@@ -4,11 +4,6 @@
     box-sizing: border-box;
 }
 
-#followingList, #followerList {
-    overflow-y: auto;
-    height: 300px;
-}
-
 /* Sidebar */
 .filter-sidebar {
     align-items: center;
