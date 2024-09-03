@@ -4,7 +4,7 @@
     box-sizing: border-box;
 }
 
-#followingList {
+#followingList, #followerList {
     overflow-y: auto;
     max-height: 50vh;
 }

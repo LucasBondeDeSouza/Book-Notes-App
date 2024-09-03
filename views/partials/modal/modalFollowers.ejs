@@ -1,4 +1,4 @@
-<div class="modal fade" id="modalFollowers" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalFollower" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -7,7 +7,54 @@
             </div>
 
             <div class="modal-body">
+                <div id="followerList">
+                    <!-- Lista de seguidores será injetada aqui -->
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modalElement = document.getElementById('modalFollower');
+        modalElement.addEventListener('show.bs.modal', async function () {
+            const showFollowerModal = document.getElementById('showFollowerModal');
+            const userId = showFollowerModal.getAttribute('data-user-id');
+            const response = await fetch(`/followers?user_id=${userId}`);
+            const followers = await response.json();
+
+            const followerList = document.getElementById('followerList');
+            followerList.innerHTML = ''; // Limpa a lista existente
+
+            followers.forEach(follower => {
+                const userDiv = document.createElement('div');
+                userDiv.className = 'd-flex align-items-center m-0 p-0';
+
+                if (follower.picture) {
+                    // Se a imagem existir
+                    const userImage = document.createElement('img');
+                    userImage.src = follower.picture;
+                    userImage.className = 'rounded-circle my-2';
+                    userImage.style.width = '40px';
+                    userImage.style.height = '40px';
+                    userImage.style.marginRight = '10px';
+                    userDiv.appendChild(userImage);
+                } else {
+                    // Se a imagem for nula, exibe o ícone
+                    const userIcon = document.createElement('i');
+                    userIcon.className = 'bi bi-person-circle';
+                    userIcon.style.fontSize = '40px'; // Define o tamanho do ícone
+                    userIcon.style.marginRight = '10px';
+                    userDiv.appendChild(userIcon);
+                }
+
+                const userName = document.createElement('span');
+                userName.textContent = follower.username;
+
+                userDiv.appendChild(userName);
+                followerList.appendChild(userDiv);
+            });
+        });
+    });
+</script>
