@@ -23,25 +23,35 @@
             const userId = showFollowingModal.getAttribute('data-user-id');
             const response = await fetch(`/following?user_id=${userId}`);
             const followings = await response.json();
-    
+
             const followingList = document.getElementById('followingList');
             followingList.innerHTML = ''; // Limpa a lista existente
-    
+
             followings.forEach(following => {
                 const userDiv = document.createElement('div');
-                userDiv.className = 'd-flex align-items-center mb-2';
-    
-                const userImage = document.createElement('img');
-                userImage.src = following.picture || '/path/to/default-image.jpg'; // Caso a imagem seja nula
-                userImage.className = 'rounded-circle';
-                userImage.style.width = '40px';
-                userImage.style.height = '40px';
-                userImage.style.marginRight = '10px';
-    
+                userDiv.className = 'd-flex align-items-center m-0 p-0';
+
+                if (following.picture) {
+                    // Se a imagem existir
+                    const userImage = document.createElement('img');
+                    userImage.src = following.picture;
+                    userImage.className = 'rounded-circle my-2';
+                    userImage.style.width = '40px';
+                    userImage.style.height = '40px';
+                    userImage.style.marginRight = '10px';
+                    userDiv.appendChild(userImage);
+                } else {
+                    // Se a imagem for nula, exibe o ícone
+                    const userIcon = document.createElement('i');
+                    userIcon.className = 'bi bi-person-circle';
+                    userIcon.style.fontSize = '40px'; // Define o tamanho do ícone
+                    userIcon.style.marginRight = '10px';
+                    userDiv.appendChild(userIcon);
+                }
+
                 const userName = document.createElement('span');
                 userName.textContent = following.username;
-    
-                userDiv.appendChild(userImage);
+
                 userDiv.appendChild(userName);
                 followingList.appendChild(userDiv);
             });

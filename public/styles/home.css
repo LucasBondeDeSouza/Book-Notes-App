@@ -4,6 +4,11 @@
     box-sizing: border-box;
 }
 
+#followingList {
+    overflow-y: auto;
+    max-height: 50vh;
+}
+
 /* Sidebar */
 .filter-sidebar {
     align-items: center;
