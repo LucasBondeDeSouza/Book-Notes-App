@@ -28,6 +28,10 @@
             followerList.innerHTML = ''; // Limpa a lista existente
 
             followers.forEach(follower => {
+                const userLink = document.createElement('a');
+                userLink.href = `/user/profile?userId=${follower.id}`; // Insere o link para o perfil do usuário
+                userLink.className = 'text-decoration-none text-dark'; // Remove sublinhado e muda a cor do texto
+
                 const userDiv = document.createElement('div');
                 userDiv.className = 'd-flex align-items-center m-0 p-0';
 
@@ -53,7 +57,8 @@
                 userName.textContent = follower.username;
 
                 userDiv.appendChild(userName);
-                followerList.appendChild(userDiv);
+                userLink.appendChild(userDiv); // Adiciona o div dentro do link
+                followerList.appendChild(userLink); // Adiciona o link na lista
             });
         });
     });
