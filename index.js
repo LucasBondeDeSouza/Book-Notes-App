@@ -611,27 +611,32 @@ app.post('/unfollow', async (req, res) => {
 
 app.get('/followers', async (req, res) => {
     const userId = req.query.user_id;
-    
+    const loggedInUserId = req.user.id;
+
     if (req.isAuthenticated()) {
         try {
             const followersResult = await pool.query(
-                "SELECT u.id, u.username, u.picture FROM users u JOIN followers f ON u.id = f.follower_id WHERE f.followed_id = $1",
-                [userId]
+                `SELECT u.id, u.username, u.picture, 
+                        EXISTS (SELECT 1 FROM followers f WHERE f.follower_id = $1 AND f.followed_id = u.id) AS isFollowing 
+                 FROM users u 
+                 JOIN followers f ON u.id = f.follower_id 
+                 WHERE f.followed_id = $2`,
+                [loggedInUserId, userId]
             );
 
-            const followers = followersResult.rows
+            const followers = followersResult.rows;
             res.json(followers);
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     } else {
         res.redirect("/login");
     }
-})
+});
 
 app.get('/following', async (req, res) => {
     const userId = req.query.user_id;
-    const loggedInUserId = req.user.id; // Supondo que o ID do usuário logado está disponível em req.user
+    const loggedInUserId = req.user.id;
 
     if (req.isAuthenticated()) {
         try {
@@ -648,7 +653,6 @@ app.get('/following', async (req, res) => {
             res.json(followings);
         } catch (err) {
             console.log(err);
-            res.status(500).send("Erro ao buscar followings");
         }
     } else {
         res.redirect("/login");

@@ -25,42 +25,67 @@
             const followers = await response.json();
 
             const followerList = document.getElementById('followerList');
-            followerList.style.maxHeight = '350px'
-            followerList.style.overflowY = 'auto'
+            followerList.style.maxHeight = '350px';
+            followerList.style.overflowY = 'auto';
             followerList.innerHTML = ''; // Limpa a lista existente
 
             followers.forEach(follower => {
-                const userLink = document.createElement('a');
-                userLink.href = `/user/profile?userId=${follower.id}`; // Insere o link para o perfil do usuário
-                userLink.className = 'text-decoration-none text-dark'; // Remove sublinhado e muda a cor do texto
+                const userContainer = document.createElement('div');
 
-                const userDiv = document.createElement('div');
-                userDiv.className = 'd-flex align-items-center m-0 p-0';
+                const userLink = document.createElement('a');
+                userLink.href = `/user/profile?userId=${follower.id}`;
+                userLink.className = 'text-decoration-none text-dark d-flex align-items-center justify-content-between';
+
+                const userInfo = document.createElement('div');
+                userInfo.className = 'd-flex align-items-center';
 
                 if (follower.picture) {
-                    // Se a imagem existir
                     const userImage = document.createElement('img');
                     userImage.src = follower.picture;
                     userImage.className = 'rounded-circle my-2';
                     userImage.style.width = '40px';
                     userImage.style.height = '40px';
                     userImage.style.marginRight = '10px';
-                    userDiv.appendChild(userImage);
+                    userInfo.appendChild(userImage);
                 } else {
-                    // Se a imagem for nula, exibe o ícone
                     const userIcon = document.createElement('i');
                     userIcon.className = 'bi bi-person-circle';
-                    userIcon.style.fontSize = '40px'; // Define o tamanho do ícone
+                    userIcon.style.fontSize = '40px';
                     userIcon.style.marginRight = '10px';
-                    userDiv.appendChild(userIcon);
+                    userInfo.appendChild(userIcon);
                 }
 
                 const userName = document.createElement('span');
                 userName.textContent = follower.username;
 
-                userDiv.appendChild(userName);
-                userLink.appendChild(userDiv); // Adiciona o div dentro do link
-                followerList.appendChild(userLink); // Adiciona o link na lista
+                userInfo.appendChild(userName);
+
+                const followForm = document.createElement('form');
+                followForm.method = 'post';
+                followForm.className = 'mb-0';
+                followForm.action = follower.isfollowing ? '/unfollow' : '/follow';
+
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'userId';
+                hiddenInput.value = follower.id;
+
+                const followButton = document.createElement('button');
+                followButton.type = 'submit';
+                followButton.className = `btn btn-${follower.isfollowing ? 'secondary' : 'primary'} btn-sm`;
+
+                const icon = document.createElement('i');
+                icon.className = `fas fa-user-${follower.isfollowing ? 'check' : 'plus'}`;
+                followButton.appendChild(icon);
+
+                followForm.appendChild(hiddenInput);
+                followForm.appendChild(followButton);
+
+                userLink.appendChild(userInfo);  // Adiciona o div com a imagem e nome no link
+                userLink.appendChild(followForm);  // Adiciona o formulário de follow/unfollow no link
+
+                userContainer.appendChild(userLink);  // Adiciona o link no container
+                followerList.appendChild(userContainer); // Adiciona o container na lista
             });
         });
     });
