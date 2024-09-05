@@ -64,8 +64,11 @@
     <% } else if (locals.searchedUser && locals.totalBooks && locals.totalFollowers && locals.totalFollowing) { %>
         <div class="d-flex mb-5 gap-3 align-items-center justify-content-center justify-content-md-start py-3 border-bottom">
             <% if (searchedUser[0].picture) { %>
-                <div class="viewProfile-picture">
-                    <img src="<%= searchedUser[0].picture %>" alt="user picture">
+                <div class="viewProfile-picture d-none d-md-inline" style="height: 70px; width: 70px;">
+                    <img src="<%= searchedUser[0].picture %>" alt="user picture" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                </div>
+                <div class="viewProfile-picture d-inline d-md-none" style="height: 50px; width: 50px;">
+                    <img src="<%= searchedUser[0].picture %>" alt="user picture" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
                 </div>
             <% } else { %>
                 <i class="bi bi-person-circle alternative-picture"></i>
