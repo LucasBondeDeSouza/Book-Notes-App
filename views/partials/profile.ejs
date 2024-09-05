@@ -13,11 +13,15 @@
 
     <div class="d-flex mb-5 gap-3 align-items-center justify-content-center justify-content-md-start py-2 border-bottom">
         <% if (userPicture) { %>
-            <div class="viewProfile-picture">
+            <div class="viewProfile-picture" style="height: 70px; width: 70px;">
+                <img src="<%= userPicture %>" alt="user picture">
+            </div>
+            <div class="viewProfile-picture" style="height: 50px; width: 50px;"></div>
                 <img src="<%= userPicture %>" alt="user picture">
             </div>
         <% } else { %>
-            <i class="bi bi-person-circle alternative-picture"></i>
+            <i class="bi bi-person-circle d-none d-md-inline" style="font-size: 70px;"></i>
+            <i class="bi bi-person-circle d-inline d-md-none" style="font-size: 50px;"></i>
         <% } %>
     
         <div class="d-flex flex-column">
