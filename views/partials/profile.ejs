@@ -215,21 +215,3 @@
       })
     });
 </script>
-
-<script>
-    document.getElementById('bookFilter').addEventListener('input', function() {
-        const filter = this.value.toLowerCase();
-        const books = document.querySelectorAll('.cards-group .flip-card');
-
-        books.forEach(book => {
-            const title = book.querySelector('.card-title h2').textContent.toLowerCase();
-            const author = book.querySelector('.card-title p').textContent.toLowerCase();
-
-            if (title.includes(filter) || author.includes(filter)) {
-                book.style.display = '';
-            } else {
-                book.style.display = 'none';
-            }
-        });
-    });
-</script>
