@@ -11,7 +11,7 @@
         </div>
     <% } %>
 
-    <div class="d-flex mb-5 gap-2 align-items-start">
+    <div class="d-flex mb-5 gap-3 align-items-center justify-content-center justify-content-md-start py-2 border-bottom">
         <% if (userPicture) { %>
             <div class="viewProfile-picture">
                 <img src="<%= userPicture %>" alt="user picture">
@@ -20,7 +20,7 @@
             <i class="bi bi-person-circle alternative-picture"></i>
         <% } %>
     
-        <div class="d-flex flex-column gap-2">
+        <div class="d-flex flex-column">
             <h2 class="mb-0">
                 <div class="d-flex gap-2">
                     <h2><%= name %></h2>
@@ -28,12 +28,12 @@
             </h2>
 
             <div class="d-flex align-items-center gap-3">
-                <h6><%= totalBooks %> books</h6>
+                <h6 class="text-secondary"><%= totalBooks %> books</h6>
                 
                 <form action="/followers" method="get">
                     <input type="hidden" name="user_id" value="<%= id %>">
                     <button type="submit" style="display: none;"></button>
-                    <h6 id="showFollowerModal" data-user-id="<%= id %>" data-bs-toggle="modal" data-bs-target="#modalFollower">
+                    <h6 class="text-secondary" id="showFollowerModal" data-user-id="<%= id %>" data-bs-toggle="modal" data-bs-target="#modalFollower">
                         <%= totalFollowers %> followers
                     </h6>                       
                 </form>
@@ -41,7 +41,7 @@
                 <form action="/following" method="get">
                     <input type="hidden" name="user_id" value="<%= id %>">
                     <button type="submit" style="display: none;"></button>
-                    <h6 id="showFollowingModal" data-user-id="<%= id %>" data-bs-toggle="modal" data-bs-target="#modalFollowing">
+                    <h6 class="text-secondary" id="showFollowingModal" data-user-id="<%= id %>" data-bs-toggle="modal" data-bs-target="#modalFollowing">
                         <%= totalFollowing %> following
                     </h6>                        
                 </form>

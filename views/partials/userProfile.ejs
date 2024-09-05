@@ -1,6 +1,6 @@
 <div class="container min-vh-100">
     <% if (locals.userEmpty && locals.totalFollowers && locals.totalFollowing) { %>
-        <div class="d-flex mb-5 gap-2 align-items-start">
+        <div class="d-flex mb-5 gap-3 align-items-center justify-content-center justify-content-md-start border-bottom">
             <% if (userEmpty[0].picture) { %>
                 <div class="viewProfile-picture">
                     <img src="<%= userEmpty[0].picture %>" alt="user picture">
@@ -62,7 +62,7 @@
             <p>This user has not published any books</p>
         </div>
     <% } else if (locals.searchedUser && locals.totalBooks && locals.totalFollowers && locals.totalFollowing) { %>
-        <div class="d-flex mb-5 gap-2 align-items-start">
+        <div class="d-flex mb-5 gap-3 align-items-center justify-content-center justify-content-md-start py-2 border-bottom">
             <% if (searchedUser[0].picture) { %>
                 <div class="viewProfile-picture">
                     <img src="<%= searchedUser[0].picture %>" alt="user picture">

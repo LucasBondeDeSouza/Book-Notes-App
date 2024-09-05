@@ -124,8 +124,8 @@
 }
 
 .viewProfile-picture {
-    height: 45px;
-    width: 45px;
+    height: 70px;
+    width: 70px;
 }
 
 .viewProfile-picture img {
@@ -136,7 +136,7 @@
 }
 
 .alternative-picture {
-    font-size: 32px;
+    font-size: 70px;
 }
 
 .card-profile {
@@ -290,11 +290,11 @@
     }
 
     .viewProfile-picture {
-        height: 40px;
-        width: 40px;
+        height: 50px;
+        width: 50px;
     }
 
     .alternative-picture {
-        font-size: 25px;
+        font-size: 50px;
     }
 }
