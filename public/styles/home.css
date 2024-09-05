@@ -123,18 +123,6 @@
     border-radius: 50%;
 }
 
-.viewProfile-picture {
-    height: 70px;
-    width: 70px;
-}
-
-.viewProfile-picture img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-}
-
 .alternative-picture {
     font-size: 70px;
 }
@@ -287,11 +275,6 @@
     .sidebar .users-profile {
         height: 30px;
         width: 30px;
-    }
-
-    .viewProfile-picture {
-        height: 50px;
-        width: 50px;
     }
 
     .alternative-picture {
