@@ -7,7 +7,7 @@
                 <div class="flip-card flip-horizontal-left">
                     <div class="flip-card-inner">
                         <div class="flip-card-front" style="align-items: start;">
-                            <a href="/user/profile?userId=<%= book.id %>" class="card-profile d-flex align-items-center text-decoration-none text-dark gap-2">
+                            <a href="/user/profile?userId=<%= book.userId %>" class="card-profile d-flex align-items-center text-decoration-none text-dark gap-2">
                                 <% if (book.picture) { %>
                                     <img src="<%= book.picture %>" alt="Profile Picture">
                                 <% } else { %>
@@ -22,21 +22,31 @@
                                 onclick="flipCard(this)">
                             </div>
     
-                            <div class="card-stars d-flex text-warning gap-1">
-                                <% for (let i = 0; i < book.rating; i++) { %>
-                                    <i class="bi bi-star-fill"></i>
-                                <% } %>
-    
-                                <% if (book.rating < 5) { %>
-                                    <% for (let i = book.rating; i < 5; i++) { %>
-                                        <i class="bi bi-star"></i>
+                            <div class="d-flex align-items-center justify-content-between" style="width: 100%;">
+                                <div class="card-stars d-flex text-warning gap-1">
+                                    <% for (let i = 0; i < book.rating; i++) { %>
+                                        <i class="bi bi-star-fill"></i>
                                     <% } %>
-                                <% } %>
+        
+                                    <% if (book.rating < 5) { %>
+                                        <% for (let i = book.rating; i < 5; i++) { %>
+                                            <i class="bi bi-star"></i>
+                                        <% } %>
+                                    <% } %>
+                                </div>
+
+                                <div class="d-flex align-items-center gap-1">
+                                    <i 
+                                        class="bi <%= book.liked_by_user ? 'bi-heart-fill text-danger' : 'bi-heart text-danger' %> like-btn" 
+                                        data-book-id="<%= book.bookId %>"
+                                        style="cursor: pointer;">
+                                    </i>
+                                </div>
                             </div>
                         </div>
     
                         <div class="flip-card-back" style="align-items: start;">
-                            <a href="/user/profile?userId=<%= book.id %>" class="card-profile d-flex align-items-center text-decoration-none text-dark gap-2">
+                            <a href="/user/profile?userId=<%= book.userId %>" class="card-profile d-flex align-items-center text-decoration-none text-dark gap-2">
                                 <% if (book.picture) { %>
                                     <img src="<%= book.picture %>" alt="Profile Picture">
                                 <% } else { %>
@@ -106,3 +116,37 @@
         <span class="visually-hidden">Loading...</span>
     </div>
 </div>
+
+<script>
+    document.querySelectorAll('.like-btn').forEach(button => {
+        button.addEventListener('click', async (event) => {
+            const icon = event.currentTarget;
+            const bookId = icon.dataset.bookId;
+
+            try {
+                const response = await fetch('/book/like', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ bookId })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.liked) {
+                        icon.classList.remove('bi-heart');
+                        icon.classList.add('bi-heart-fill');
+                    } else {
+                        icon.classList.remove('bi-heart-fill');
+                        icon.classList.add('bi-heart');
+                    }
+                } else {
+                    console.error('Failed to like/unlike the book');
+                }
+            } catch (err) {
+                console.error('Error:', err);
+            }
+        });
+    });
+</script>

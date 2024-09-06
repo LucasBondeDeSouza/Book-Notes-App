@@ -20,3 +20,10 @@ CREATE TABLE followers (
     followed_id INTEGER REFERENCES users(id),
     UNIQUE (follower_id, followed_id)
 );
+
+CREATE TABLE likes (
+    id SERIAL PRIMARY KEY,
+    like_id INTEGER REFERENCES users(id),
+    liked_id INTEGER REFERENCES books(id),
+    UNIQUE (like_id, liked_id)
+);

@@ -26,6 +26,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static("public"))
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
 
 app.use(
     session({
@@ -194,7 +195,8 @@ app.get("/home", async (req, res) => {
 
         try {
             const result = await pool.query(
-                `SELECT u.id, u.username, u.picture, b.title, b.review, b.rating
+                `SELECT u.id AS user_id, u.username, u.picture, b.id AS book_id, b.title, b.review, b.rating,
+                        CASE WHEN l.like_id IS NOT NULL THEN TRUE ELSE FALSE END AS liked_by_user
                 FROM (
                     SELECT * FROM books
                     ORDER BY id DESC
@@ -202,6 +204,7 @@ app.get("/home", async (req, res) => {
                 ) b
                 JOIN users u ON b.user_id = u.id
                 JOIN followers f ON u.id = f.followed_id
+                LEFT JOIN likes l ON b.id = l.liked_id AND l.like_id = $1
                 WHERE f.follower_id = $1
                 ORDER BY b.id DESC
                 LIMIT $2 OFFSET $3`,
@@ -225,7 +228,19 @@ app.get("/home", async (req, res) => {
             const totalBooks = parseInt(countResult.rows[0].count);
             const totalPages = Math.ceil(totalBooks / limit);
 
-            const listBooks = await Promise.all(result.rows.map(fetchBookData));
+            const listBooks = await Promise.all(result.rows.map(async (row) => {
+                const book = {
+                    title: row.title,
+                    review: row.review,
+                    rating: row.rating,
+                    userId: row.user_id,
+                    bookId: row.book_id,
+                    username: row.username,
+                    picture: row.picture,
+                    liked_by_user: row.liked_by_user
+                };
+                return fetchBookData(book);
+            }));
 
             const followersResult = await pool.query(
                 "SELECT u.id, u.username, u.picture FROM users u JOIN followers f ON u.id = f.followed_id WHERE f.follower_id = $1",
@@ -656,6 +671,54 @@ app.get('/following', async (req, res) => {
         }
     } else {
         res.redirect("/login");
+    }
+});
+
+// Like a book
+app.post('/book/like', async (req, res) => {
+    const { bookId } = req.body;
+    const userId = req.user.id;
+
+    try {
+        // Verifica se o usuário já deu like no livro
+        const existingLike = await pool.query(
+            'SELECT * FROM likes WHERE like_id = $1 AND liked_id = $2',
+            [userId, bookId]
+        );
+
+        if (existingLike.rows.length === 0) {
+            // Se não existe, insere um novo like
+            await pool.query(
+                'INSERT INTO likes (like_id, liked_id) VALUES ($1, $2)',
+                [userId, bookId]
+            );
+            res.json({ liked: true });
+        } else {
+            // Se já existe, remove o like
+            await pool.query(
+                'DELETE FROM likes WHERE like_id = $1 AND liked_id = $2',
+                [userId, bookId]
+            );
+            res.json({ liked: false });
+        }
+    } catch (err) {
+        console.error(err);
+    }
+});
+
+// Unlike a book
+app.post('/book/unlike', async (req, res) => {
+    const { bookId } = req.body;
+    const userId = req.user.id;
+
+    try {
+        // Remove o like
+        await pool.query(
+            'DELETE FROM likes WHERE like_id = $1 AND liked_id = $2',
+            [userId, bookId]
+        );
+    } catch (err) {
+        console.error(err);
     }
 });
 
