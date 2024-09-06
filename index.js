@@ -679,30 +679,34 @@ app.post('/book/like', async (req, res) => {
     const { bookId } = req.body;
     const userId = req.user.id;
 
-    try {
-        // Verifica se o usuário já deu like no livro
-        const existingLike = await pool.query(
-            'SELECT * FROM likes WHERE like_id = $1 AND liked_id = $2',
-            [userId, bookId]
-        );
-
-        if (existingLike.rows.length === 0) {
-            // Se não existe, insere um novo like
-            await pool.query(
-                'INSERT INTO likes (like_id, liked_id) VALUES ($1, $2)',
+    if (req.isAuthenticated()) {
+        try {
+            // Verifica se o usuário já deu like no livro
+            const existingLike = await pool.query(
+                'SELECT * FROM likes WHERE like_id = $1 AND liked_id = $2',
                 [userId, bookId]
             );
-            res.json({ liked: true });
-        } else {
-            // Se já existe, remove o like
-            await pool.query(
-                'DELETE FROM likes WHERE like_id = $1 AND liked_id = $2',
-                [userId, bookId]
-            );
-            res.json({ liked: false });
+    
+            if (existingLike.rows.length === 0) {
+                // Se não existe, insere um novo like
+                await pool.query(
+                    'INSERT INTO likes (like_id, liked_id) VALUES ($1, $2)',
+                    [userId, bookId]
+                );
+                res.json({ liked: true });
+            } else {
+                // Se já existe, remove o like
+                await pool.query(
+                    'DELETE FROM likes WHERE like_id = $1 AND liked_id = $2',
+                    [userId, bookId]
+                );
+                res.json({ liked: false });
+            }
+        } catch (err) {
+            console.error(err);
         }
-    } catch (err) {
-        console.error(err);
+    } else {
+        res.redirect("/login");
     }
 });
 
@@ -711,14 +715,18 @@ app.post('/book/unlike', async (req, res) => {
     const { bookId } = req.body;
     const userId = req.user.id;
 
-    try {
-        // Remove o like
-        await pool.query(
-            'DELETE FROM likes WHERE like_id = $1 AND liked_id = $2',
-            [userId, bookId]
-        );
-    } catch (err) {
-        console.error(err);
+    if (req.isAuthenticated()) {
+        try {
+            // Remove o like
+            await pool.query(
+                'DELETE FROM likes WHERE like_id = $1 AND liked_id = $2',
+                [userId, bookId]
+            );
+        } catch (err) {
+            console.error(err);
+        }
+    } else {
+        res.redirect("/login");
     }
 });
 
