@@ -187,7 +187,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    align-items: start;
+    /*align-items: start;*/
 }
 
 .flip-card-back > .card-body {
