@@ -140,7 +140,7 @@
             <% for (let book of searchedUser) { %>
                 <div class="flip-card flip-horizontal-left" data-title="<%= book.title.toLowerCase() %>" data-author="<%= book.author.toLowerCase() %>">
                     <div class="flip-card-inner">
-                        <div class="flip-card-front">
+                        <div class="flip-card-front" style="align-items: start;">
                             <div class="card-profile d-flex align-items-center gap-2">
                                 <% if (book.picture) { %>
                                     <img src="<%= book.picture %>" alt="Profile Picture">
@@ -168,7 +168,7 @@
                             </div>
                         </div>
 
-                        <div class="flip-card-back">
+                        <div class="flip-card-back" style="align-items: start;">
                             <div class="card-profile d-flex align-items-center gap-2">
                                 <% if (book.picture) { %>
                                     <img src="<%= book.picture %>" alt="Profile Picture">
