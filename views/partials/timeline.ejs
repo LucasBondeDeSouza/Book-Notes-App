@@ -41,6 +41,13 @@
                                         data-book-id="<%= book.bookId %>"
                                         style="cursor: pointer;">
                                     </i>
+                                    <span class="text-danger">
+                                        <% if (book.like_count >= 1000) { %>
+                                            <%= (book.like_count / 1000).toFixed(1) + 'k' %>
+                                        <% } else { %>
+                                            <%= book.like_count %>
+                                        <% } %>
+                                    </span>                                    
                                 </div>
                             </div>
                         </div>
@@ -122,6 +129,7 @@
         button.addEventListener('click', async (event) => {
             const icon = event.currentTarget;
             const bookId = icon.dataset.bookId;
+            const likeCountElement = icon.nextElementSibling;
 
             try {
                 const response = await fetch('/book/like', {
@@ -137,9 +145,11 @@
                     if (data.liked) {
                         icon.classList.remove('bi-heart');
                         icon.classList.add('bi-heart-fill');
+                        likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1; // Incrementa a contagem de likes
                     } else {
                         icon.classList.remove('bi-heart-fill');
                         icon.classList.add('bi-heart');
+                        likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1; // Decrementa a contagem de likes
                     }
                 } else {
                     console.error('Failed to like/unlike the book');

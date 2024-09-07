@@ -196,7 +196,8 @@ app.get("/home", async (req, res) => {
         try {
             const result = await pool.query(
                 `SELECT u.id AS user_id, u.username, u.picture, b.id AS book_id, b.title, b.review, b.rating,
-                        CASE WHEN l.like_id IS NOT NULL THEN TRUE ELSE FALSE END AS liked_by_user
+                        CASE WHEN l.like_id IS NOT NULL THEN TRUE ELSE FALSE END AS liked_by_user,
+                        COALESCE(likes_count.count, 0) AS like_count
                 FROM (
                     SELECT * FROM books
                     ORDER BY id DESC
@@ -205,6 +206,11 @@ app.get("/home", async (req, res) => {
                 JOIN users u ON b.user_id = u.id
                 JOIN followers f ON u.id = f.followed_id
                 LEFT JOIN likes l ON b.id = l.liked_id AND l.like_id = $1
+                LEFT JOIN (
+                    SELECT liked_id, COUNT(*) AS count
+                    FROM likes
+                    GROUP BY liked_id
+                ) likes_count ON b.id = likes_count.liked_id
                 WHERE f.follower_id = $1
                 ORDER BY b.id DESC
                 LIMIT $2 OFFSET $3`,
@@ -225,6 +231,8 @@ app.get("/home", async (req, res) => {
                 [req.user.id]
             );
 
+            console.log(result.rows)
+
             const totalBooks = parseInt(countResult.rows[0].count);
             const totalPages = Math.ceil(totalBooks / limit);
 
@@ -237,7 +245,8 @@ app.get("/home", async (req, res) => {
                     bookId: row.book_id,
                     username: row.username,
                     picture: row.picture,
-                    liked_by_user: row.liked_by_user
+                    liked_by_user: row.liked_by_user,
+                    like_count: row.like_count
                 };
                 return fetchBookData(book);
             }));
@@ -681,29 +690,38 @@ app.post('/book/like', async (req, res) => {
 
     if (req.isAuthenticated()) {
         try {
-            // Verifica se o usuário já deu like no livro
             const existingLike = await pool.query(
                 'SELECT * FROM likes WHERE like_id = $1 AND liked_id = $2',
                 [userId, bookId]
             );
     
             if (existingLike.rows.length === 0) {
-                // Se não existe, insere um novo like
+                // Inserir um novo like
                 await pool.query(
                     'INSERT INTO likes (like_id, liked_id) VALUES ($1, $2)',
                     [userId, bookId]
                 );
-                res.json({ liked: true });
             } else {
-                // Se já existe, remove o like
+                // Remover o like existente
                 await pool.query(
                     'DELETE FROM likes WHERE like_id = $1 AND liked_id = $2',
                     [userId, bookId]
                 );
-                res.json({ liked: false });
             }
+
+            // Contar o número atualizado de likes
+            const likeCountResult = await pool.query(
+                'SELECT COUNT(*) FROM likes WHERE liked_id = $1',
+                [bookId]
+            );
+
+            const likeCount = parseInt(likeCountResult.rows[0].count);
+            const liked = existingLike.rows.length === 0; // Se antes não tinha like, agora tem
+
+            res.json({ liked, likeCount });
         } catch (err) {
             console.error(err);
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     } else {
         res.redirect("/login");
