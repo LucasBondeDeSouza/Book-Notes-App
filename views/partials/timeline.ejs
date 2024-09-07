@@ -42,12 +42,16 @@
                                         style="cursor: pointer;">
                                     </i>
                                     <span class="text-danger">
-                                        <% if (book.like_count >= 1000) { %>
+                                        <% if (book.like_count >= 1000 && book.like_count < 10000) { %>
+                                            <%= (book.like_count / 1000).toFixed(1) + 'k' %>
+                                        <% } else if (book.like_count >= 10000 && book.like_count < 100000) { %>
+                                            <%= (book.like_count / 1000).toFixed(0) + 'k' %>
+                                        <% } else if (book.like_count >= 100000 && book.like_count < 1000000) { %>
                                             <%= (book.like_count / 1000).toFixed(1) + 'k' %>
                                         <% } else { %>
                                             <%= book.like_count %>
                                         <% } %>
-                                    </span>                                    
+                                    </span>                                                                                             
                                 </div>
                             </div>
                         </div>
