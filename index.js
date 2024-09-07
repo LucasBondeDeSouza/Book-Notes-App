@@ -231,8 +231,6 @@ app.get("/home", async (req, res) => {
                 [req.user.id]
             );
 
-            console.log(result.rows)
-
             const totalBooks = parseInt(countResult.rows[0].count);
             const totalPages = Math.ceil(totalBooks / limit);
 
