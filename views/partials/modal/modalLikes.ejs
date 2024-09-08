@@ -22,12 +22,18 @@
             .then(response => response.json())
             .then(likes => {
                 const likeList = document.getElementById('likeList');
+                likeList.style.maxHeight = '350px';
+                likeList.style.overflowY = 'auto';
                 likeList.innerHTML = ''; // Limpa a lista existente
 
                 if (likes.length > 0) {
                     likes.forEach(like => {
                         const listItem = document.createElement('div');
                         listItem.classList.add('d-flex', 'align-items-center');
+
+                        const userLink = document.createElement('a');
+                        userLink.href = `/user/profile?userId=${like.id}`;
+                        userLink.className = 'text-decoration-none text-dark d-flex align-items-center';
 
                         const userInfo = document.createElement('div');
                         userInfo.className = 'd-flex align-items-center';
@@ -53,8 +59,10 @@
                         userName.textContent = like.username;
 
                         userInfo.appendChild(userName);
-                        listItem.appendChild(userInfo);
-                        likeList.appendChild(listItem);
+                        userLink.appendChild(userInfo);  // Adiciona o div com a imagem e nome no link
+                        listItem.appendChild(userLink);  // Adiciona o link no item da lista
+
+                        likeList.appendChild(listItem);  // Adiciona o item da lista no container principal
                     });
                 } else {
                     likeList.innerHTML = '<p>No likes yet.</p>';
