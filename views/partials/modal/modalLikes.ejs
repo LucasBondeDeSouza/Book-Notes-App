@@ -15,5 +15,53 @@
 </div>
 
 <script>
-    
-</script>    
+    function loadLikes(element) {
+        const bookId = element.getAttribute('data-book-id');
+
+        fetch(`/likes?book_id=${bookId}`)
+            .then(response => response.json())
+            .then(likes => {
+                const likeList = document.getElementById('likeList');
+                likeList.innerHTML = ''; // Limpa a lista existente
+
+                if (likes.length > 0) {
+                    likes.forEach(like => {
+                        const listItem = document.createElement('div');
+                        listItem.classList.add('d-flex', 'align-items-center');
+
+                        const userInfo = document.createElement('div');
+                        userInfo.className = 'd-flex align-items-center';
+
+                        if (like.picture) {
+                            const userImage = document.createElement('img');
+                            userImage.src = like.picture;
+                            userImage.alt = like.username;
+                            userImage.className = 'rounded-circle my-2';
+                            userImage.width = 40;
+                            userImage.height = 40;
+                            userImage.style.marginRight = '10px';
+                            userInfo.appendChild(userImage);
+                        } else {
+                            const userIcon = document.createElement('i');
+                            userIcon.className = 'bi bi-person-circle';
+                            userIcon.style.fontSize = '40px';
+                            userIcon.style.marginRight = '10px';
+                            userInfo.appendChild(userIcon);
+                        }
+
+                        const userName = document.createElement('span');
+                        userName.textContent = like.username;
+
+                        userInfo.appendChild(userName);
+                        listItem.appendChild(userInfo);
+                        likeList.appendChild(listItem);
+                    });
+                } else {
+                    likeList.innerHTML = '<p>No likes yet.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching likes:', error);
+            });
+    }
+</script>
