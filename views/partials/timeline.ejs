@@ -29,17 +29,17 @@
                                         data-book-id="<%= book.bookId %>"
                                         style="cursor: pointer;">
                                     </i>
-                                    <span class="text-danger" data-bs-toggle="modal" data-bs-target="#modalLikes">
-                                        <% if (book.like_count >= 1000 && book.like_count < 10000) { %>
-                                            <%= (book.like_count / 1000).toFixed(1) + 'k' %>
-                                        <% } else if (book.like_count >= 10000 && book.like_count < 100000) { %>
-                                            <%= (book.like_count / 1000).toFixed(1) + 'k' %>
-                                        <% } else if (book.like_count >= 100000 && book.like_count < 1000000) { %>
-                                            <%= (book.like_count / 1000).toFixed(1) + 'k' %>
-                                        <% } else { %>
-                                            <%= book.like_count %>
-                                        <% } %>
-                                    </span>                                                                                             
+
+                                    <form action="/likes" method="get">
+                                        <input type="hidden" name="book_id" value="<%= book.bookId %>">
+                                        <span class="text-danger" data-bs-toggle="modal" data-bs-target="#modalLikes" id="showLikesModal" data-book-id="<%= book.bookId %>" onclick="this.closest('form').submit();">
+                                            <% if (book.like_count >= 1000 && book.like_count < 1000000) { %>
+                                                <%= (book.like_count / 1000).toFixed(1) + 'k' %>
+                                            <% } else { %>
+                                                <%= book.like_count %>
+                                            <% } %>
+                                        </span> 
+                                    </form>                                                                                                                               
                                 </div>
                                 <div class="card-stars d-flex text-warning gap-1">
                                     <% for (let i = 0; i < book.rating; i++) { %>
@@ -132,7 +132,8 @@
         button.addEventListener('click', async (event) => {
             const icon = event.currentTarget;
             const bookId = icon.dataset.bookId;
-            const likeCountElement = icon.nextElementSibling;
+            const form = icon.nextElementSibling; // Seleciona o form que contém o span
+            const likeCountElement = form.querySelector('span');
 
             try {
                 const response = await fetch('/book/like', {
@@ -145,14 +146,23 @@
 
                 if (response.ok) {
                     const data = await response.json();
+                    let likeCount = parseInt(likeCountElement.textContent.replace(/[^0-9]/g, ''));
+
                     if (data.liked) {
                         icon.classList.remove('bi-heart');
                         icon.classList.add('bi-heart-fill');
-                        likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1; // Incrementa a contagem de likes
+                        likeCount += 1; // Incrementa a contagem de likes
                     } else {
                         icon.classList.remove('bi-heart-fill');
                         icon.classList.add('bi-heart');
-                        likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1; // Decrementa a contagem de likes
+                        likeCount -= 1; // Decrementa a contagem de likes
+                    }
+
+                    // Atualiza o texto do span com base no número de likes
+                    if (likeCount >= 1000 && likeCount < 1000000) {
+                        likeCountElement.textContent = (likeCount / 1000).toFixed(1) + 'k';
+                    } else {
+                        likeCountElement.textContent = likeCount;
                     }
                 } else {
                     console.error('Failed to like/unlike the book');

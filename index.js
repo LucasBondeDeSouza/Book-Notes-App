@@ -746,6 +746,31 @@ app.post('/book/unlike', async (req, res) => {
     }
 });
 
+app.get('/likes', async (req, res) => {
+    const bookId = req.query.book_id;
+
+    if (req.isAuthenticated()) {
+        try {
+            const result = await pool.query(
+                `SELECT u.id, u.username, u.picture
+                FROM likes l
+                JOIN users u ON l.user_id = u.id
+                WHERE l.book_id = $1;`,
+                [bookId]
+            )
+
+            const likes = result.rows
+            console.log(likes)
+
+            res.json(likes)
+        } catch (err) {
+            console.log(err);
+        }
+    } else {
+        res.redirect("/login");
+    }
+});
+
 app.get(
     "/auth/google", 
     passport.authenticate("google", {

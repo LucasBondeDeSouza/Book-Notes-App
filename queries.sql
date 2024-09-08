@@ -23,7 +23,7 @@ CREATE TABLE followers (
 
 CREATE TABLE likes (
     id SERIAL PRIMARY KEY,
-    like_id INTEGER REFERENCES users(id),
-    liked_id INTEGER REFERENCES books(id),
-    UNIQUE (like_id, liked_id)
+    user_id INTEGER REFERENCES users(id),
+    book_id INTEGER REFERENCES books(id),
+    UNIQUE (user_id, book_id)
 );
