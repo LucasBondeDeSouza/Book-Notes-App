@@ -196,7 +196,7 @@ app.get("/home", async (req, res) => {
         try {
             const result = await pool.query(
                 `SELECT u.id AS user_id, u.username, u.picture, b.id AS book_id, b.title, b.review, b.rating,
-                        CASE WHEN l.like_id IS NOT NULL THEN TRUE ELSE FALSE END AS liked_by_user,
+                        CASE WHEN l.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS liked_by_user,
                         COALESCE(likes_count.count, 0) AS like_count
                 FROM (
                     SELECT * FROM books
@@ -205,12 +205,12 @@ app.get("/home", async (req, res) => {
                 ) b
                 JOIN users u ON b.user_id = u.id
                 JOIN followers f ON u.id = f.followed_id
-                LEFT JOIN likes l ON b.id = l.liked_id AND l.like_id = $1
+                LEFT JOIN likes l ON b.id = l.book_id AND l.user_id = $1
                 LEFT JOIN (
-                    SELECT liked_id, COUNT(*) AS count
+                    SELECT book_id, COUNT(*) AS count
                     FROM likes
-                    GROUP BY liked_id
-                ) likes_count ON b.id = likes_count.liked_id
+                    GROUP BY book_id
+                ) likes_count ON b.id = likes_count.book_id
                 WHERE f.follower_id = $1
                 ORDER BY b.id DESC
                 LIMIT $2 OFFSET $3`,
@@ -689,27 +689,27 @@ app.post('/book/like', async (req, res) => {
     if (req.isAuthenticated()) {
         try {
             const existingLike = await pool.query(
-                'SELECT * FROM likes WHERE like_id = $1 AND liked_id = $2',
+                'SELECT * FROM likes WHERE user_id = $1 AND book_id = $2',
                 [userId, bookId]
             );
     
             if (existingLike.rows.length === 0) {
                 // Inserir um novo like
                 await pool.query(
-                    'INSERT INTO likes (like_id, liked_id) VALUES ($1, $2)',
+                    'INSERT INTO likes (user_id, book_id) VALUES ($1, $2)',
                     [userId, bookId]
                 );
             } else {
                 // Remover o like existente
                 await pool.query(
-                    'DELETE FROM likes WHERE like_id = $1 AND liked_id = $2',
+                    'DELETE FROM likes WHERE user_id = $1 AND book_id = $2',
                     [userId, bookId]
                 );
             }
 
             // Contar o número atualizado de likes
             const likeCountResult = await pool.query(
-                'SELECT COUNT(*) FROM likes WHERE liked_id = $1',
+                'SELECT COUNT(*) FROM likes WHERE book_id = $1',
                 [bookId]
             );
 
@@ -735,7 +735,7 @@ app.post('/book/unlike', async (req, res) => {
         try {
             // Remove o like
             await pool.query(
-                'DELETE FROM likes WHERE like_id = $1 AND liked_id = $2',
+                'DELETE FROM likes WHERE user_id = $1 AND book_id = $2',
                 [userId, bookId]
             );
         } catch (err) {

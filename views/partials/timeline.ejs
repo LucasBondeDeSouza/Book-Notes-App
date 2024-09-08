@@ -33,7 +33,7 @@
                                         <% if (book.like_count >= 1000 && book.like_count < 10000) { %>
                                             <%= (book.like_count / 1000).toFixed(1) + 'k' %>
                                         <% } else if (book.like_count >= 10000 && book.like_count < 100000) { %>
-                                            <%= (book.like_count / 1000).toFixed(0) + 'k' %>
+                                            <%= (book.like_count / 1000).toFixed(1) + 'k' %>
                                         <% } else if (book.like_count >= 100000 && book.like_count < 1000000) { %>
                                             <%= (book.like_count / 1000).toFixed(1) + 'k' %>
                                         <% } else { %>

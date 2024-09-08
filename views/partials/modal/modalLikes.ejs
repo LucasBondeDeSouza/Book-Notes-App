@@ -5,8 +5,65 @@
                 <h1 class="modal-title fs-5" id="exampleModalLabel">Likes</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
             <div class="modal-body">
+                <div id="likesList">
+                    <!-- Lista de likes será injetada aqui -->
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modalLikesElement = document.getElementById('modalLikes');
+        modalLikesElement.addEventListener('show.bs.modal', async function () {
+            const showLikesModal = document.getElementById('showLikesModal');
+            const bookId = showLikesModal.getAttribute('data-book-id');
+            const response = await fetch(`/likes?book_id=${bookId}`);
+            const likes = await response.json();
+
+            const likesList = document.getElementById('likesList');
+            likesList.style.maxHeight = '350px';
+            likesList.style.overflowY = 'auto';
+            likesList.innerHTML = ''; // Limpa a lista existente
+
+            likes.forEach(like => {
+                const userContainer = document.createElement('div');
+
+                const userLink = document.createElement('a');
+                userLink.href = `/user/profile?userId=${like.id}`;
+                userLink.className = 'text-decoration-none text-dark d-flex align-items-center justify-content-between';
+
+                const userInfo = document.createElement('div');
+                userInfo.className = 'd-flex align-items-center';
+
+                if (like.picture) {
+                    const userImage = document.createElement('img');
+                    userImage.src = like.picture;
+                    userImage.className = 'rounded-circle my-2';
+                    userImage.style.width = '40px';
+                    userImage.style.height = '40px';
+                    userImage.style.marginRight = '10px';
+                    userInfo.appendChild(userImage);
+                } else {
+                    const userIcon = document.createElement('i');
+                    userIcon.className = 'bi bi-person-circle';
+                    userIcon.style.fontSize = '40px';
+                    userIcon.style.marginRight = '10px';
+                    userInfo.appendChild(userIcon);
+                }
+
+                const userName = document.createElement('span');
+                userName.textContent = like.username;
+
+                userInfo.appendChild(userName);
+
+                userLink.appendChild(userInfo);  // Adiciona o div com a imagem e nome no link
+                userContainer.appendChild(userLink);  // Adiciona o link no container
+                likesList.appendChild(userContainer); // Adiciona o container na lista
+            });
+        });
+    });
+</script>
