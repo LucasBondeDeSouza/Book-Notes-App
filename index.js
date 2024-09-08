@@ -760,7 +760,6 @@ app.get('/likes', async (req, res) => {
             )
 
             const likes = result.rows
-            console.log(likes)
 
             res.json(likes)
         } catch (err) {
