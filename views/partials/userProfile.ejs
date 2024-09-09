@@ -41,22 +41,36 @@
                 </div>
         
                 <div class="d-flex align-items-center gap-3">
-                    <h6 class="text-secondary">0 books</h6>
+                    <div class="d-flex gap-1">
+                        <h6>0</h6>
+                        <h6 class="text-secondary">books</h6>
+                    </div>
                     
                     <form action="/followers" method="get">
                         <input type="hidden" name="user_id" value="<%= userEmpty[0].id %>">
                         <button type="submit" style="display: none;"></button>
-                        <h6 class="text-secondary" id="showFollowerModal" data-user-id="<%= userEmpty[0].id %>" data-bs-toggle="modal" data-bs-target="#modalFollower">
-                            <%= totalFollowers %> followers
-                        </h6>                       
+                        <div class="d-flex gap-1">
+                            <h6 id="showFollowerModal" data-user-id="<%= userEmpty[0].id %>" data-bs-toggle="modal" data-bs-target="#modalFollower">
+                                <%= totalFollowers %>
+                            </h6>
+                            <h6 class="text-secondary" id="showFollowerModal" data-user-id="<%= userEmpty[0].id %>" data-bs-toggle="modal" data-bs-target="#modalFollower">
+                                followers
+                            </h6>
+                            
+                        </div>                       
                     </form>
 
                     <form action="/following" method="get">
                         <input type="hidden" name="user_id" value="<%= userEmpty[0].id %>">
                         <button type="submit" style="display: none;"></button>
-                        <h6 class="text-secondary" id="showFollowingModal" data-user-id="<%= userEmpty[0].id %>" data-bs-toggle="modal" data-bs-target="#modalFollowing">
-                            <%= totalFollowing %> following
-                        </h6>                        
+                        <div class="d-flex gap-1">
+                            <h6 id="showFollowingModal" data-user-id="<%= userEmpty[0].id %>" data-bs-toggle="modal" data-bs-target="#modalFollowing">
+                                <%= totalFollowing %>
+                            </h6>
+                            <h6 class="text-secondary" data-user-id="<%= userEmpty[0].id %>" data-bs-toggle="modal" data-bs-target="#modalFollowing">
+                                following
+                            </h6>
+                        </div>                        
                     </form>
                 </div>
             </div>
@@ -107,22 +121,35 @@
                 </div>
         
                 <div class="d-flex align-items-center gap-3">
-                    <h6 class="text-secondary"><%= totalBooks %> books</h6>
+                    <div class="d-flex gap-1">
+                        <h6><%= totalBooks %></h6>
+                        <h6 class="text-secondary">books</h6>
+                    </div>
 
                     <form action="/followers" method="get">
                         <input type="hidden" name="user_id" value="<%= user_id %>">
                         <button type="submit" style="display: none;"></button>
-                        <h6 class="text-secondary" id="showFollowerModal" data-user-id="<%= user_id %>" data-bs-toggle="modal" data-bs-target="#modalFollower">
-                            <%= totalFollowers %> followers
-                        </h6>                       
+                        <div class="d-flex gap-1">
+                            <h6 id="showFollowerModal" data-user-id="<%= user_id %>" data-bs-toggle="modal" data-bs-target="#modalFollower">
+                                <%= totalFollowers %>
+                            </h6> 
+                            <h6 class="text-secondary" data-user-id="<%= user_id %>" data-bs-toggle="modal" data-bs-target="#modalFollower">
+                                followers
+                            </h6>
+                        </div>                      
                     </form>
 
                     <form action="/following" method="get">
                         <input type="hidden" name="user_id" value="<%= user_id %>">
                         <button type="submit" style="display: none;"></button>
-                        <h6 class="text-secondary" id="showFollowingModal" data-user-id="<%= user_id %>" data-bs-toggle="modal" data-bs-target="#modalFollowing">
-                            <%= totalFollowing %> following
-                        </h6>                        
+                        <div class="d-flex gap-1">
+                            <h6 id="showFollowingModal" data-user-id="<%= user_id %>" data-bs-toggle="modal" data-bs-target="#modalFollowing">
+                                <%= totalFollowing %>
+                            </h6>
+                            <h6 class="text-secondary" data-user-id="<%= user_id %>" data-bs-toggle="modal" data-bs-target="#modalFollowing">
+                                following
+                            </h6>
+                        </div>                      
                     </form>
                 </div>
             </div>
