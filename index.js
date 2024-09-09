@@ -748,15 +748,21 @@ app.post('/book/unlike', async (req, res) => {
 
 app.get('/likes', async (req, res) => {
     const bookId = req.query.book_id;
+    const loggedInUserId = req.user.id;
 
     if (req.isAuthenticated()) {
         try {
             const result = await pool.query(
-                `SELECT u.id, u.username, u.picture
+                `SELECT u.id, u.username, u.picture,
+                        CASE 
+                            WHEN f.follower_id IS NOT NULL THEN true 
+                            ELSE false 
+                        END AS is_following
                 FROM likes l
                 JOIN users u ON l.user_id = u.id
+                LEFT JOIN followers f ON f.followed_id = u.id AND f.follower_id = $2
                 WHERE l.book_id = $1;`,
-                [bookId]
+                [bookId, loggedInUserId]
             )
 
             const likes = result.rows
