@@ -106,19 +106,49 @@ app.get("/profile", async (req, res) => {
 
         try {
             const result = await pool.query(
-                "SELECT * FROM books WHERE user_id = $1 ORDER BY id DESC LIMIT $2 OFFSET $3",
-                [req.user.id, limit, offset]
+                `SELECT b.id AS book_id, b.title, b.review, b.rating,
+                        CASE WHEN l.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS liked_by_user,
+                        COALESCE(likes_count.count, 0) AS like_count
+                FROM books b
+                LEFT JOIN likes l ON b.id = l.book_id AND l.user_id = $1
+                LEFT JOIN (
+                    SELECT book_id, COUNT(*) AS count
+                    FROM likes
+                    GROUP BY book_id
+                ) likes_count ON b.id = likes_count.book_id
+                WHERE b.user_id = $2
+                ORDER BY b.id DESC
+                LIMIT $3 OFFSET $4`,
+                [req.user.id, req.user.id, limit, offset]
             );
 
             const countResult = await pool.query(
-                "SELECT COUNT(*) FROM books WHERE user_id = $1",
-                [req.user.id]
+                `SELECT COUNT(*)
+                FROM books b
+                LEFT JOIN likes l ON b.id = l.book_id AND l.user_id = $1
+                LEFT JOIN (
+                    SELECT book_id, COUNT(*) AS count
+                    FROM likes
+                    GROUP BY book_id
+                ) likes_count ON b.id = likes_count.book_id
+                WHERE b.user_id = $2`,
+                [req.user.id, req.user.id]
             );
 
             const totalBooks = parseInt(countResult.rows[0].count);
             const totalPages = Math.ceil(totalBooks / limit);
 
-            const listBooks = await Promise.all(result.rows.map(fetchBookData));
+            const listBooks = await Promise.all(result.rows.map(async (row) => {
+                const book = {
+                    title: row.title,
+                    review: row.review,
+                    rating: row.rating,
+                    bookId: row.book_id,
+                    liked_by_user: row.liked_by_user,
+                    like_count: row.like_count
+                };
+                return fetchBookData(book);
+            }));
 
             const followersResult = await pool.query(
                 "SELECT u.id, u.username, u.picture FROM users u JOIN followers f ON u.id = f.followed_id WHERE f.follower_id = $1",
