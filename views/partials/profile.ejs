@@ -112,7 +112,7 @@
                                     </i>
                     
                                     <form action="/likes" method="get">
-                                        <input type="hidden" name="book_id" value="<%= book.bookId %>">
+                                        <input type="hidden" name="book_id" value="<%= book.bookId || 0 %>">
                                         <span class="text-danger" data-bs-toggle="modal" data-bs-target="#modalLikes" data-book-id="<%= book.bookId %>" onclick="event.preventDefault(); loadLikes(this)">
                                             <% if (book.like_count >= 1000 && book.like_count < 1000000) { %>
                                                 <%= (book.like_count / 1000).toFixed(1) + 'k' %>
