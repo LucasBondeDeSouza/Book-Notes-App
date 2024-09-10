@@ -110,7 +110,6 @@
                                     <i class="bi <%= book.liked_by_user ? 'bi-heart-fill text-danger' : 'bi-heart text-danger' %> like-btn" 
                                         data-book-id="<%= book.bookId %>" style="cursor: pointer;">
                                     </i>
-                                     
                     
                                     <form action="/likes" method="get">
                                         <input type="hidden" name="book_id" value="<%= book.bookId %>">
@@ -121,7 +120,7 @@
                                                 <%= book.like_count %>
                                             <% } %>
                                         </span> 
-                                    </form>                                                                                                                                                                  
+                                    </form>                                                                                                                                                                   
                                 </div>
                                 <div class="card-stars d-flex text-warning gap-1">
                                     <% for (let i = 0; i < book.rating; i++) { %>
@@ -249,50 +248,5 @@
       inputBookRating.addEventListener('input', () => {
         valueDisplay.textContent = inputBookRating.value
       })
-    });
-
-    document.querySelectorAll('.like-btn').forEach(button => {
-        button.addEventListener('click', async (event) => {
-            const icon = event.currentTarget;
-            const bookId = icon.dataset.bookId;
-            const form = icon.nextElementSibling; // Seleciona o form que contém o span
-            const likeCountElement = form.querySelector('span');
-
-            try {
-                const response = await fetch('/book/like', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ bookId })
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    let likeCount = parseInt(likeCountElement.textContent.replace(/[^0-9]/g, ''));
-
-                    if (data.liked) {
-                        icon.classList.remove('bi-heart');
-                        icon.classList.add('bi-heart-fill');
-                        likeCount += 1; // Incrementa a contagem de likes
-                    } else {
-                        icon.classList.remove('bi-heart-fill');
-                        icon.classList.add('bi-heart');
-                        likeCount -= 1; // Decrementa a contagem de likes
-                    }
-
-                    // Atualiza o texto do span com base no número de likes
-                    if (likeCount >= 1000 && likeCount < 1000000) {
-                        likeCountElement.textContent = (likeCount / 1000).toFixed(1) + 'k';
-                    } else {
-                        likeCountElement.textContent = likeCount;
-                    }
-                } else {
-                    console.error('Failed to like/unlike the book');
-                }
-            } catch (err) {
-                console.error('Error:', err);
-            }
-        });
     });
 </script>
