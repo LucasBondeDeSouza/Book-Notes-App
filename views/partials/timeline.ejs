@@ -29,17 +29,17 @@
                                         data-book-id="<%= book.bookId %>"
                                         style="cursor: pointer;">
                                     </i>
-
+                                    
                                     <form action="/likes" method="get">
                                         <input type="hidden" name="book_id" value="<%= book.bookId %>">
-                                        <span class="text-danger" data-bs-toggle="modal" data-bs-target="#modalLikes" data-book-id="<%= book.bookId %>" onclick="event.preventDefault(); loadLikes(this)">
-                                            <% if (book.like_count >= 1000 && book.like_count < 1000000) { %>
-                                                <%= (book.like_count / 1000).toFixed(1) + 'k' %>
-                                            <% } else { %>
-                                                <%= book.like_count %>
-                                            <% } %>
-                                        </span> 
-                                    </form>                                                                                                                                                                  
+                                        <button type="submit" style="display: none;"></button>
+
+                                        <div class="d-flex gap-1">
+                                            <span id="showLikesModal-<%= book.bookId %>" data-book-id="<%= book.bookId %>" data-bs-toggle="modal" data-bs-target="#modalLikes">
+                                                <%= book.like_count >= 1000 && book.like_count < 1000000 ? (book.like_count / 1000).toFixed(1) + 'k' : book.like_count %>
+                                            </span>
+                                        </div>                                        
+                                    </form>                                    
                                 </div>
                                 <div class="card-stars d-flex text-warning gap-1">
                                     <% for (let i = 0; i < book.rating; i++) { %>

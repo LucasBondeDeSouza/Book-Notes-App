@@ -1,10 +1,11 @@
-<div class="modal fade" id="modalLikes" tabindex="-1" aria-labelledby="modalLikesLabel" aria-hidden="true">
+<div class="modal fade" id="modalLikes" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="modalLikesLabel">Likes</h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Likes</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
             <div class="modal-body">
                 <div id="likeList">
                     <!-- Lista de likes será injetada aqui -->
@@ -17,30 +18,31 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const modalElement = document.getElementById('modalLikes');
-        modalElement.addEventListener('show.bs.modal', async function () {
-            const showFollowingModal = document.getElementById('showFollowingModal');
-            const bookId = showFollowingModal.getAttribute('data-book-id');
+        
+        modalElement.addEventListener('show.bs.modal', async function (event) {
+            const button = event.relatedTarget; // Botão que acionou o modal
+            const bookId = button.getAttribute('data-book-id'); // Pega o data-book-id do botão clicado
             const response = await fetch(`/likes?book_id=${bookId}`);
-            const likes = await response.json();
+            const users = await response.json();
 
             const likeList = document.getElementById('likeList');
             likeList.style.maxHeight = '350px';
             likeList.style.overflowY = 'auto';
             likeList.innerHTML = ''; // Limpa a lista existente
 
-            likes.forEach(like => {
+            users.forEach(user => {
                 const userContainer = document.createElement('div');
 
                 const userLink = document.createElement('a');
-                userLink.href = `/user/profile?userId=${like.id}`;
+                userLink.href = `/user/profile?userId=${user.id}`;
                 userLink.className = 'text-decoration-none text-dark d-flex align-items-center justify-content-between';
 
                 const userInfo = document.createElement('div');
                 userInfo.className = 'd-flex align-items-center';
 
-                if (like.picture) {
+                if (user.picture) {
                     const userImage = document.createElement('img');
-                    userImage.src = following.picture;
+                    userImage.src = user.picture;
                     userImage.className = 'rounded-circle my-2';
                     userImage.style.width = '40px';
                     userImage.style.height = '40px';
@@ -55,126 +57,37 @@
                 }
 
                 const userName = document.createElement('span');
-                userName.textContent = like.username;
+                userName.textContent = user.username;
 
                 userInfo.appendChild(userName);
 
                 const followForm = document.createElement('form');
                 followForm.method = 'post';
                 followForm.className = 'mb-0';
-                followForm.action = like.is_following ? '/unfollow' : '/follow';
+                followForm.action = user.isfollowing ? '/unfollow' : '/follow';
 
                 const hiddenInput = document.createElement('input');
                 hiddenInput.type = 'hidden';
                 hiddenInput.name = 'userId';
-                hiddenInput.value = like.id;
+                hiddenInput.value = user.id;
 
                 const followButton = document.createElement('button');
                 followButton.type = 'submit';
-                followButton.className = `btn btn-${like.is_following ? 'secondary' : 'primary'} btn-sm`;
+                followButton.className = `btn btn-${user.isfollowing ? 'secondary' : 'primary'} btn-sm`;
 
                 const icon = document.createElement('i');
-                icon.className = `fas fa-user-${like.is_following ? 'check' : 'plus'}`;
+                icon.className = `fas fa-user-${user.isfollowing ? 'check' : 'plus'}`;
                 followButton.appendChild(icon);
 
                 followForm.appendChild(hiddenInput);
                 followForm.appendChild(followButton);
 
-                userLink.appendChild(userInfo);  // Adiciona o div com a imagem e nome no link
-                userLink.appendChild(followForm);  // Adiciona o formulário de follow/unfollow no link
+                userLink.appendChild(userInfo);
+                userLink.appendChild(followForm);
 
-                userContainer.appendChild(userLink);  // Adiciona o link no container
-                likeList.appendChild(userContainer); // Adiciona o container na lista
+                userContainer.appendChild(userLink);
+                likeList.appendChild(userContainer);
             });
         });
     });
-</script>
-
-<script>
-    function loadLikes(element) {
-        const bookId = element.getAttribute('data-book-id');
-
-        fetch(`/likes?book_id=${bookId}`)
-            .then(response => response.json())
-            .then(likes => {
-                const likeList = document.getElementById('likeList');
-                likeList.style.maxHeight = '350px';
-                likeList.style.overflowY = 'auto';
-                likeList.innerHTML = ''; // Limpa a lista existente
-
-                if (likes.length > 0) {
-                    likes.forEach(like => {
-                        const listItem = document.createElement('div');
-                        listItem.classList.add('d-flex', 'align-items-center', 'justify-content-between');
-
-                        // Container para a imagem e nome
-                        const userInfo = document.createElement('div');
-                        userInfo.className = 'd-flex align-items-center';
-
-                        // Adicionando a imagem ou ícone de usuário
-                        if (like.picture) {
-                            const userImage = document.createElement('img');
-                            userImage.src = like.picture;
-                            userImage.alt = like.username;
-                            userImage.className = 'rounded-circle my-2';
-                            userImage.style.width = '40px';
-                            userImage.style.height = '40px';
-                            userImage.style.marginRight = '10px';
-                            userInfo.appendChild(userImage);
-                        } else {
-                            const userIcon = document.createElement('i');
-                            userIcon.className = 'bi bi-person-circle';
-                            userIcon.style.fontSize = '40px';
-                            userIcon.style.marginRight = '10px';
-                            userInfo.appendChild(userIcon);
-                        }
-
-                        // Adicionando o nome do usuário
-                        const userName = document.createElement('span');
-                        userName.textContent = like.username;
-                        userInfo.appendChild(userName);
-
-                        // Adicionando o link ao item da lista
-                        const userLink = document.createElement('a');
-                        userLink.href = `/user/profile?userId=${like.id}`;
-                        userLink.className = 'text-decoration-none text-dark d-flex align-items-center';
-                        userLink.appendChild(userInfo);
-                        listItem.appendChild(userLink);
-
-                        // Criando o formulário de seguir/não seguir
-                        const followForm = document.createElement('form');
-                        followForm.method = 'post';
-                        followForm.className = 'mb-0';
-                        followForm.action = like.is_following ? '/unfollow' : '/follow';
-
-                        const hiddenInput = document.createElement('input');
-                        hiddenInput.type = 'hidden';
-                        hiddenInput.name = 'userId';
-                        hiddenInput.value = like.id;
-
-                        const followButton = document.createElement('button');
-                        followButton.type = 'submit';
-                        followButton.className = `btn btn-${like.is_following ? 'secondary' : 'primary'} btn-sm`;
-
-                        const icon = document.createElement('i');
-                        icon.className = `fas fa-user-${like.is_following ? 'check' : 'plus'}`;
-                        followButton.appendChild(icon);
-
-                        followForm.appendChild(hiddenInput);
-                        followForm.appendChild(followButton);
-
-                        // Adicionando o formulário ao item da lista
-                        listItem.appendChild(followForm);
-
-                        // Adicionando o item da lista ao container principal
-                        likeList.appendChild(listItem);
-                    });
-                } else {
-                    likeList.innerHTML = '<p>No likes yet.</p>';
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching likes:', error);
-            });
-    }
 </script>

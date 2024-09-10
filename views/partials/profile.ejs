@@ -66,13 +66,6 @@
         </div>
     </div>
 
-    <!-- Filtro de Busca -->
-    <!--<div class="mb-4 d-flex filter">
-        <i class="bi bi-search fw-bold fs-5 d-none d-lg-inline"></i>
-        <i class="bi bi-search fw-bold d-inline d-lg-none"></i>
-        <input type="text" id="bookFilter" placeholder="Search">
-    </div>-->
-
     <div class="cards-group">
         <% if (yourBooks.length > 0) { %>
             <% for (let book of yourBooks) { %>
@@ -107,20 +100,22 @@
 
                             <div class="d-flex align-items-center justify-content-between" style="width: 100%;">
                                 <div class="d-flex align-items-center gap-1">
-                                    <i class="bi <%= book.liked_by_user ? 'bi-heart-fill text-danger' : 'bi-heart text-danger' %> like-btn" 
-                                        data-book-id="<%= book.bookId %>" style="cursor: pointer;">
+                                    <i 
+                                        class="bi <%= book.liked_by_user ? 'bi-heart-fill text-danger' : 'bi-heart text-danger' %> like-btn" 
+                                        data-book-id="<%= book.bookId %>"
+                                        style="cursor: pointer;">
                                     </i>
-                    
+                                    
                                     <form action="/likes" method="get">
-                                        <input type="hidden" name="book_id" value="<%= book.bookId || 0 %>">
-                                        <span class="text-danger" data-bs-toggle="modal" data-bs-target="#modalLikes" data-book-id="<%= book.bookId %>" onclick="event.preventDefault(); loadLikes(this)">
-                                            <% if (book.like_count >= 1000 && book.like_count < 1000000) { %>
-                                                <%= (book.like_count / 1000).toFixed(1) + 'k' %>
-                                            <% } else { %>
-                                                <%= book.like_count %>
-                                            <% } %>
-                                        </span> 
-                                    </form>                                                                                                                                                                   
+                                        <input type="hidden" name="book_id" value="<%= book.bookId %>">
+                                        <button type="submit" style="display: none;"></button>
+
+                                        <div class="d-flex gap-1">
+                                            <span id="showLikesModal-<%= book.bookId %>" data-book-id="<%= book.bookId %>" data-bs-toggle="modal" data-bs-target="#modalLikes">
+                                                <%= book.like_count >= 1000 && book.like_count < 1000000 ? (book.like_count / 1000).toFixed(1) + 'k' : book.like_count %>
+                                            </span>
+                                        </div>                                        
+                                    </form>                                                                                                                                                                                                    
                                 </div>
                                 <div class="card-stars d-flex text-warning gap-1">
                                     <% for (let i = 0; i < book.rating; i++) { %>

@@ -776,31 +776,24 @@ app.get('/likes', async (req, res) => {
     const bookId = req.query.book_id;
     const loggedInUserId = req.user.id;
 
-    if (req.isAuthenticated()) {
-        try {
-            const result = await pool.query(
-                `SELECT u.id, u.username, u.picture,
-                        CASE 
-                            WHEN f.follower_id IS NOT NULL THEN true 
-                            ELSE false 
-                        END AS is_following
-                FROM likes l
-                JOIN users u ON l.user_id = u.id
-                LEFT JOIN followers f ON f.followed_id = u.id AND f.follower_id = $2
-                WHERE l.book_id = $1;`,
-                [bookId, loggedInUserId]
-            )
+    try {
+        const likesResult = await pool.query(
+            `SELECT u.id, u.username, u.picture,
+                    EXISTS (SELECT 1 FROM followers f WHERE f.follower_id = $1 AND f.followed_id = u.id) AS isFollowing
+             FROM users u
+             JOIN likes l ON u.id = l.user_id
+             WHERE l.book_id = $2`,
+            [loggedInUserId, bookId]
+        );
 
-            const likes = result.rows
-
-            res.json(likes)
-        } catch (err) {
-            console.log(err);
-        }
-    } else {
-        res.redirect("/login");
+        const users = likesResult.rows;
+        res.json(users);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao buscar usuários que curtiram este livro.' });
     }
 });
+
 
 app.get(
     "/auth/google", 
