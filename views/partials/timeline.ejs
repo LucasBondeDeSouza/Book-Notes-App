@@ -23,7 +23,7 @@
                             </div>
     
                             <div class="d-flex align-items-center justify-content-between" style="width: 100%;">
-                                <div class="d-flex align-items-center gap-1">
+                                <div class="d-flex align-items-center gap-2">
                                     <i 
                                         class="bi <%= book.liked_by_user ? 'bi-heart-fill text-danger' : 'bi-heart text-danger' %> like-btn" 
                                         data-book-id="<%= book.bookId %>"
@@ -33,12 +33,10 @@
                                     <form action="/likes" method="get">
                                         <input type="hidden" name="book_id" value="<%= book.bookId %>">
                                         <button type="submit" style="display: none;"></button>
-
-                                        <div class="d-flex gap-1">
-                                            <span id="showLikesModal-<%= book.bookId %>" data-book-id="<%= book.bookId %>" data-bs-toggle="modal" data-bs-target="#modalLikes">
-                                                <%= book.like_count >= 1000 && book.like_count < 1000000 ? (book.like_count / 1000).toFixed(1) + 'k' : book.like_count %>
-                                            </span>
-                                        </div>                                        
+                                        
+                                        <span class="text-danger" id="showLikesModal-<%= book.bookId %>" data-book-id="<%= book.bookId %>" data-bs-toggle="modal" data-bs-target="#modalLikes">
+                                            <%= book.like_count >= 1000 && book.like_count < 1000000 ? (book.like_count / 1000).toFixed(1) + 'k' : book.like_count %>
+                                        </span>                                       
                                     </form>                                    
                                 </div>
                                 <div class="card-stars d-flex text-warning gap-1">
