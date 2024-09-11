@@ -182,16 +182,34 @@
                                 <img src="https://covers.openlibrary.org/b/id/<%= book.cover %>-L.jpg" alt="book" onclick="flipCard(this)">
                             </div>
 
-                            <div class="card-stars d-flex text-warning gap-1">
-                                <% for (let i = 0; i < book.rating; i++) { %>
-                                    <i class="bi bi-star-fill"></i>
-                                <% } %>
-
-                                <% if (book.rating < 5) { %>
-                                    <% for (let i = book.rating; i < 5; i++) { %>
-                                        <i class="bi bi-star"></i>
+                            <div class="d-flex align-items-center justify-content-between" style="width: 100%;">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i 
+                                        class="bi <%= book.liked_by_user ? 'bi-heart-fill text-danger' : 'bi-heart text-danger' %> like-btn" 
+                                        data-book-id="<%= book.book_id %>"
+                                        style="cursor: pointer;">
+                                    </i>
+                                    
+                                    <form action="/likes" method="get">
+                                        <input type="hidden" name="book_id" value="<%= book.book_id %>">
+                                        <button type="submit" style="display: none;"></button>
+                                        
+                                        <span class="text-danger" id="showLikesModal-<%= book.book_id %>" data-book-id="<%= book.book_id %>" data-bs-toggle="modal" data-bs-target="#modalLikes">
+                                            <%= book.like_count >= 1000 && book.like_count < 1000000 ? (book.like_count / 1000).toFixed(1) + 'k' : book.like_count %>
+                                        </span>                                       
+                                    </form>                                    
+                                </div>
+                                <div class="card-stars d-flex text-warning gap-1">
+                                    <% for (let i = 0; i < book.rating; i++) { %>
+                                        <i class="bi bi-star-fill"></i>
                                     <% } %>
-                                <% } %>
+        
+                                    <% if (book.rating < 5) { %>
+                                        <% for (let i = book.rating; i < 5; i++) { %>
+                                            <i class="bi bi-star"></i>
+                                        <% } %>
+                                    <% } %>
+                                </div>
                             </div>
                         </div>
 

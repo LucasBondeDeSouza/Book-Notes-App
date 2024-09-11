@@ -508,7 +508,7 @@ app.get("/search/book", async (req, res) => {
 })
 
 app.get("/user/profile", async (req, res) => {
-    const user_id = req.query.userId
+    const user_id = req.query.userId;
 
     const page = parseInt(req.query.page) || 1;
     const limit = 6; // Número de livros por página
@@ -522,17 +522,66 @@ app.get("/user/profile", async (req, res) => {
     const isFollowing = followingResult.rowCount > 0;
 
     if (req.isAuthenticated()) {
-
         if (user_id == req.user.id) {
-            res.redirect('/profile')
+            res.redirect('/profile');
         } else {
             try {
-                const searchUser = await pool.query(
-                    "SELECT title, review, rating, username, picture FROM books JOIN users ON users.id = books.user_id WHERE users.id = $1 ORDER BY books.id DESC LIMIT $2 OFFSET $3",
-                    [user_id, limit, offset]
-                )
+                const result = await pool.query(
+                    `SELECT b.id AS book_id, b.title, b.review, b.rating,
+                            CASE WHEN l.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS liked_by_user,
+                            COALESCE(likes_count.count, 0) AS like_count,
+                            u.username, u.picture
+                    FROM books b
+                    LEFT JOIN users u ON u.id = b.user_id
+                    LEFT JOIN likes l ON b.id = l.book_id AND l.user_id = $1
+                    LEFT JOIN (
+                        SELECT book_id, COUNT(*) AS count
+                        FROM likes
+                        GROUP BY book_id
+                    ) likes_count ON b.id = likes_count.book_id
+                    WHERE b.user_id = $2
+                    ORDER BY b.id DESC
+                    LIMIT $3 OFFSET $4`,
+                    [req.user.id, user_id, limit, offset]
+                );
 
-                // Obtenha os seguidores para a visualização
+                const countResult = await pool.query(
+                    `SELECT COUNT(*)
+                    FROM books b
+                    LEFT JOIN likes l ON b.id = l.book_id AND l.user_id = $1
+                    LEFT JOIN (
+                        SELECT book_id, COUNT(*) AS count
+                        FROM likes
+                        GROUP BY book_id
+                    ) likes_count ON b.id = likes_count.book_id
+                    WHERE b.user_id = $2`,
+                    [req.user.id, user_id]
+                );
+
+                const totalBooks = parseInt(countResult.rows[0].count);
+                const totalPages = Math.ceil(totalBooks / limit);
+
+                const searchedUser = await Promise.all(result.rows.map(async (row) => {
+                    try {
+                        const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${row.title}`);
+                        const cover = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].cover_i) ? searchBook.data.docs[0].cover_i : 'cover Not Found';
+                        const author = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].author_name) ? searchBook.data.docs[0].author_name[0] : 'Author Not Found';
+
+                        return {
+                            ...row,
+                            cover: cover,
+                            author: author
+                        };
+                    } catch (error) {
+                        console.error(`Error fetching data for book ${row.title}:`, error);
+                        return {
+                            ...row,
+                            cover: 'Error fetching cover',
+                            author: 'Error fetching author'
+                        };
+                    }
+                }));
+
                 const followersResult = await pool.query(
                     "SELECT u.id, u.username, u.picture FROM users u JOIN followers f ON u.id = f.followed_id WHERE f.follower_id = $1",
                     [req.user.id]
@@ -553,75 +602,30 @@ app.get("/user/profile", async (req, res) => {
                     [user_id]
                 );
                 const totalFollowing = countFollowing.rows[0].count;
-    
-                if (searchUser.rows.length > 0) {
-                    const countResult = await pool.query(
-                        "SELECT COUNT(*) FROM books JOIN users ON users.id = books.user_id WHERE users.id = $1",
-                        [user_id]
-                    );
-        
-                    const totalBooks = parseInt(countResult.rows[0].count);
-                    const totalPages = Math.ceil(totalBooks / limit);
-                    
-                    const searchedUser = await Promise.all(searchUser.rows.map(async (book) => {
-                        try {
-                            const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${book.title}`);
-                            const cover = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].cover_i) ? searchBook.data.docs[0].cover_i : 'cover Not Found';
-                            const author = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].author_name) ? searchBook.data.docs[0].author_name[0] : 'Author Not Found';
-                
-                            return {
-                                ...book,
-                                cover: cover,
-                                author: author
-                            };
-                        } catch (error) {
-                            console.error(`Error fetching data for book ${book.title}:`, error);
-                            return {
-                                ...book,
-                                cover: 'Error fetching cover',
-                                author: 'Error fetching author'
-                            };
-                        }
-                    }));
-    
-                    res.render('home.ejs', {
-                        name: req.user.username,
-                        userPicture: req.user.picture,
-                        searchedUser,
-                        currentPage: page,
-                        totalPages: totalPages,
-                        user_id,
-                        isFollowing,
-                        followers,
-                        totalBooks,
-                        totalFollowers,
-                        totalFollowing
-                    })
-    
-                } else {
-                    const result = await pool.query("SELECT * FROM users WHERE id = $1", [user_id])
-                    const userEmpty = result.rows
-                    
-                    res.render('home.ejs', { 
-                        name: req.user.username,
-                        userPicture: req.user.picture,
-                        userEmpty,
-                        isFollowing,
-                        followers,
-                        totalFollowers,
-                        totalFollowing
-                    })
-                }
-    
-            } catch(err) {
-                console.log(err)
+
+                res.render('home.ejs', {
+                    name: req.user.username,
+                    userPicture: req.user.picture,
+                    searchedUser,
+                    currentPage: page,
+                    totalPages: totalPages,
+                    user_id,
+                    isFollowing,
+                    followers,
+                    totalBooks,
+                    totalFollowers,
+                    totalFollowing
+                });
+
+            } catch (err) {
+                console.log(err);
+                res.redirect("/login");
             }
         }
-
     } else {
         res.redirect("/login");
     }
-})
+});
 
 app.post('/follow', async (req, res) => {
     const followerId = req.user.id;
