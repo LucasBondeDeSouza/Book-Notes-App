@@ -72,26 +72,28 @@
                 <div class="flip-card flip-horizontal-left">
                     <div class="flip-card-inner">
                         <div class="flip-card-front" style="align-items: start;">
-                            <div class="dropstart">
-                                <button type="button" class="btn p-0" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-three-dots-vertical fw-bold"></i>
-                                </button>
-
-                                <ul class="dropdown-menu dropdown-menu-start p-3">
-                                    <li>
-                                        <form action="/deleteBook" method="post">
-                                            <button class="text-danger button" onchange="this.form.submit()" name="deleteBookId" value="<%= book.bookId %>">
-                                                <i class="bi bi-trash-fill"></i> Delete
+                            <div class="d-flex flex-row-reverse w-100">
+                                <div class="dropstart">
+                                    <button type="button" class="btn p-0" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical fw-bold"></i>
+                                    </button>
+    
+                                    <ul class="dropdown-menu dropdown-menu-start p-3">
+                                        <li>
+                                            <form action="/deleteBook" method="post">
+                                                <button class="text-danger button" onchange="this.form.submit()" name="deleteBookId" value="<%= book.bookId %>">
+                                                    <i class="bi bi-trash-fill"></i> Delete
+                                                </button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <button class="text-primary button edit-book-btn" data-bs-toggle="modal" data-bs-target="#editBookModal" data-book-id="<%= book.bookId %>" 
+                                                data-user-id="<%= book.user_id %>" data-book-title="<%= book.title %>" data-book-review="<%= book.review %>" data-book-rating="<%= book.rating %>">
+                                                <i class="bi bi-pencil-fill"></i> Edit
                                             </button>
-                                        </form>
-                                    </li>
-                                    <li>
-                                        <button class="text-primary button edit-book-btn" data-bs-toggle="modal" data-bs-target="#editBookModal" data-book-id="<%= book.bookId %>" 
-                                            data-user-id="<%= book.user_id %>" data-book-title="<%= book.title %>" data-book-review="<%= book.review %>" data-book-rating="<%= book.rating %>">
-                                            <i class="bi bi-pencil-fill"></i> Edit
-                                        </button>
-                                    </li>
-                                </ul>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
 
                             <div class="card-image">
@@ -130,26 +132,28 @@
                         </div>
 
                         <div class="flip-card-back" style="align-items: start;">
-                            <div class="dropstart">
-                                <button type="button" class="btn p-0" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-three-dots-vertical fw-bold"></i>
-                                </button>
-
-                                <ul class="dropdown-menu dropdown-menu-start p-3">
-                                    <li>
-                                        <form action="/deleteBook" method="post">
-                                            <button class="text-danger button" onchange="this.form.submit()" name="deleteBookId" value="<%= book.bookId %>">
-                                                <i class="bi bi-trash-fill"></i> Delete
+                            <div class="d-flex w-100 flex-row-reverse">
+                                <div class="dropstart">
+                                    <button type="button" class="btn p-0" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical fw-bold"></i>
+                                    </button>
+    
+                                    <ul class="dropdown-menu dropdown-menu-start p-3">
+                                        <li>
+                                            <form action="/deleteBook" method="post">
+                                                <button class="text-danger button" onchange="this.form.submit()" name="deleteBookId" value="<%= book.bookId %>">
+                                                    <i class="bi bi-trash-fill"></i> Delete
+                                                </button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <button class="text-primary button edit-book-btn" data-bs-toggle="modal" data-bs-target="#editBookModal" data-book-id="<%= book.bookId %>" 
+                                                data-user-id="<%= book.user_id %>" data-book-title="<%= book.title %>" data-book-review="<%= book.review %>" data-book-rating="<%= book.rating %>">
+                                                <i class="bi bi-pencil-fill"></i> Edit
                                             </button>
-                                        </form>
-                                    </li>
-                                    <li>
-                                        <button class="text-primary button edit-book-btn" data-bs-toggle="modal" data-bs-target="#editBookModal" data-book-id="<%= book.bookId %>" 
-                                            data-user-id="<%= book.user_id %>" data-book-title="<%= book.title %>" data-book-review="<%= book.review %>" data-book-rating="<%= book.rating %>">
-                                            <i class="bi bi-pencil-fill"></i> Edit
-                                        </button>
-                                    </li>
-                                </ul>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
 
                             <div class="card-body" onclick="flipCard(this)">
