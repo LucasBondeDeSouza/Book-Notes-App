@@ -670,18 +670,16 @@ app.post('/follow', async (req, res) => {
 
     if (req.isAuthenticated()) {
         try {
-            await pool.query('INSERT INTO followers (follower_id, followed_id) VALUES ($1, $2)',
-                [followerId, followedId]
-            )
-    
-            res.redirect(req.get('Referer'));
+            await pool.query('INSERT INTO followers (follower_id, followed_id) VALUES ($1, $2)', [followerId, followedId]);
+            res.json({ success: true });
         } catch (err) {
-            console.log(err)
+            console.error(err);
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     } else {
-        res.redirect("/login");
+        res.status(401).json({ error: 'Unauthorized' });
     }
-})
+});
 
 app.post('/unfollow', async (req, res) => {
     const followerId = req.user.id;
@@ -689,18 +687,16 @@ app.post('/unfollow', async (req, res) => {
 
     if (req.isAuthenticated()) {
         try {
-            await pool.query('DELETE FROM followers WHERE follower_id = $1 AND followed_id = $2',
-                [followerId, followedId]
-            )
-
-            res.redirect(req.get('Referer'));
+            await pool.query('DELETE FROM followers WHERE follower_id = $1 AND followed_id = $2', [followerId, followedId]);
+            res.json({ success: true });
         } catch (err) {
-            console.log(err)
+            console.error(err);
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     } else {
-        res.redirect("/login");
+        res.status(401).json({ error: 'Unauthorized' });
     }
-})
+});
 
 app.get('/followers', async (req, res) => {
     const userId = req.query.user_id;

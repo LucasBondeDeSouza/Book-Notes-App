@@ -18,6 +18,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const modalElement = document.getElementById('modalFollower');
+        
         modalElement.addEventListener('show.bs.modal', async function () {
             const showFollowerModal = document.getElementById('showFollowerModal');
             const userId = showFollowerModal.getAttribute('data-user-id');
@@ -31,10 +32,11 @@
 
             followers.forEach(follower => {
                 const userContainer = document.createElement('div');
+                userContainer.classList.add('d-flex', 'align-items-center', 'justify-content-between');
 
                 const userLink = document.createElement('a');
                 userLink.href = `/user/profile?userId=${follower.id}`;
-                userLink.className = 'text-decoration-none text-dark d-flex align-items-center justify-content-between';
+                userLink.className = 'text-decoration-none text-dark d-flex align-items-center';
 
                 const userInfo = document.createElement('div');
                 userInfo.className = 'd-flex align-items-center';
@@ -57,35 +59,79 @@
 
                 const userName = document.createElement('span');
                 userName.textContent = follower.username;
-
                 userInfo.appendChild(userName);
 
-                const followForm = document.createElement('form');
-                followForm.method = 'post';
-                followForm.className = 'mb-0';
-                followForm.action = follower.isfollowing ? '/unfollow' : '/follow';
+                userLink.appendChild(userInfo);
 
-                const hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.name = 'userId';
-                hiddenInput.value = follower.id;
-
+                // Cria botão de seguir/desseguir
                 const followButton = document.createElement('button');
-                followButton.type = 'submit';
-                followButton.className = `btn btn-${follower.isfollowing ? 'secondary' : 'primary'} btn-sm`;
+                followButton.className = `btn btn-${follower.isfollowing ? 'secondary' : 'primary'} btn-sm follow-btn ms-3`;
+                followButton.dataset.userId = follower.id;
 
                 const icon = document.createElement('i');
                 icon.className = `fas fa-user-${follower.isfollowing ? 'check' : 'plus'}`;
                 followButton.appendChild(icon);
 
-                followForm.appendChild(hiddenInput);
-                followForm.appendChild(followButton);
+                const followText = document.createElement('span');
+                followText.className = 'follow-text ms-2';
+                followText.textContent = follower.isfollowing ? 'Following' : 'Follow';
+                followText.classList.add('d-none'); // Texto escondido por padrão
+                followButton.appendChild(followText);
 
-                userLink.appendChild(userInfo);  // Adiciona o div com a imagem e nome no link
-                userLink.appendChild(followForm);  // Adiciona o formulário de follow/unfollow no link
+                userContainer.appendChild(userLink);
+                userContainer.appendChild(followButton);
+                followerList.appendChild(userContainer);
 
-                userContainer.appendChild(userLink);  // Adiciona o link no container
-                followerList.appendChild(userContainer); // Adiciona o container na lista
+                // Função para atualizar o texto do botão com base no tamanho
+                const updateButtonText = () => {
+                    if (followButton.clientWidth < 100) {
+                        followText.classList.add('d-none');
+                    } else {
+                        followText.classList.remove('d-none');
+                    }
+                };
+
+                // Chama para ajustar o texto inicial
+                updateButtonText();
+
+                // Atualiza ao redimensionar a tela (opcional)
+                window.addEventListener('resize', updateButtonText);
+
+                // Evento de clique para seguir/desseguir
+                followButton.addEventListener('click', async (event) => {
+                    event.preventDefault(); // Impede o redirecionamento padrão
+                    const isFollowing = followButton.classList.contains('btn-secondary');
+                    const route = isFollowing ? '/unfollow' : '/follow';
+
+                    try {
+                        const res = await fetch(route, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ userId: follower.id })
+                        });
+
+                        if (res.ok) {
+                            if (isFollowing) {
+                                followButton.classList.remove('btn-secondary');
+                                followButton.classList.add('btn-primary');
+                                icon.classList.replace('fa-user-check', 'fa-user-plus');
+                                followText.textContent = 'Follow';
+                            } else {
+                                followButton.classList.remove('btn-primary');
+                                followButton.classList.add('btn-secondary');
+                                icon.classList.replace('fa-user-plus', 'fa-user-check');
+                                followText.textContent = 'Following';
+                            }
+                            updateButtonText();
+                        } else {
+                            console.error('Failed to follow/unfollow the user');
+                        }
+                    } catch (err) {
+                        console.error('Error:', err);
+                    }
+                });
             });
         });
     });

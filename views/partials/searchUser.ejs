@@ -31,21 +31,13 @@
 
                             <!-- Botões para seguir/deixar de seguir -->
                             <div class="d-flex justify-content-between mt-2">
-                                <% if (user.isFollowing) { %>
-                                    <form action="/unfollow" method="post" class="w-100">
-                                        <input type="hidden" name="userId" value="<%= user.id %>">
-                                        <button type="submit" class="btn btn-secondary w-100">
-                                            <i class="fas fa-user-check me-1"></i> Following
-                                        </button>
-                                    </form>
-                                <% } else { %>
-                                    <form action="/follow" method="post" class="w-100">
-                                        <input type="hidden" name="userId" value="<%= user.id %>">
-                                        <button type="submit" class="btn btn-primary w-100">
-                                            <i class="fas fa-user-plus me-1"></i> Follow
-                                        </button>
-                                    </form>
-                                <% } %>
+                                <button 
+                                    class="btn <%= user.isFollowing ? 'btn-secondary' : 'btn-primary' %> follow-btn w-100" 
+                                    data-user-id="<%= user.id %>"
+                                    style="cursor: pointer;">
+                                    <i class="fas <%= user.isFollowing ? 'fa-user-check' : 'fa-user-plus' %> me-1"></i>
+                                    <span class="follow-text"><%= user.isFollowing ? 'Following' : 'Follow' %></span>
+                                </button>
                             </div>
                         </div>
                     </div>

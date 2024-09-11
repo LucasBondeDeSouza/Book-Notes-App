@@ -60,6 +60,7 @@
   });
 </script>
 
+<!-- Like -->
 <script>
   document.querySelectorAll('.like-btn').forEach(button => {
     button.addEventListener('click', async (event) => {
@@ -102,6 +103,66 @@
         }
     });
   });
+</script>
+
+<!-- Follow -->
+<script>
+  document.querySelectorAll('.follow-btn').forEach(button => {
+    const followText = button.querySelector('.follow-text');
+
+    // Função para atualizar o texto com base no tamanho do botão
+    const updateButtonText = () => {
+        if (button.clientWidth < 100) { // Defina um tamanho limite adequado
+            followText.classList.add('d-none');  // Esconde o texto se o botão for pequeno
+        } else {
+            followText.classList.remove('d-none'); // Mostra o texto se o botão for grande
+        }
+    };
+
+    // Atualiza o texto na inicialização
+    updateButtonText();
+
+    // Atualiza o texto ao redimensionar a janela (opcional, se o layout for responsivo)
+    window.addEventListener('resize', updateButtonText);
+
+    // Lida com o evento de clique para seguir/desseguir
+    button.addEventListener('click', async (event) => {
+        const btn = event.currentTarget;
+        const userId = btn.dataset.userId;
+        const isFollowing = btn.classList.contains('btn-secondary');
+        const route = isFollowing ? '/unfollow' : '/follow';
+
+        try {
+            const response = await fetch(route, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId })
+            });
+
+            if (response.ok) {
+                // Atualiza a aparência do botão sem recarregar a página
+                if (isFollowing) {
+                    btn.classList.remove('btn-secondary');
+                    btn.classList.add('btn-primary');
+                    btn.querySelector('i').classList.replace('fa-user-check', 'fa-user-plus');
+                    followText.textContent = 'Follow';
+                } else {
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-secondary');
+                    btn.querySelector('i').classList.replace('fa-user-plus', 'fa-user-check');
+                    followText.textContent = 'Following';
+                }
+                updateButtonText();  // Revalida o tamanho após o clique
+            } else {
+                console.error('Failed to follow/unfollow the user');
+            }
+        } catch (err) {
+            console.error('Error:', err);
+        }
+    });
+});
 </script>
 
 </body>
