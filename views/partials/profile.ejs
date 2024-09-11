@@ -42,7 +42,7 @@
                     <button type="submit" style="display: none;"></button>
                     <div class="d-flex gap-1">
                         <h6 id="showFollowerModal" data-user-id="<%= id %>" data-bs-toggle="modal" data-bs-target="#modalFollower">
-                            <%= totalFollowers %>
+                            <%= totalFollowers >= 1000 && totalFollowers < 1000000 ? (totalFollowers / 1000).toFixed(1) + 'k' : totalFollowers %>
                         </h6> 
                         <h6 class="text-secondary" data-user-id="<%= id %>" data-bs-toggle="modal" data-bs-target="#modalFollower">
                             followers
@@ -55,7 +55,7 @@
                     <button type="submit" style="display: none;"></button>
                     <div class="d-flex gap-1">
                         <h6 id="showFollowingModal" data-user-id="<%= id %>" data-bs-toggle="modal" data-bs-target="#modalFollowing">
-                            <%= totalFollowing %>
+                            <%= totalFollowing >= 1000 && totalFollowing < 1000000 ? (totalFollowing / 1000).toFixed(1) + 'k' : totalFollowing %>
                         </h6>
                         <h6 class="text-secondary" data-user-id="<%= id %>" data-bs-toggle="modal" data-bs-target="#modalFollowing">
                             following
