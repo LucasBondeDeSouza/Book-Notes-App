@@ -35,7 +35,7 @@
                 <div class="flip-card flip-horizontal-left">
                     <div class="flip-card-inner">
                         <div class="flip-card-front" style="align-items: start;">
-                            <a href="/user/profile?userId=<%= book.id %>" class="card-profile d-flex align-items-center text-decoration-none text-dark gap-2">
+                            <a href="/user/profile?userId=<%= book.user_id %>" class="card-profile d-flex align-items-center text-decoration-none text-dark gap-2">
                                 <% if (book.picture) { %>
                                     <img src="<%= book.picture %>" alt="Profile Picture">
                                 <% } else { %>
@@ -50,21 +50,39 @@
                                 onclick="flipCard(this)">
                             </div>
     
-                            <div class="card-stars d-flex text-warning gap-1">
-                                <% for (let i = 0; i < book.rating; i++) { %>
-                                    <i class="bi bi-star-fill"></i>
-                                <% } %>
-    
-                                <% if (book.rating < 5) { %>
-                                    <% for (let i = book.rating; i < 5; i++) { %>
-                                        <i class="bi bi-star"></i>
+                            <div class="d-flex align-items-center justify-content-between" style="width: 100%;">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i 
+                                        class="bi <%= book.liked_by_user ? 'bi-heart-fill text-danger' : 'bi-heart text-danger' %> like-btn" 
+                                        data-book-id="<%= book.bookId %>"
+                                        style="cursor: pointer;">
+                                    </i>
+                                    
+                                    <form action="/likes" method="get">
+                                        <input type="hidden" name="book_id" value="<%= book.bookId %>">
+                                        <button type="submit" style="display: none;"></button>
+                                        
+                                        <span class="text-danger" id="showLikesModal-<%= book.bookId %>" data-book-id="<%= book.bookId %>" data-bs-toggle="modal" data-bs-target="#modalLikes">
+                                            <%= book.like_count >= 1000 && book.like_count < 1000000 ? (book.like_count / 1000).toFixed(1) + 'k' : book.like_count %>
+                                        </span>                                       
+                                    </form>                                    
+                                </div>
+                                <div class="card-stars d-flex text-warning gap-1">
+                                    <% for (let i = 0; i < book.rating; i++) { %>
+                                        <i class="bi bi-star-fill"></i>
                                     <% } %>
-                                <% } %>
+        
+                                    <% if (book.rating < 5) { %>
+                                        <% for (let i = book.rating; i < 5; i++) { %>
+                                            <i class="bi bi-star"></i>
+                                        <% } %>
+                                    <% } %>
+                                </div>
                             </div>
                         </div>
     
                         <div class="flip-card-back" style="align-items: start;">
-                            <a href="viewProfile?userId=<%= book.id %>" class="card-profile d-flex align-items-center text-decoration-none text-dark gap-2">
+                            <a href="/user/profile?userId=<%= book.user_id %>" class="card-profile d-flex align-items-center text-decoration-none text-dark gap-2">
                                 <% if (book.picture) { %>
                                     <img src="<%= book.picture %>" alt="Profile Picture">
                                 <% } else { %>

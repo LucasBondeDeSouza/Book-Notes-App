@@ -414,7 +414,7 @@ app.get("/search/user", async (req, res) => {
 })
 
 app.get("/search/book", async (req, res) => {
-    const book = req.query.title
+    const book = req.query.title;
 
     const page = parseInt(req.query.page) || 1;
     const limit = 6; // Número de livros por página
@@ -423,15 +423,25 @@ app.get("/search/book", async (req, res) => {
     if (req.isAuthenticated()) {
         try {
             const result = await pool.query(
-                `SELECT u.id, u.username, u.picture, b.title, b.review, b.rating, COUNT(f.followed_id) AS follower_count
-                FROM books b 
+                `SELECT b.id AS book_id, b.title, b.review, b.rating,
+                        u.id AS user_id, u.username, u.picture,
+                        CASE WHEN l.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS liked_by_user,
+                        COALESCE(likes_count.count, 0) AS like_count,
+                        COUNT(f.followed_id) AS follower_count
+                FROM books b
                 JOIN users u ON b.user_id = u.id 
+                LEFT JOIN likes l ON b.id = l.book_id AND l.user_id = $1
+                LEFT JOIN (
+                    SELECT book_id, COUNT(*) AS count
+                    FROM likes
+                    GROUP BY book_id
+                ) likes_count ON b.id = likes_count.book_id
                 LEFT JOIN followers f ON u.id = f.followed_id
-                WHERE b.title ILIKE $1 
-                GROUP BY u.id, b.id
+                WHERE b.title ILIKE $2 
+                GROUP BY u.id, b.id, l.user_id, likes_count.count
                 ORDER BY follower_count DESC, b.id DESC 
-                LIMIT $2 OFFSET $3`, 
-                [`%${book}%`, limit, offset]
+                LIMIT $3 OFFSET $4`, 
+                [req.user.id, `%${book}%`, limit, offset]
             );
             
             const countResult = await pool.query(
@@ -439,7 +449,7 @@ app.get("/search/book", async (req, res) => {
                  JOIN users u ON b.user_id = u.id 
                  WHERE b.title ILIKE $1`,
                  [`%${book}%`]
-            )
+            );
 
             const totalBooks = parseInt(countResult.rows[0].count);
             const totalPages = Math.ceil(totalBooks / limit);
@@ -452,30 +462,42 @@ app.get("/search/book", async (req, res) => {
                 WHERE title ILIKE $1`,
                 [`%${book}%`]
             );
-            
-            const averageRating = bookData.rows[0].average_rating;
-            const count = bookData.rows[0].count;
-            
-            console.log(`Average Rating: ${averageRating}`);
-            console.log(`Count: ${count}`);            
 
-            const listSearchBook = await Promise.all(result.rows.map(async (book) => {
+            const listSearchBook = await Promise.all(result.rows.map(async (row) => {
                 try {
-                    const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${book.title}`);
+                    const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${row.title}`);
                     const cover = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].cover_i) ? searchBook.data.docs[0].cover_i : 'cover Not Found';
                     const author = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].author_name) ? searchBook.data.docs[0].author_name[0] : 'Author Not Found';
 
                     return {
-                        ...book,
+                        title: row.title,
+                        review: row.review,
+                        rating: row.rating,
+                        bookId: row.book_id,
+                        liked_by_user: row.liked_by_user,
+                        like_count: row.like_count,
+                        user_id: row.user_id,
+                        username: row.username,
+                        picture: row.picture,
                         cover: cover,
-                        author: author
+                        author: author,
+                        follower_count: row.follower_count
                     };
                 } catch (error) {
-                    console.error(`Error fetching data for book ${book.title}:`, error);
+                    console.error(`Error fetching data for book ${row.title}:`, error);
                     return {
-                        ...book,
+                        title: row.title,
+                        review: row.review,
+                        rating: row.rating,
+                        bookId: row.book_id,
+                        liked_by_user: row.liked_by_user,
+                        like_count: row.like_count,
+                        user_id: row.user_id,
+                        username: row.username,
+                        picture: row.picture,
                         cover: 'Error fetching cover',
-                        author: 'Error fetching author'
+                        author: 'Error fetching author',
+                        follower_count: row.follower_count
                     };
                 }
             }));
@@ -497,15 +519,15 @@ app.get("/search/book", async (req, res) => {
                 book,
                 currentPage: page,
                 totalPages: totalPages,
-            })
+            });
         } catch (err) {
-            console.log(err)
+            console.log(err);
+            res.redirect("/login");
         }
-        
     } else {
         res.redirect("/login");
     }
-})
+});
 
 app.get("/user/profile", async (req, res) => {
     const user_id = req.query.userId;
