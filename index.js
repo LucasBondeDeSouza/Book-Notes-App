@@ -603,19 +603,34 @@ app.get("/user/profile", async (req, res) => {
                 );
                 const totalFollowing = countFollowing.rows[0].count;
 
-                res.render('home.ejs', {
-                    name: req.user.username,
-                    userPicture: req.user.picture,
-                    searchedUser,
-                    currentPage: page,
-                    totalPages: totalPages,
-                    user_id,
-                    isFollowing,
-                    followers,
-                    totalBooks,
-                    totalFollowers,
-                    totalFollowing
-                });
+                if (searchedUser.length > 0) {
+                    res.render('home.ejs', {
+                        name: req.user.username,
+                        userPicture: req.user.picture,
+                        searchedUser,
+                        currentPage: page,
+                        totalPages: totalPages,
+                        user_id,
+                        isFollowing,
+                        followers,
+                        totalBooks,
+                        totalFollowers,
+                        totalFollowing
+                    });
+                } else {
+                    const result = await pool.query("SELECT * FROM users WHERE id = $1", [user_id])
+                    const userEmpty = result.rows
+                    
+                    res.render('home.ejs', { 
+                        name: req.user.username,
+                        userPicture: req.user.picture,
+                        userEmpty,
+                        isFollowing,
+                        followers,
+                        totalFollowers,
+                        totalFollowing
+                    })
+                }
 
             } catch (err) {
                 console.log(err);
