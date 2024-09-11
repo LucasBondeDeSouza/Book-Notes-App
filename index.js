@@ -426,8 +426,7 @@ app.get("/search/book", async (req, res) => {
                 `SELECT b.id AS book_id, b.title, b.review, b.rating,
                         u.id AS user_id, u.username, u.picture,
                         CASE WHEN l.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS liked_by_user,
-                        COALESCE(likes_count.count, 0) AS like_count,
-                        COUNT(f.followed_id) AS follower_count
+                        COALESCE(likes_count.count, 0) AS like_count
                 FROM books b
                 JOIN users u ON b.user_id = u.id 
                 LEFT JOIN likes l ON b.id = l.book_id AND l.user_id = $1
@@ -436,10 +435,9 @@ app.get("/search/book", async (req, res) => {
                     FROM likes
                     GROUP BY book_id
                 ) likes_count ON b.id = likes_count.book_id
-                LEFT JOIN followers f ON u.id = f.followed_id
                 WHERE b.title ILIKE $2 
                 GROUP BY u.id, b.id, l.user_id, likes_count.count
-                ORDER BY follower_count DESC, b.id DESC 
+                ORDER BY like_count DESC, b.id DESC 
                 LIMIT $3 OFFSET $4`, 
                 [req.user.id, `%${book}%`, limit, offset]
             );
@@ -480,8 +478,7 @@ app.get("/search/book", async (req, res) => {
                         username: row.username,
                         picture: row.picture,
                         cover: cover,
-                        author: author,
-                        follower_count: row.follower_count
+                        author: author
                     };
                 } catch (error) {
                     console.error(`Error fetching data for book ${row.title}:`, error);
@@ -496,8 +493,7 @@ app.get("/search/book", async (req, res) => {
                         username: row.username,
                         picture: row.picture,
                         cover: 'Error fetching cover',
-                        author: 'Error fetching author',
-                        follower_count: row.follower_count
+                        author: 'Error fetching author'
                     };
                 }
             }));
