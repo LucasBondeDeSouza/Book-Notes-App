@@ -167,7 +167,7 @@
                             </div>
 
                             <div class="d-flex align-items-center justify-content-between" style="width: 100%;">
-                                <div class="d-flex align-items-center gap-2">
+                                <div class="d-flex align-items-center">
                                     <i 
                                         class="bi <%= book.liked_by_user ? 'bi-heart-fill text-danger' : 'bi-heart text-danger' %> like-btn" 
                                         data-book-id="<%= book.book_id %>"
@@ -178,7 +178,7 @@
                                         <input type="hidden" name="book_id" value="<%= book.book_id %>">
                                         <button type="submit" style="display: none;"></button>
                                         
-                                        <span class="text-danger" id="showLikesModal-<%= book.book_id %>" data-book-id="<%= book.book_id %>" data-bs-toggle="modal" data-bs-target="#modalLikes">
+                                        <span class="text-danger px-2" id="showLikesModal-<%= book.book_id %>" data-book-id="<%= book.book_id %>" data-bs-toggle="modal" data-bs-target="#modalLikes">
                                             <%= book.like_count >= 1000 && book.like_count < 1000000 ? (book.like_count / 1000).toFixed(1) + 'k' : book.like_count %>
                                         </span>                                       
                                     </form>                                    
