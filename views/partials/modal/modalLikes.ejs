@@ -7,6 +7,13 @@
             </div>
 
             <div class="modal-body">
+                <div class="my-2 d-flex filter-sidebar">
+                    <button id="toggleButton" class="btn-filter">
+                        <i class="bi bi-search fs-5 fw-bold"></i>
+                    </button>
+                    <input type="text" id="likeFilterInput" class="form-control" placeholder="Search" />
+                </div>
+
                 <div id="likeList">
                     <!-- Lista de likes será injetada aqui -->
                 </div>
@@ -18,13 +25,19 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const modalElement = document.getElementById('modalLikes');
+        let users = []; // Armazena os usuários que curtiram o livro
 
         modalElement.addEventListener('show.bs.modal', async function (event) {
             const button = event.relatedTarget; // Botão que acionou o modal
             const bookId = button.getAttribute('data-book-id'); // Pega o data-book-id do botão clicado
             const response = await fetch(`/likes?book_id=${bookId}`);
-            const users = await response.json();
+            users = await response.json();
 
+            renderLikes(users);
+        });
+
+        // Função para renderizar a lista de curtidas
+        function renderLikes(users) {
             const likeList = document.getElementById('likeList');
             likeList.style.maxHeight = '350px';
             likeList.style.overflowY = 'auto';
@@ -32,7 +45,7 @@
 
             users.forEach(user => {
                 const userContainer = document.createElement('div');
-                userContainer.classList.add('d-flex', 'align-items-center', 'justify-content-between');
+                userContainer.classList.add('d-flex', 'align-items-center', 'justify-content-between', 'like-item');
 
                 const userLink = document.createElement('a');
                 userLink.href = `/user/profile?userId=${user.id}`;
@@ -91,10 +104,7 @@
                     }
                 };
 
-                // Chama para ajustar o texto inicial
                 updateButtonText();
-
-                // Atualiza ao redimensionar a tela (opcional)
                 window.addEventListener('resize', updateButtonText);
 
                 // Evento de clique para seguir/desseguir
@@ -133,6 +143,15 @@
                     }
                 });
             });
+        }
+
+        // Função para filtrar os usuários que curtiram
+        document.getElementById('likeFilterInput').addEventListener('input', function () {
+            const filterText = this.value.toLowerCase();
+            const filteredUsers = users.filter(user => 
+                user.username.toLowerCase().includes(filterText)
+            );
+            renderLikes(filteredUsers);
         });
     });
 </script>
