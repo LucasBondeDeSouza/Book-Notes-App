@@ -7,6 +7,13 @@
             </div>
 
             <div class="modal-body">
+                <div class="my-2 d-flex filter-sidebar">
+                    <button id="toggleButton" class="btn-filter">
+                        <i class="bi bi-search fs-5 fw-bold"></i>
+                    </button>
+                    <input type="text" id="filterInput" class="form-control" placeholder="Search" />
+                </div>
+
                 <div id="followingList">
                     <!-- Lista de seguidores será injetada aqui -->
                 </div>
@@ -17,15 +24,20 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Adiciona um listener para o evento de exibição do modal
         const modalElement = document.getElementById('modalFollowing');
-        
+        let followings = []; // Armazena os seguidores recebidos
+
         modalElement.addEventListener('show.bs.modal', async function () {
             const showFollowingModal = document.getElementById('showFollowingModal');
             const userId = showFollowingModal.getAttribute('data-user-id');
             const response = await fetch(`/following?user_id=${userId}`);
-            const followings = await response.json();
+            followings = await response.json();
 
+            renderFollowings(followings);
+        });
+
+        // Função para renderizar a lista de seguidores
+        function renderFollowings(followings) {
             const followingList = document.getElementById('followingList');
             followingList.style.maxHeight = '350px';
             followingList.style.overflowY = 'auto';
@@ -33,7 +45,7 @@
 
             followings.forEach(following => {
                 const userContainer = document.createElement('div');
-                userContainer.classList.add('d-flex', 'align-items-center', 'justify-content-between')
+                userContainer.classList.add('d-flex', 'align-items-center', 'justify-content-between', 'following-item');
 
                 const userLink = document.createElement('a');
                 userLink.href = `/user/profile?userId=${following.id}`;
@@ -92,10 +104,7 @@
                     }
                 };
 
-                // Chama para ajustar o texto inicial
                 updateButtonText();
-
-                // Atualiza ao redimensionar a tela (opcional)
                 window.addEventListener('resize', updateButtonText);
 
                 // Evento de clique para seguir/desseguir
@@ -134,6 +143,15 @@
                     }
                 });
             });
+        }
+
+        // Função para filtrar os seguidores
+        document.getElementById('filterInput').addEventListener('input', function () {
+            const filterText = this.value.toLowerCase();
+            const filteredFollowings = followings.filter(following => 
+                following.username.toLowerCase().includes(filterText)
+            );
+            renderFollowings(filteredFollowings);
         });
     });
 </script>

@@ -7,6 +7,13 @@
             </div>
 
             <div class="modal-body">
+                <div class="my-2 d-flex filter-sidebar">
+                    <button id="toggleButton" class="btn-filter">
+                        <i class="bi bi-search fs-5 fw-bold"></i>
+                    </button>
+                    <input type="text" id="followerFilterInput" class="form-control" placeholder="Search" />
+                </div>
+
                 <div id="followerList">
                     <!-- Lista de seguidores será injetada aqui -->
                 </div>
@@ -18,13 +25,19 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const modalElement = document.getElementById('modalFollower');
-        
+        let followers = []; // Armazena os seguidores recebidos
+
         modalElement.addEventListener('show.bs.modal', async function () {
             const showFollowerModal = document.getElementById('showFollowerModal');
             const userId = showFollowerModal.getAttribute('data-user-id');
             const response = await fetch(`/followers?user_id=${userId}`);
-            const followers = await response.json();
+            followers = await response.json();
 
+            renderFollowers(followers);
+        });
+
+        // Função para renderizar a lista de seguidores
+        function renderFollowers(followers) {
             const followerList = document.getElementById('followerList');
             followerList.style.maxHeight = '350px';
             followerList.style.overflowY = 'auto';
@@ -32,7 +45,7 @@
 
             followers.forEach(follower => {
                 const userContainer = document.createElement('div');
-                userContainer.classList.add('d-flex', 'align-items-center', 'justify-content-between');
+                userContainer.classList.add('d-flex', 'align-items-center', 'justify-content-between', 'follower-item');
 
                 const userLink = document.createElement('a');
                 userLink.href = `/user/profile?userId=${follower.id}`;
@@ -91,10 +104,7 @@
                     }
                 };
 
-                // Chama para ajustar o texto inicial
                 updateButtonText();
-
-                // Atualiza ao redimensionar a tela (opcional)
                 window.addEventListener('resize', updateButtonText);
 
                 // Evento de clique para seguir/desseguir
@@ -133,6 +143,15 @@
                     }
                 });
             });
+        }
+
+        // Função para filtrar os seguidores
+        document.getElementById('followerFilterInput').addEventListener('input', function () {
+            const filterText = this.value.toLowerCase();
+            const filteredFollowers = followers.filter(follower => 
+                follower.username.toLowerCase().includes(filterText)
+            );
+            renderFollowers(filteredFollowers);
         });
     });
 </script>
