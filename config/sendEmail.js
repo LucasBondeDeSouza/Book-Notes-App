@@ -24,7 +24,7 @@ const sendEmail = (email, userName) => {
             <h1>Você tem um novo seguidor!</h1>
             <p>${userName} começou a te seguir!</p>
 
-            <a href='https://litshare.vercel.app'class='my-2 btn btn-primary'>
+            <a href='https://litshare.vercel.app' class='my-4 btn btn-primary' role="button">
                 Visite o LitShare
             </a>
         `
