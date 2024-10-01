@@ -21,13 +21,12 @@ const sendEmail = (email, userName) => {
         to: email,
         subject: 'Você tem um novo seguidor!',
         html: `
-            <div class="container text-center my-4">
-                <h1>Você tem um novo seguidor!</h1>
-                <p>${userName} começou a te seguir!</p>
-                <a href='https://litshare.vercel.app' class="btn btn-success btn-lg my-3">
-                    Visite o LitShare
-                </a>
-            </div>
+            <h1>Você tem um novo seguidor!</h1>
+            <p>${userName} começou a te seguir!</p>
+
+            <a href='https://litshare.vercel.app'class='my-2 btn btn-primary'>
+                Visite o LitShare
+            </a>
         `
     };
 
