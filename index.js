@@ -12,6 +12,7 @@ import path from "path";
 import { fileURLToPath } from 'url';
 
 import pool from "./config/db.js"
+import sendEmail from "./config/sendEmail.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -667,6 +668,12 @@ app.post('/follow', async (req, res) => {
     if (req.isAuthenticated()) {
         try {
             await pool.query('INSERT INTO followers (follower_id, followed_id) VALUES ($1, $2)', [followerId, followedId]);
+            
+            const { rows: [followedUser] } = await pool.query('SELECT email, username FROM users WHERE id = $1', [followedId]);
+            const { rows: [followerUser] } = await pool.query('SELECT username FROM users WHERE id = $1', [followerId]);
+
+            await sendEmail(followedUser.email, followerUser.username);
+
             res.json({ success: true });
         } catch (err) {
             console.error(err);
