@@ -64,9 +64,16 @@ app.use((req, res, next) => {
 // Função reutilizável para buscar dados do livro na API OpenLibrary
 async function fetchBookData(book) {
     try {
-        const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${book.title}`);
-        const cover = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].cover_i) ? searchBook.data.docs[0].cover_i : 'cover Not Found';
-        const author = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].author_name) ? searchBook.data.docs[0].author_name[0] : 'Author Not Found';
+        const searchBook = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${book.title}`);
+        const firstResult = searchBook.data.items[0];
+
+        const cover = firstResult.volumeInfo.imageLinks && firstResult.volumeInfo.imageLinks.thumbnail 
+            ? firstResult.volumeInfo.imageLinks.thumbnail 
+            : 'Cover Not Found';
+
+        const author = firstResult.volumeInfo.authors && firstResult.volumeInfo.authors.length > 0 
+            ? firstResult.volumeInfo.authors[0] 
+            : 'Author Not Found';
 
         return {
             ...book,
@@ -198,7 +205,7 @@ app.post("/newBook", async (req, res) => {
 
     if (req.isAuthenticated()) {
         try {
-            const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${title}`);
+            const searchBook = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${title}`);
             if (searchBook.data.docs.length > 0) {
                 await pool.query(
                     "INSERT INTO books (title, review, user_id, rating) VALUES ($1, $2, $3, $4)", 
@@ -464,9 +471,16 @@ app.get("/search/book", async (req, res) => {
 
             const listSearchBook = await Promise.all(result.rows.map(async (row) => {
                 try {
-                    const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${row.title}`);
-                    const cover = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].cover_i) ? searchBook.data.docs[0].cover_i : 'cover Not Found';
-                    const author = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].author_name) ? searchBook.data.docs[0].author_name[0] : 'Author Not Found';
+                    const searchBook = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${row.title}`);
+                    const firstResult = searchBook.data.items[0];
+
+                    const cover = firstResult.volumeInfo.imageLinks && firstResult.volumeInfo.imageLinks.thumbnail 
+                        ? firstResult.volumeInfo.imageLinks.thumbnail 
+                        : 'Cover Not Found';
+
+                    const author = firstResult.volumeInfo.authors && firstResult.volumeInfo.authors.length > 0 
+                        ? firstResult.volumeInfo.authors[0] 
+                        : 'Author Not Found';
 
                     return {
                         title: row.title,
@@ -582,9 +596,16 @@ app.get("/user/profile", async (req, res) => {
 
                 const searchedUser = await Promise.all(result.rows.map(async (row) => {
                     try {
-                        const searchBook = await axios.get(`https://openlibrary.org/search.json?title=${row.title}`);
-                        const cover = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].cover_i) ? searchBook.data.docs[0].cover_i : 'cover Not Found';
-                        const author = (searchBook.data.docs.length > 0 && searchBook.data.docs[0].author_name) ? searchBook.data.docs[0].author_name[0] : 'Author Not Found';
+                        const searchBook = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${row.title}`);
+                        const firstResult = searchBook.data.items[0];
+
+                        const cover = firstResult.volumeInfo.imageLinks && firstResult.volumeInfo.imageLinks.thumbnail 
+                            ? firstResult.volumeInfo.imageLinks.thumbnail 
+                            : 'Cover Not Found';
+
+                        const author = firstResult.volumeInfo.authors && firstResult.volumeInfo.authors.length > 0 
+                            ? firstResult.volumeInfo.authors[0] 
+                            : 'Author Not Found';
 
                         return {
                             ...row,
