@@ -61,7 +61,7 @@ app.use((req, res, next) => {
     next()
 })
 
-// Função reutilizável para buscar dados do livro na API OpenLibrary
+// Função reutilizável para buscar dados do livro na Google Books API
 async function fetchBookData(book) {
     try {
         const searchBook = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${book.title}`);
