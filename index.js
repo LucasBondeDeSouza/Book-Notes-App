@@ -201,12 +201,12 @@ app.get("/profile", async (req, res) => {
 });
 
 app.post("/newBook", async (req, res) => {
-    const { title, review, rating } = req.body
+    const { title, review, rating } = req.body;
 
     if (req.isAuthenticated()) {
         try {
             const searchBook = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${title}`);
-            if (searchBook.data.docs.length > 0) {
+            if (searchBook.data.items && searchBook.data.items.length > 0) {
                 await pool.query(
                     "INSERT INTO books (title, review, user_id, rating) VALUES ($1, $2, $3, $4)", 
                     [title, review, req.user.id, rating]
