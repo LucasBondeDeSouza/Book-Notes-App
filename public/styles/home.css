@@ -220,7 +220,7 @@
 
 .card-image img {
     width: 100%;
-    height: 100%;
+    height: auto; /* Preserva a proporção da altura */
     /*object-fit: cover;*/
 }
 
