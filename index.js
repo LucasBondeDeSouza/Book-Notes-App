@@ -688,20 +688,35 @@ app.post('/follow', async (req, res) => {
 
     if (req.isAuthenticated()) {
         try {
-            await pool.query('INSERT INTO followers (follower_id, followed_id) VALUES ($1, $2)', [followerId, followedId]);
-            
-            const { rows: [followedUser] } = await pool.query('SELECT email, username FROM users WHERE id = $1', [followedId]);
-            const { rows: [followerUser] } = await pool.query('SELECT username FROM users WHERE id = $1', [followerId]);
+            // Verifica se o seguidor já está seguindo o usuário
+            const { rowCount } = await pool.query(
+                'SELECT 1 FROM followers WHERE follower_id = $1 AND followed_id = $2',
+                [followerId, followedId]
+            );
 
-            await sendEmail(followedUser.email, followerUser.username);
+            if (rowCount === 0) {
+                // Se não está seguindo, faz a inserção
+                await pool.query(
+                    'INSERT INTO followers (follower_id, followed_id) VALUES ($1, $2)',
+                    [followerId, followedId]
+                );
 
-            res.json({ success: true });
+                // Obter e enviar o e-mail
+                const { rows: [followedUser] } = await pool.query('SELECT email, username FROM users WHERE id = $1', [followedId]);
+                const { rows: [followerUser] } = await pool.query('SELECT username FROM users WHERE id = $1', [followerId]);
+
+                await sendEmail(followedUser.email, followerUser.username);
+                res.json({ success: true });
+            } else {
+                // Caso já exista a relação, retorna uma mensagem de sucesso sem erro
+                res.json({ success: true, message: 'Already following' });
+            }
         } catch (err) {
             console.error(err);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     } else {
-        res.status(401).json({ error: 'Unauthorized' });
+        res.redirect("/login");
     }
 });
 
@@ -718,7 +733,7 @@ app.post('/unfollow', async (req, res) => {
             res.status(500).json({ error: 'Internal Server Error' });
         }
     } else {
-        res.status(401).json({ error: 'Unauthorized' });
+        res.redirect("/login");
     }
 });
 
