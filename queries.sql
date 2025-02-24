@@ -1,6 +1,7 @@
 CREATE TABLE users(
     id SERIAL PRIMARY KEY,
     username VARCHAR(50),
+    social_handle VARCHAR(50) UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(100),
     picture TEXT
